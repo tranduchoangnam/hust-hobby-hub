@@ -1,103 +1,231 @@
+"use client";
+
+import { useSession, signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import Image from "next/image";
+import { Prisma } from "@prisma/client";
+import LoginModal from "@/components/LoginModal";
+
+// Type for users with their hobbies
+type UserWithHobbies = Prisma.UserGetPayload<{
+    include: {
+        hobbies: {
+            include: {
+                hobby: true;
+            };
+        };
+    };
+}>;
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    const { data: session } = useSession();
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [hobbies, setHobbies] = useState<{ id: string; name: string }[]>([]);
+    const [selectedHobby, setSelectedHobby] = useState<string | null>(null);
+    const [users, setUsers] = useState<UserWithHobbies[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    // Fetch hobbies on mount
+    useEffect(() => {
+        const fetchHobbies = async () => {
+            try {
+                const response = await fetch("/api/hobbies");
+                const data = await response.json();
+                setHobbies(data);
+            } catch (error) {
+                console.error("Error fetching hobbies:", error);
+            }
+        };
+
+        fetchHobbies();
+    }, []);
+
+    // Fetch users when a hobby is selected
+    useEffect(() => {
+        if (!selectedHobby) return;
+
+        const fetchUsers = async () => {
+            setIsLoading(true);
+            try {
+                const response = await fetch(
+                    `/api/users?hobbyId=${selectedHobby}`,
+                );
+                const data = await response.json();
+                setUsers(data);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUsers();
+    }, [selectedHobby]);
+
+    const handleHobbySelect = (hobbyId: string) => {
+        setSelectedHobby(hobbyId);
+    };
+
+    const handleLoginClick = () => {
+        if (session) return;
+        setIsLoginModalOpen(true);
+    };
+
+    // Generate dots for mutual interests
+    const renderMutualDots = (count: number) => {
+        return (
+            <div className="flex gap-1">
+                {Array.from({ length: count }).map((_, index) => (
+                    <span 
+                        key={index} 
+                        className="w-2 h-2 rounded-full bg-[#FF3366]"
+                    ></span>
+                ))}
+            </div>
+        );
+    };
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins']" id="home-screen">
+            <div className="max-w-[1200px] mx-auto p-8 bg-white rounded-[20px] shadow-md my-6">
+                {/* Header */}
+                <header className="text-center mb-8">
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-[#FF3366] to-[#FF6B98] text-transparent bg-clip-text mb-2">
+                        Find Your Connection
+                    </h1>
+                    <p className="text-lg text-[#666] mb-6">
+                        Discover people who share your passions
+                    </p>
+                </header>
+
+                {/* Interest Tags Section */}
+                <section className="mb-12">
+                    <div className="flex flex-wrap justify-center gap-4">
+                        {hobbies.map((hobby) => (
+                            <div
+                                key={hobby.id}
+                                onClick={() => handleHobbySelect(hobby.id)}
+                                className={`py-2 px-6 rounded-[20px] shadow-md cursor-pointer transition-all hover:-translate-y-[3px] hover:shadow-lg ${
+                                    selectedHobby === hobby.id 
+                                    ? "bg-[#FF3366] text-white" 
+                                    : "bg-white text-[#FF3366]"
+                                }`}
+                            >
+                                {hobby.name}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* User Profiles */}
+                <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {isLoading ? (
+                        <div className="col-span-full text-center py-8">Loading...</div>
+                    ) : users.length > 0 ? (
+                        users.map((user) => (
+                            <div
+                                key={user.id}
+                                className="bg-white rounded-[24px] p-6 shadow-md flex flex-col transition-all hover:-translate-y-1 hover:shadow-lg"
+                            >
+                                <div className="w-20 h-20 rounded-full bg-[#f5f5f5] mb-4 self-center overflow-hidden border-2 border-white shadow-sm">
+                                    {user.image && (
+                                        <Image
+                                            src={user.image}
+                                            alt={user.name || "User profile"}
+                                            width={80}
+                                            height={80}
+                                            className="object-cover w-full h-full"
+                                        />
+                                    )}
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-semibold text-[#333] mb-2 text-center">
+                                        {user.name}
+                                    </h2>
+                                    <p className="text-sm text-[#666] mb-4 text-center">
+                                        {user.hobbies.length > 0 
+                                            ? `${user.hobbies[0].hobby.name} ${user.hobbies.length > 1 ? 'and' : ''} ${user.hobbies.length > 1 ? user.hobbies[1].hobby.name : ''} enthusiast`
+                                            : 'New user'}
+                                    </p>
+
+                                    <div className="flex flex-wrap justify-center gap-2 mb-4">
+                                        {user.hobbies.slice(0, 3).map((uh) => (
+                                            <span
+                                                key={uh.hobbyId}
+                                                className="bg-[#FFF0F3] text-[#FF3366] rounded-2xl px-3 py-1 text-sm font-medium"
+                                            >
+                                                {uh.hobby.name}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    <div className="flex items-center gap-2 mb-6">
+                                        <span className="text-sm text-[#666]">
+                                            {Math.min(user.hobbies.length, 3)}
+                                        </span>
+                                        <span className="text-sm text-[#666]">
+                                            mutual interests
+                                        </span>
+                                        <div className="ml-auto">
+                                            {renderMutualDots(Math.min(user.hobbies.length, 3))}
+                                        </div>
+                                    </div>
+
+                                    <Link
+                                        href={session ? `/chat/${user.id}` : "#"}
+                                        onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+                                        className="block w-full text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-3 px-4 font-medium transition-all hover:bg-[#FF3366] hover:text-white"
+                                    >
+                                        Send Message
+                                    </Link>
+                                </div>
+                            </div>
+                        ))
+                    ) : selectedHobby ? (
+                        <div className="col-span-full text-center py-8">
+                            No users found with this interest.
+                        </div>
+                    ) : (
+                        <div className="col-span-full text-center py-8">
+                            Select an interest to see people.
+                        </div>
+                    )}
+                </section>
+            </div>
+
+            {/* Bottom Navigation */}
+            <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md z-10">
+                <ul className="flex justify-around list-none p-4">
+                    <li>
+                        <Link href="/" className="text-[#BE185D] font-medium no-underline">
+                            Browse
+                        </Link>
+                    </li>
+                    <li>
+                        <Link
+                            href="/chat"
+                            className="text-[#666] no-underline font-medium"
+                            onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+                        >
+                            Chat
+                        </Link>
+                    </li>
+                    <li>
+                        <Link
+                            href="/love-note"
+                            className="text-[#666] no-underline font-medium"
+                            onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+                        >
+                            Love Note
+                        </Link>
+                    </li>
+                </ul>
+            </nav>
+
+            {isLoginModalOpen && (
+                <LoginModal onClose={() => setIsLoginModalOpen(false)} />
+            )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    );
 }
