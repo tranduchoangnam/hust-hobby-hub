@@ -37,6 +37,45 @@ export async function GET(request: NextRequest) {
         }
       }
     });
+
+    // If user is logged in, calculate compatibility scores
+    if (session?.user?.id) {
+      // Get the current user's hobbies
+      const userHobbies = await prisma.userHobby.findMany({
+        where: {
+          userId: session.user.id
+        },
+        select: {
+          hobbyId: true
+        }
+      });
+      
+      const currentUserHobbyIds = userHobbies.map(hobby => hobby.hobbyId);
+      
+      // Calculate compatibility scores for each user
+      const usersWithScores = users.map(user => {
+        const otherUserHobbyIds = user.hobbies.map(hobby => hobby.hobbyId);
+        
+        // Find common hobbies
+        const commonHobbies = currentUserHobbyIds.filter(hobbyId => 
+          otherUserHobbyIds.includes(hobbyId)
+        );
+        
+        // Calculate compatibility score (percentage of shared hobbies)
+        const totalUniqueHobbies = new Set([...currentUserHobbyIds, ...otherUserHobbyIds]).size;
+        const compatibilityScore = totalUniqueHobbies > 0 
+          ? (commonHobbies.length / totalUniqueHobbies) * 100 
+          : 0;
+        
+        return {
+          ...user,
+          compatibilityScore: Math.round(compatibilityScore),
+          commonHobbies: commonHobbies.length
+        };
+      });
+      
+      return NextResponse.json(usersWithScores);
+    }
     
     return NextResponse.json(users);
   } catch (error) {
