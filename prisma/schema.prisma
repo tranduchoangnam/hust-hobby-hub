@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -103,4 +103,4 @@ model LoveNote {
   senderId    String
   recipient   User      @relation("ReceivedLoveNotes", fields: [recipientId], references: [id])
   recipientId String
-}
+} 
