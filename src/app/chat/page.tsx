@@ -22,11 +22,14 @@ interface Conversation {
 export default function ChatPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const userIdFromQuery = searchParams.get("userId");
+
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { socket, isConnected } = useSocket();
-  
+
   // Added states for inline chat functionality
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -53,6 +56,14 @@ export default function ChatPage() {
           if (response.ok) {
             const data = await response.json();
             setConversations(data);
+
+            // If userId in url select that convo
+            if (
+              userIdFromQuery &&
+              data.some((conv: Conversation) => conv.id === userIdFromQuery)
+            ) {
+              handleSelectConversation(userIdFromQuery);
+            }
           }
         } catch (error) {
           console.error('Error fetching conversations:', error);
@@ -63,7 +74,7 @@ export default function ChatPage() {
 
       fetchConversations();
     }
-  }, [session, status]);
+  }, [session, status, userIdFromQuery]);
 
   // Listen for new messages via Socket.IO
   useEffect(() => {
@@ -74,20 +85,20 @@ export default function ChatPage() {
       setConversations(prev => {
         const updatedConversations = [...prev];
         const conversationIndex = updatedConversations.findIndex(c => c.id === data.senderId || c.id === data.recipientId);
-        
+
         if (conversationIndex >= 0) {
           const conversation = {...updatedConversations[conversationIndex]};
           conversation.lastMessage = data.content;
           conversation.unreadCount += 1;
-          
+
           // Move this conversation to the top
           updatedConversations.splice(conversationIndex, 1);
           updatedConversations.unshift(conversation);
         }
-        
+
         return updatedConversations;
       });
-      
+
       // If we're in a chat with the sender/recipient, update the messages
       if (selectedUserId === data.senderId || selectedUserId === data.recipientId) {
         setMessages(prev => {
@@ -102,7 +113,7 @@ export default function ChatPage() {
             return [...prev, data];
           }
         });
-        
+
         // Mark message as read if it's to the current user
         if (data.recipientId === session?.user?.id) {
           socket.emit('mark_read', { messageId: data.id });
@@ -125,7 +136,7 @@ export default function ChatPage() {
         });
       });
     });
-    
+
     // Listen for love notes
     socket.on('new_love_note', (data: LoveNote) => {
       if (data.senderId === selectedUserId || data.recipientId === selectedUserId) {
@@ -133,7 +144,7 @@ export default function ChatPage() {
         setShowLoveNote(true);
       }
     });
-    
+
     // Listen for love note updates
     socket.on('love_note_updated', (data: LoveNote) => {
       if (data.senderId === selectedUserId || data.recipientId === selectedUserId) {
@@ -148,26 +159,26 @@ export default function ChatPage() {
       socket.off('love_note_updated');
     };
   }, [socket, session, selectedUserId]);
-  
+
   // Auto-scroll to bottom of messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-  
+
   // Mark messages as read when viewed
   useEffect(() => {
     if (!socket || !session?.user || !messages.length) return;
-    
+
     const unreadMessages = messages.filter(
       msg => msg.recipientId === session.user.id && !msg.read
     );
-    
+
     if (unreadMessages.length > 0) {
       // Mark messages as read
       unreadMessages.forEach(msg => {
         socket.emit('mark_read', { messageId: msg.id });
       });
-      
+
       // Update local state
       setMessages(prev => 
         prev.map(msg => 
@@ -178,12 +189,65 @@ export default function ChatPage() {
       );
     }
   }, [messages, session, socket]);
-  
+
+  // Handle direct chat load from URL
+  useEffect(() => {
+    if (!userIdFromQuery || !session?.user || isLoading) return;
+
+    // If we don't have the user in conversations yet but have userId in URL
+    // attempt to fetch their information and create a chat with them
+    if (!conversations.some((conv) => conv.id === userIdFromQuery)) {
+      const loadUserChat = async () => {
+        try {
+          const userResponse = await fetch(`/api/users/${userIdFromQuery}`);
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            // Add to conversations if not already there
+            setConversations((prev) => {
+              // Make sure we don't add duplicates
+              if (!prev.some((c) => c.id === userData.id)) {
+                return [
+                  {
+                    id: userData.id,
+                    name: userData.name || "User",
+                    image: userData.image,
+                    lastMessage: "Start a conversation...",
+                    unreadCount: 0,
+                    isOnline: false,
+                    lastActive: "unknown",
+                  },
+                  ...prev,
+                ];
+              }
+              return prev;
+            });
+
+            // Now that we've added them to conversations, select their chat
+            handleSelectConversation(userIdFromQuery);
+          } else {
+            console.error("User not found");
+          }
+        } catch (error) {
+          console.error("Error loading user chat:", error);
+        }
+      };
+
+      loadUserChat();
+    }
+  }, [userIdFromQuery, session, conversations, isLoading]);
+
   // Function to handle selecting a conversation
   const handleSelectConversation = async (userId: string) => {
     setSelectedUserId(userId);
     setIsChatLoading(true);
-    
+
+    // Update chat
+    if (userIdFromQuery !== userId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("userId", userId);
+      window.history.pushState({}, "", url);
+    }
+
     try {
       // Fetch user details
       const userResponse = await fetch(`/api/users/${userId}`);
@@ -191,14 +255,14 @@ export default function ChatPage() {
         const userData = await userResponse.json();
         setSelectedUser(userData);
       }
-      
+
       // Fetch message history
       const messagesResponse = await fetch(`/api/messages?userId=${userId}`);
       if (messagesResponse.ok) {
         const messagesData = await messagesResponse.json();
         setMessages(messagesData);
       }
-      
+
       // Fetch love note if exists
       const loveNoteResponse = await fetch(`/api/love-notes?userId=${userId}`);
       if (loveNoteResponse.ok) {
@@ -210,9 +274,9 @@ export default function ChatPage() {
             // Show love note popup if it's new (within last hour) or not answered by current user
             const isNew = new Date(loveNoteData.createdAt) > new Date(Date.now() - 3600000);
             const isUnanswered = session?.user?.id === loveNoteData.senderId 
-              ? !loveNoteData.senderAnswer 
-              : !loveNoteData.recipientAnswer;
-            
+                ? !loveNoteData.senderAnswer
+                : !loveNoteData.recipientAnswer;
+
             if (isNew || isUnanswered) {
               setShowLoveNote(true);
             }
@@ -225,14 +289,14 @@ export default function ChatPage() {
       setIsChatLoading(false);
     }
   };
-  
+
   const handleSubmitMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !session?.user || !selectedUserId) return;
-    
+
     // Create a temporary ID for optimistic update
     const tempId = `temp-${Date.now()}`;
-    
+
     // Optimistically add to UI
     const optimisticMessage: Message = {
       id: tempId,
@@ -242,10 +306,10 @@ export default function ChatPage() {
       createdAt: new Date().toISOString(),
       read: false,
     };
-    
+
     setMessages(prev => [...prev, optimisticMessage]);
     setNewMessage('');
-    
+
     try {
       // Save message using API
       const response = await fetch('/api/messages', {
@@ -259,15 +323,15 @@ export default function ChatPage() {
           tempId: tempId,
         }),
       });
-      
+
       if (response.ok) {
         const savedMessage = await response.json();
-        
+
         // Replace optimistic message with saved message
         setMessages(prev => 
           prev.map(msg => msg.id === tempId ? savedMessage : msg)
         );
-        
+
         // Try to emit via socket, but don't block if socket is not connected
         if (socket && isConnected) {
           // Simplified payload with only necessary data
@@ -284,7 +348,7 @@ export default function ChatPage() {
         } else {
           console.log('Socket not connected, message saved to DB only');
         }
-        
+
         // Maybe trigger a love note after a few messages
         const messageCount = messages.filter(msg => msg.senderId === session.user.id).length;
         if (messageCount === 2 && !loveNote && socket && isConnected) {
@@ -304,29 +368,29 @@ export default function ChatPage() {
       setMessages(prev => prev.filter(msg => msg.id !== tempId));
     }
   };
-  
+
   const handleSubmitLoveNote = () => {
     if (!loveNoteAnswer.trim() || !socket || !session?.user || !loveNote) return;
-    
+
     const isRecipient = loveNote.recipientId === session.user.id;
-    
+
     socket.emit('answer_love_note', {
       loveNoteId: loveNote.id,
       answer: loveNoteAnswer,
       isRecipient,
     });
-    
+
     // Optimistically update UI
     setLoveNote(prev => {
       if (!prev) return null;
-      
+
       return {
         ...prev,
         senderAnswer: isRecipient ? prev.senderAnswer : loveNoteAnswer,
         recipientAnswer: isRecipient ? loveNoteAnswer : prev.recipientAnswer,
       };
     });
-    
+
     setLoveNoteAnswer('');
     setShowLoveNote(false);
   };
@@ -354,7 +418,7 @@ export default function ChatPage() {
                 <ul>
                   {conversations.map((conversation) => (
                     <li key={conversation.id}>
-                      <button 
+                      <button
                         onClick={() => handleSelectConversation(conversation.id)}
                         className={`flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors w-full text-left ${
                           selectedUserId === conversation.id ? 'bg-pink-50' : ''
@@ -380,7 +444,7 @@ export default function ChatPage() {
                             <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
                           )}
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between">
                             <h3 className="font-medium text-gray-900 truncate font-poppins">
@@ -394,7 +458,7 @@ export default function ChatPage() {
                             {conversation.lastMessage}
                           </p>
                         </div>
-                        
+
                         {conversation.unreadCount > 0 && (
                           <div className="ml-2 bg-[#FF3366] text-white text-xs font-medium rounded-full w-5 h-5 flex items-center justify-center font-poppins">
                             {conversation.unreadCount}
@@ -438,12 +502,12 @@ export default function ChatPage() {
                       </div>
                       <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
                     </div>
-                    
+
                     <div>
                       <h2 className="font-semibold text-lg font-poppins">{selectedUser.name}</h2>
                       <p className="text-xs text-[#4CAF50] font-poppins">Online</p>
                     </div>
-                    
+
                     {/* Music interests section */}
                     {selectedUser.hobbies?.includes('music') && (
                       <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
@@ -452,9 +516,9 @@ export default function ChatPage() {
                       </div>
                     )}
                   </div>
-                  
+
                   {loveNote && (
-                    <button 
+                    <button
                       onClick={() => setShowLoveNote(true)}
                       className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
                     >
@@ -462,7 +526,7 @@ export default function ChatPage() {
                     </button>
                   )}
                 </header>
-                
+
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 bg-white">
                   {isChatLoading ? (
@@ -473,9 +537,9 @@ export default function ChatPage() {
                     <div className="space-y-4">
                       {messages.map((message) => {
                         const isSentByMe = message.senderId === session?.user?.id;
-                        
+
                         return (
-                          <div 
+                          <div
                             key={message.id}
                             className={`flex ${isSentByMe ? 'justify-end' : 'justify-start'}`}
                           >
@@ -496,7 +560,7 @@ export default function ChatPage() {
                                 )}
                               </div>
                             )}
-                            
+
                             <div className={`
                               max-w-xs rounded-[20px] px-4 py-2 shadow-sm font-poppins text-sm
                               ${isSentByMe 
@@ -529,7 +593,7 @@ export default function ChatPage() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Message Input */}
                 <div className="p-4 border-t border-[#FFE5EA] bg-white">
                   <form onSubmit={handleSubmitMessage} className="flex items-center">
@@ -588,10 +652,14 @@ export default function ChatPage() {
                   <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">Daily Love Note</h2>
-              <p className="text-gray-700 mt-2 font-poppins">{loveNote.question}</p>
+              <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
+                Daily Love Note
+              </h2>
+              <p className="text-gray-700 mt-2 font-poppins">
+                {loveNote.question}
+              </p>
             </div>
-            
+
             {/* My Answer */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
@@ -612,7 +680,7 @@ export default function ChatPage() {
                 />
               )}
             </div>
-            
+
             {/* Partner's Answer */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
@@ -632,7 +700,7 @@ export default function ChatPage() {
                 </div>
               )}
             </div>
-            
+
             <div className="flex justify-center space-x-4">
               {!((session?.user?.id === loveNote.senderId && loveNote.senderAnswer) ||
                  (session?.user?.id === loveNote.recipientId && loveNote.recipientAnswer)) && (
@@ -673,10 +741,10 @@ export default function ChatPage() {
       {/* Login Modal */}
       {isLoginModalOpen && (
         <LoginModal onClose={() => {
-          setIsLoginModalOpen(false);
+            setIsLoginModalOpen(false);
           if (status === 'unauthenticated') {
             router.push('/');
-          }
+            }
         }} />
       )}
     </main>
