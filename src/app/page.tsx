@@ -47,6 +47,16 @@ export default function Home() {
     const [viewMode, setViewMode] = useState<"browse" | "compatibility">("browse");
     const [showOnlyUserInterests, setShowOnlyUserInterests] = useState<boolean>(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
+    
+    // Pagination state for users
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalUsers, setTotalUsers] = useState(0);
+    const usersPerPage = 10;
+
+    // Pagination state for interests
+    const [currentInterestPage, setCurrentInterestPage] = useState(1);
+    const interestsPerPage = 15;
 
     // Fetch hobbies on mount
     useEffect(() => {
@@ -91,10 +101,12 @@ export default function Home() {
             setIsLoading(true);
             try {
                 const response = await fetch(
-                    `/api/users?hobbyId=${selectedHobby}`,
+                    `/api/users?hobbyId=${selectedHobby}&page=${currentPage}&limit=${usersPerPage}`,
                 );
                 const data = await response.json();
-                setUsers(data);
+                setUsers(data.users);
+                setTotalPages(data.pagination.pages);
+                setTotalUsers(data.pagination.total);
             } catch (error) {
                 console.error("Error fetching users:", error);
             } finally {
@@ -103,7 +115,7 @@ export default function Home() {
         };
 
         fetchUsers();
-    }, [selectedHobby, viewMode]);
+    }, [selectedHobby, viewMode, currentPage]);
 
     // Fetch compatibility users when in compatibility mode
     useEffect(() => {
@@ -148,6 +160,16 @@ export default function Home() {
         
         return filteredHobbies;
     }, [hobbies, userHobbies, showOnlyUserInterests, session, searchQuery]);
+
+    // Calculate total pages for interests
+    const totalInterestPages = Math.ceil(displayedHobbies.length / interestsPerPage);
+
+    // Get paginated interests
+    const paginatedInterests = useMemo(() => {
+        const start = (currentInterestPage - 1) * interestsPerPage;
+        const end = start + interestsPerPage;
+        return displayedHobbies.slice(start, end);
+    }, [displayedHobbies, currentInterestPage]);
 
     const handleHobbySelect = (hobbyId: string) => {
         setSelectedHobby(hobbyId);
@@ -273,25 +295,16 @@ export default function Home() {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                                     </svg>
                                 </div>
-                                {searchQuery && (
-                                    <button
-                                        onClick={() => setSearchQuery("")}
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                )}
                             </div>
 
-                            {/* Toggle Button - Only show for logged in users */}
+                            {/* My Interests Toggle */}
                             {session && userHobbies.length > 0 && (
                                 <button
                                     onClick={() => {
                                         setShowOnlyUserInterests(!showOnlyUserInterests);
-                                        setSelectedHobby(null); // Reset selection when toggling
-                                        setSearchQuery(""); // Clear search when toggling
+                                        setSelectedHobby(null);
+                                        setSearchQuery("");
+                                        setCurrentPage(1);
                                     }}
                                     className="flex items-center gap-2 bg-[#FFF0F3] px-4 py-2 rounded-full text-[#FF3366] hover:bg-[#FFE5EA] transition-colors whitespace-nowrap"
                                 >
@@ -306,8 +319,7 @@ export default function Home() {
                                     ) : (
                                         <>
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                                                <path fillRule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 100-12 6 6 0 000 12z" clipRule="evenodd" />
                                             </svg>
                                             <span>All Interests</span>
                                         </>
@@ -316,156 +328,197 @@ export default function Home() {
                             )}
                         </div>
 
-                        {/* Interest Tags Section */}
-                        <section className="mb-12">
-                            <div className="flex flex-wrap justify-center gap-4">
-                                {displayedHobbies.length > 0 ? displayedHobbies.map((hobby) => (
-                                    <div
+                        {/* Interests Grid with Pagination */}
+                        <section className="mb-8">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                {paginatedInterests.map((hobby) => (
+                                    <button
                                         key={hobby.id}
-                                        onClick={() => handleHobbySelect(hobby.id)}
-                                        className={`py-2 px-6 rounded-[20px] shadow-md cursor-pointer transition-all hover:-translate-y-[3px] hover:shadow-lg ${
-                                            selectedHobby === hobby.id 
-                                            ? "bg-[#FF3366] text-white" 
-                                            : "bg-white text-[#FF3366]"
+                                        onClick={() => {
+                                            handleHobbySelect(hobby.id);
+                                            setCurrentPage(1);
+                                        }}
+                                        className={`p-4 rounded-[20px] text-center transition-all ${
+                                            selectedHobby === hobby.id
+                                                ? "bg-[#FF3366] text-white shadow-lg transform scale-105"
+                                                : "bg-white hover:bg-[#FFF0F3] text-[#333]"
                                         }`}
                                     >
                                         {hobby.name}
-                                    </div>
-                                )) : searchQuery ? (
-                                    <div className="text-center w-full py-6 bg-[#FFF0F3] rounded-[20px]">
-                                        <p className="text-[#666] mb-3">No interests found matching "{searchQuery}".</p>
-                                    </div>
-                                ) : (session && showOnlyUserInterests) ? (
-                                    <div className="text-center w-full py-6 bg-[#FFF0F3] rounded-[20px]">
-                                        <p className="text-[#666] mb-3">You haven't selected any interests yet.</p>
-                                        <Link
-                                            href="/profile"
-                                            className="text-[#FF3366] font-medium inline-flex items-center"
-                                        >
-                                            Go to profile to add interests
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
-                                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                                            </svg>
-                                        </Link>
-                                    </div>
-                                ) : (
-                                    <div className="text-center w-full py-6 bg-[#FFF0F3] rounded-[20px]">
-                                        <p className="text-[#666] mb-3">No interests available. Please try another search.</p>
-                                    </div>
-                                )}
+                                    </button>
+                                ))}
                             </div>
-                        </section>
 
-                        {/* User Profiles - Browse Mode */}
-                        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {isLoading ? (
-                                <div className="col-span-full text-center py-8">
-                                    <div className="w-16 h-16 border-4 border-[#FF3366] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                                    <p className="text-[#666]">Loading users...</p>
-                                </div>
-                            ) : users.length > 0 ? (
-                                users.map((user) => (
-                                    <div
-                                        key={user.id}
-                                        className="bg-white rounded-[24px] p-6 shadow-md flex flex-col transition-all hover:-translate-y-1 hover:shadow-lg"
+                            {/* Interest Pagination Controls */}
+                            {totalInterestPages > 1 && (
+                                <div className="flex justify-center items-center gap-2 mt-6">
+                                    <button
+                                        onClick={() => setCurrentInterestPage(prev => Math.max(prev - 1, 1))}
+                                        disabled={currentInterestPage === 1}
+                                        className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {/* Compatibility Score Badge - Only show when user is logged in */}
-                                        {session && user.compatibilityScore !== undefined && (
-                                            <div className="relative">
-                                                <div className="absolute right-0 top-0">
-                                                    {renderCompatibilityBadge(user.compatibilityScore)}
-                                                </div>
-                                            </div>
-                                        )}
-                                        
-                                        <div className="w-20 h-20 rounded-full bg-[#f5f5f5] mb-4 self-center overflow-hidden border-2 border-white shadow-sm">
-                                            {user.image && (
-                                                <Image
-                                                    src={user.image}
-                                                    alt={user.name || "User profile"}
-                                                    width={80}
-                                                    height={80}
-                                                    className="object-cover w-full h-full"
-                                                />
-                                            )}
-                                        </div>
-                                        <div>
-                                            <h2 className="text-xl font-semibold text-[#333] mb-2 text-center">
-                                                {user.name}
-                                            </h2>
-                                            <p className="text-sm text-[#666] mb-4 text-center">
-                                                {user.hobbies.length > 0 
-                                                    ? `${user.hobbies[0].hobby.name} ${user.hobbies.length > 1 ? 'and' : ''} ${user.hobbies.length > 1 ? user.hobbies[1].hobby.name : ''} enthusiast`
-                                                    : 'New user'}
-                                            </p>
-
-                                            <div className="flex flex-wrap justify-center gap-2 mb-4">
-                                                {user.hobbies.slice(0, 3).map((uh) => (
-                                                    <span
-                                                        key={uh.hobbyId}
-                                                        className="bg-[#FFF0F3] text-[#FF3366] rounded-2xl px-3 py-1 text-sm font-medium"
-                                                    >
-                                                        {uh.hobby.name}
-                                                    </span>
-                                                ))}
-                                            </div>
-
-                                            <div className="flex items-center gap-2 mb-6">
-                                                {session && user.commonHobbies !== undefined ? (
-                                                    <>
-                                                        <span className="text-sm font-medium text-[#FF3366]">
-                                                            {user.commonHobbies}
-                                                        </span>
-                                                        <span className="text-sm text-[#666]">
-                                                            {user.commonHobbies === 1 ? 'shared interest' : 'shared interests'}
-                                                        </span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <span className="text-sm text-[#666]">
-                                                            {Math.min(user.hobbies.length, 3)}
-                                                        </span>
-                                                        <span className="text-sm text-[#666]">
-                                                            mutual interests
-                                                        </span>
-                                                    </>
-                                                )}
-                                                <div className="ml-auto">
-                                                    {renderMutualDots(session && user.commonHobbies !== undefined 
-                                                        ? Math.min(user.commonHobbies, 3) 
-                                                        : Math.min(user.hobbies.length, 3))}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex gap-2">
-                                                <Link
-                                                    href={session ? `/users/${user.id}` : "#"}
-                                                    onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
-                                                    className="flex-1 text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#FFF0F3]"
-                                                >
-                                                    Profile
-                                                </Link>
-                                                <Link
-                                                    href={session ? `/chat/${user.id}` : "#"}
-                                                    onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
-                                                    className="flex-1 text-center bg-[#FF3366] text-white border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#E62E5C]"
-                                                >
-                                                    Chat
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : selectedHobby ? (
-                                <div className="col-span-full text-center py-8">
-                                    No users found with this interest.
+                                        Previous
+                                    </button>
+                                    <span className="text-[#666]">
+                                        Page {currentInterestPage} of {totalInterestPages}
+                                    </span>
+                                    <button
+                                        onClick={() => setCurrentInterestPage(prev => Math.min(prev + 1, totalInterestPages))}
+                                        disabled={currentInterestPage === totalInterestPages}
+                                        className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Next
+                                    </button>
                                 </div>
-                            ) : (
-                                <div className="col-span-full text-center py-8">
-                                    Select an interest to see people.
+                            )}
+
+                            {/* No Results Message */}
+                            {displayedHobbies.length === 0 && (
+                                <div className="text-center w-full py-6 bg-[#FFF0F3] rounded-[20px] mt-4">
+                                    {searchQuery ? (
+                                        <p className="text-[#666] mb-3">No interests found matching "{searchQuery}".</p>
+                                    ) : (session && showOnlyUserInterests) ? (
+                                        <>
+                                            <p className="text-[#666] mb-3">You haven't selected any interests yet.</p>
+                                            <Link
+                                                href="/profile"
+                                                className="text-[#FF3366] font-medium inline-flex items-center"
+                                            >
+                                                Go to profile to add interests
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                                </svg>
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <p className="text-[#666] mb-3">No interests available. Please try another search.</p>
+                                    )}
                                 </div>
                             )}
                         </section>
+
+                        {/* User Profiles with Pagination */}
+                        {selectedHobby && (
+                            <section>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {users.map((user) => (
+                                        <div
+                                            key={user.id}
+                                            className="bg-white rounded-[24px] p-6 shadow-md flex flex-col transition-all hover:-translate-y-1 hover:shadow-lg"
+                                        >
+                                            {/* Compatibility Score Badge - Only show when user is logged in */}
+                                            {session && user.compatibilityScore !== undefined && (
+                                                <div className="relative">
+                                                    <div className="absolute right-0 top-0">
+                                                        {renderCompatibilityBadge(user.compatibilityScore)}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
+                                            <div className="w-20 h-20 rounded-full bg-[#f5f5f5] mb-4 self-center overflow-hidden border-2 border-white shadow-sm">
+                                                {user.image && (
+                                                    <Image
+                                                        src={user.image}
+                                                        alt={user.name || "User profile"}
+                                                        width={80}
+                                                        height={80}
+                                                        className="object-cover w-full h-full"
+                                                    />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <h2 className="text-xl font-semibold text-[#333] mb-2 text-center">
+                                                    {user.name}
+                                                </h2>
+                                                <p className="text-sm text-[#666] mb-4 text-center">
+                                                    {user.hobbies.length > 0 
+                                                        ? `${user.hobbies[0].hobby.name} ${user.hobbies.length > 1 ? 'and' : ''} ${user.hobbies.length > 1 ? user.hobbies[1].hobby.name : ''} enthusiast`
+                                                        : 'New user'}
+                                                </p>
+
+                                                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                                                    {user.hobbies.slice(0, 3).map((uh) => (
+                                                        <span
+                                                            key={uh.hobbyId}
+                                                            className="bg-[#FFF0F3] text-[#FF3366] rounded-2xl px-3 py-1 text-sm font-medium"
+                                                        >
+                                                            {uh.hobby.name}
+                                                        </span>
+                                                    ))}
+                                                </div>
+
+                                                <div className="flex items-center gap-2 mb-6">
+                                                    {session && user.commonHobbies !== undefined ? (
+                                                        <>
+                                                            <span className="text-sm font-medium text-[#FF3366]">
+                                                                {user.commonHobbies}
+                                                            </span>
+                                                            <span className="text-sm text-[#666]">
+                                                                {user.commonHobbies === 1 ? 'shared interest' : 'shared interests'}
+                                                            </span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <span className="text-sm text-[#666]">
+                                                                {Math.min(user.hobbies.length, 3)}
+                                                            </span>
+                                                            <span className="text-sm text-[#666]">
+                                                                mutual interests
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                    <div className="ml-auto">
+                                                        {renderMutualDots(session && user.commonHobbies !== undefined 
+                                                            ? Math.min(user.commonHobbies, 3) 
+                                                            : Math.min(user.hobbies.length, 3))}
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex gap-2">
+                                                    <Link
+                                                        href={session ? `/users/${user.id}` : "#"}
+                                                        onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+                                                        className="flex-1 text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#FFF0F3]"
+                                                    >
+                                                        Profile
+                                                    </Link>
+                                                    <Link
+                                                        href={session ? `/chat/${user.id}` : "#"}
+                                                        onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+                                                        className="flex-1 text-center bg-[#FF3366] text-white border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#E62E5C]"
+                                                    >
+                                                        Chat
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* User Pagination Controls */}
+                                {totalPages > 1 && (
+                                    <div className="flex justify-center items-center gap-2 mt-8">
+                                        <button
+                                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                            disabled={currentPage === 1}
+                                            className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            Previous
+                                        </button>
+                                        <span className="text-[#666]">
+                                            Page {currentPage} of {totalPages}
+                                        </span>
+                                        <button
+                                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                            disabled={currentPage === totalPages}
+                                            className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+                                )}
+                            </section>
+                        )}
                     </>
                 )}
 

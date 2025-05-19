@@ -6,6 +6,9 @@ import { authOptions } from "@/lib/auth";
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const hobbyId = searchParams.get("hobbyId");
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "10");
+  const skip = (page - 1) * limit;
   
   try {
     const session = await getServerSession(authOptions);
@@ -18,7 +21,19 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Query users who have the specified hobby
+    // Get total count for pagination
+    const totalUsers = await prisma.user.count({
+      where: {
+        hobbies: {
+          some: {
+            hobbyId: hobbyId
+          }
+        },
+        ...(session?.user ? { id: { not: session.user.id } } : {})
+      }
+    });
+    
+    // Query users who have the specified hobby with pagination
     const users = await prisma.user.findMany({
       where: {
         hobbies: {
@@ -35,6 +50,11 @@ export async function GET(request: NextRequest) {
             hobby: true
           }
         }
+      },
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: 'desc'
       }
     });
 
@@ -74,10 +94,26 @@ export async function GET(request: NextRequest) {
         };
       });
       
-      return NextResponse.json(usersWithScores);
+      return NextResponse.json({
+        users: usersWithScores,
+        pagination: {
+          total: totalUsers,
+          pages: Math.ceil(totalUsers / limit),
+          currentPage: page,
+          limit
+        }
+      });
     }
     
-    return NextResponse.json(users);
+    return NextResponse.json({
+      users,
+      pagination: {
+        total: totalUsers,
+        pages: Math.ceil(totalUsers / limit),
+        currentPage: page,
+        limit
+      }
+    });
   } catch (error) {
     console.error("Error fetching users:", error);
     return NextResponse.json(
