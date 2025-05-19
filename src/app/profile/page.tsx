@@ -371,9 +371,41 @@ export default function ProfilePage() {
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
-
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const interestsPerPage = 12; // Show 12 interests per page (3 rows of 4)
+  
   // Derived state for limit check
   const isLimitReached = selectedHobbyIds.length >= MAX_INTERESTS;
+
+  // Filter hobbies based on search query and category
+  const filteredHobbies = useMemo(() => {
+    return allHobbies.filter(hobby => {
+      const matchesSearch = searchQuery === "" || 
+        hobby.name.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesCategory = selectedCategory === "All Categories" || 
+        getCategoryForHobby(hobby.name) === selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    });
+  }, [allHobbies, searchQuery, selectedCategory]);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredHobbies.length / interestsPerPage);
+
+  // Get paginated interests
+  const paginatedInterests = useMemo(() => {
+    const start = (currentPage - 1) * interestsPerPage;
+    const end = start + interestsPerPage;
+    return filteredHobbies.slice(start, end);
+  }, [filteredHobbies, currentPage]);
+
+  // Reset pagination when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
 
   // Fetch all available hobbies
   useEffect(() => {
@@ -958,7 +990,8 @@ export default function ProfilePage() {
                   </select>
                 </div>
               </div>
-
+              
+              {/* Interests Grid */}
               {/* Interest Selection */}
               <div
                 className={`flex flex-wrap gap-3 mb-8 p-4 rounded-lg ${

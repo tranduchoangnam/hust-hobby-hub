@@ -396,13 +396,12 @@ export default function ChatPage() {
   };
 
   return (
-    <main className="min-h-screen pb-16">
-      <div className="w-full mx-auto">
-        <div className="bg-white min-h-[calc(100vh-4rem)]">
-          {/* Chat Interface */}
-          <div className="flex h-[calc(100vh-4rem)] ">
-            {/* Conversation List - Left Sidebar */}
-            <div className="w-1/3 border-r border-gray-200 overflow-y-auto">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins']">
+      <div className="max-w-[1200px] mx-auto p-4 md:p-8">
+        <div className="bg-white rounded-[20px] shadow-md overflow-hidden">
+          <div className="flex h-[calc(100vh-200px)]">
+            {/* Conversations List */}
+            <div className="w-full md:w-1/3 lg:w-1/4 border-r border-gray-200 overflow-y-auto">
               <div className="p-4 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-800 font-poppins">Messages</h2>
                 <p className="text-sm text-gray-500 font-poppins">
@@ -478,166 +477,247 @@ export default function ChatPage() {
               )}
             </div>
 
-            {/* Chat Window - Right Side */}
-            {selectedUserId && selectedUser ? (
-              <div className="flex-1 flex flex-col">
-                {/* Chat Header */}
-                <header className="flex items-center p-4 bg-gradient-to-r from-[#FFF5F5] to-[#FFE4E6] border-b border-gray-200">
-                  <div className="flex items-center">
-                    <div className="relative mr-3">
-                      <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
-                        {selectedUser.image ? (
-                          <Image
-                            src={selectedUser.image}
-                            alt={selectedUser.name}
-                            width={48}
-                            height={48}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            {selectedUser.name.charAt(0)}
-                          </div>
-                        )}
+            {/* Chat Area */}
+            <div className="hidden md:flex flex-col flex-1">
+              {selectedUser ? (
+                <>
+                  {/* Chat Header */}
+                  <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="relative mr-3">
+                        <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
+                          {selectedUser.image ? (
+                            <Image
+                              src={selectedUser.image}
+                              alt={selectedUser.name}
+                              width={48}
+                              height={48}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                              {selectedUser.name.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
                       </div>
-                      <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
-                    </div>
-
-                    <div>
-                      <h2 className="font-semibold text-lg font-poppins">{selectedUser.name}</h2>
-                      <p className="text-xs text-[#4CAF50] font-poppins">Online</p>
-                    </div>
-
-                    {/* Music interests section */}
-                    {selectedUser.hobbies?.includes('music') && (
-                      <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
-                        <span className="text-gray-600 mr-1">🎵</span>
-                        <span className="text-sm text-gray-600 font-poppins">Music Lover</span>
+                      
+                      <div>
+                        <h2 className="font-semibold text-lg font-poppins">{selectedUser.name}</h2>
+                        <p className="text-xs text-[#4CAF50] font-poppins">Online</p>
                       </div>
+                      
+                      {/* Music interests section */}
+                      {selectedUser.hobbies?.includes('music') && (
+                        <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
+                          <span className="text-gray-600 mr-1">🎵</span>
+                          <span className="text-sm text-gray-600 font-poppins">Music Lover</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {loveNote && (
+                      <button 
+                        onClick={() => setShowLoveNote(true)}
+                        className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
+                      >
+                        ❤️ Love Note
+                      </button>
                     )}
                   </div>
-
-                  {loveNote && (
-                    <button
-                      onClick={() => setShowLoveNote(true)}
-                      className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
-                    >
-                      ❤️ Love Note
-                    </button>
-                  )}
-                </header>
-
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 bg-white">
-                  {isChatLoading ? (
-                    <div className="flex justify-center items-center h-full">
-                      <p className="font-poppins text-gray-600">Loading messages...</p>
-                    </div>
-                  ) : messages.length > 0 ? (
-                    <div className="space-y-4">
-                      {messages.map((message) => {
-                        const isSentByMe = message.senderId === session?.user?.id;
-
-                        return (
+                  
+                  {/* Messages Area */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {messages.map((message) => {
+                      const isOwnMessage = message.senderId === session?.user?.id;
+                      return (
+                        <div
+                          key={message.id}
+                          className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                        >
                           <div
-                            key={message.id}
-                            className={`flex ${isSentByMe ? 'justify-end' : 'justify-start'}`}
+                            className={`relative max-w-[70%] rounded-2xl px-4 py-2 ${
+                              isOwnMessage
+                                ? 'bg-[#FF3366] text-white rounded-tr-none'
+                                : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                            }`}
                           >
-                            {!isSentByMe && (
-                              <div className="w-8 h-8 rounded-full bg-gray-200 mr-2 overflow-hidden flex-shrink-0">
-                                {selectedUser?.image ? (
-                                  <Image
-                                    src={selectedUser.image}
-                                    alt={selectedUser.name}
-                                    width={32}
-                                    height={32}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                                    {selectedUser?.name.charAt(0)}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                            <div className={`
-                              max-w-xs rounded-[20px] px-4 py-2 shadow-sm font-poppins text-sm
-                              ${isSentByMe 
-                                ? 'bg-gradient-to-r from-[#FF3366] to-[#FF6B98] text-white' 
-                                : 'bg-[#F5F5F5] text-[#333333]'}
-                            `}>
-                              <p>{message.content}</p>
-                              <div className={`flex text-[10px] mt-1 ${isSentByMe ? 'justify-end' : 'justify-start'}`}>
-                                <span className={isSentByMe ? 'text-white/80' : 'text-gray-500'}>
-                                  {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            <div className="break-words">
+                              {message.content}
+                            </div>
+                            <div
+                              className={`text-xs mt-1 ${
+                                isOwnMessage ? 'text-white/80' : 'text-gray-500'
+                              }`}
+                            >
+                              {new Date(message.createdAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                              {isOwnMessage && (
+                                <span className="ml-2">
+                                  {message.read ? '✓✓' : '✓'}
                                 </span>
-                                {isSentByMe && (
-                                  <span className="ml-1 text-white/80">
-                                    {message.read ? '✓✓' : '✓'}
-                                  </span>
-                                )}
-                              </div>
+                              )}
                             </div>
                           </div>
-                        );
-                      })}
-                      <div ref={messagesEndRef} />
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-center">
-                      <p className="text-gray-500 mb-2 font-poppins">No messages yet.</p>
-                      <p className="text-sm text-gray-400 font-poppins">
-                        Start the conversation with {selectedUser?.name}
-                      </p>
-                    </div>
-                  )}
-                </div>
+                        </div>
+                      );
+                    })}
+                    <div ref={messagesEndRef} />
+                  </div>
 
-                {/* Message Input */}
-                <div className="p-4 border-t border-[#FFE5EA] bg-white">
-                  <form onSubmit={handleSubmitMessage} className="flex items-center">
-                    <button
-                      type="button"
-                      className="mr-2 p-2 bg-[#F5F5F5] text-gray-600 rounded-full"
-                    >
-                      😊
-                    </button>
-                    <div className="flex-1 relative">
+                  {/* Message Input */}
+                  <div className="p-4 border-t border-gray-200">
+                    <form onSubmit={handleSubmitMessage} className="flex gap-2">
                       <input
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type your message..."
-                        className="w-full py-3 px-4 bg-[#F5F5F5] border-none rounded-3xl focus:outline-none focus:ring-2 focus:ring-[#FF3366] text-gray-800 font-poppins"
+                        placeholder="Type a message..."
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
                       />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={!newMessage.trim()}
-                      className="ml-2 p-3 bg-[#F5F5F5] text-[#FF3366] rounded-full disabled:text-gray-400"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                      </svg>
-                    </button>
-                  </form>
-                </div>
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col bg-gray-50">
+                      <button
+                        type="submit"
+                        disabled={!newMessage.trim()}
+                        className="bg-[#FF3366] text-white px-6 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#E62E5C] transition-colors"
+                      >
+                        Send
+                      </button>
+                    </form>
+                  </div>
+                </>
+              ) : (
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <h3 className="text-xl font-medium text-gray-700 mb-2 font-poppins">
-                      Select a Conversation
-                    </h3>
-                    <p className="text-gray-500 max-w-md font-poppins">
-                      Choose a conversation from the list or start a new one by finding people with similar interests.
-                    </p>
+                  <div className="text-center text-gray-500">
+                    <p className="text-lg mb-2">Select a conversation to start chatting</p>
+                    <p className="text-sm">Your messages will appear here</p>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            {/* Mobile Chat View */}
+            <div className="md:hidden flex-1">
+              {selectedUser ? (
+                <div className="flex flex-col h-full">
+                  {/* Mobile Chat Header */}
+                  <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="relative mr-3">
+                        <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
+                          {selectedUser.image ? (
+                            <Image
+                              src={selectedUser.image}
+                              alt={selectedUser.name}
+                              width={48}
+                              height={48}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                              {selectedUser.name.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
+                      </div>
+                      
+                      <div>
+                        <h2 className="font-semibold text-lg font-poppins">{selectedUser.name}</h2>
+                        <p className="text-xs text-[#4CAF50] font-poppins">Online</p>
+                      </div>
+                      
+                      {/* Music interests section */}
+                      {selectedUser.hobbies?.includes('music') && (
+                        <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
+                          <span className="text-gray-600 mr-1">🎵</span>
+                          <span className="text-sm text-gray-600 font-poppins">Music Lover</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {loveNote && (
+                      <button 
+                        onClick={() => setShowLoveNote(true)}
+                        className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
+                      >
+                        ❤️ Love Note
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Mobile Messages Area */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {messages.map((message) => {
+                      const isOwnMessage = message.senderId === session?.user?.id;
+                      return (
+                        <div
+                          key={message.id}
+                          className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`relative max-w-[70%] rounded-2xl px-4 py-2 ${
+                              isOwnMessage
+                                ? 'bg-[#FF3366] text-white rounded-tr-none'
+                                : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                            }`}
+                          >
+                            <div className="break-words">
+                              {message.content}
+                            </div>
+                            <div
+                              className={`text-xs mt-1 ${
+                                isOwnMessage ? 'text-white/80' : 'text-gray-500'
+                              }`}
+                            >
+                              {new Date(message.createdAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                              {isOwnMessage && (
+                                <span className="ml-2">
+                                  {message.read ? '✓✓' : '✓'}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div ref={messagesEndRef} />
+                  </div>
+
+                  {/* Mobile Message Input */}
+                  <div className="p-4 border-t border-gray-200">
+                    <form onSubmit={handleSubmitMessage} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder="Type a message..."
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
+                      />
+                      <button
+                        type="submit"
+                        disabled={!newMessage.trim()}
+                        className="bg-[#FF3366] text-white px-6 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#E62E5C] transition-colors"
+                      >
+                        Send
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center text-gray-500">
+                    <p className="text-lg mb-2">Select a conversation to start chatting</p>
+                    <p className="text-sm">Your messages will appear here</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -747,6 +827,6 @@ export default function ChatPage() {
             }
         }} />
       )}
-    </main>
+    </div>
   );
 }
