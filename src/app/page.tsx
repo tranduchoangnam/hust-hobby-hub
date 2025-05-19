@@ -483,7 +483,7 @@ export default function Home() {
                                                         Profile
                                                     </Link>
                                                     <Link
-                                                        href={session ? `/chat/${user.id}` : "#"}
+                                                        href={session ? `/chat?userId=${user.id}` : "#"}
                                                         onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
                                                         className="flex-1 text-center bg-[#FF3366] text-white border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#E62E5C]"
                                                     >
@@ -615,7 +615,7 @@ export default function Home() {
                                                 Profile
                                             </Link>
                                             <Link
-                                                href={`/chat/${user.id}`}
+                                                href={`/chat?userId=${user.id}`}
                                                 className="flex-1 text-center bg-[#FF3366] text-white border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#E62E5C]"
                                             >
                                                 Chat

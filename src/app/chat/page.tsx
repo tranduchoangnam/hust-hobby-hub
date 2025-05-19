@@ -1,8 +1,8 @@
 'use client';
 
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import LoginModal from '@/components/LoginModal';
@@ -19,9 +19,10 @@ interface Conversation {
   lastActive: string;
 }
 
-export default function ChatPage() {
+function ChatPageInner() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -265,7 +266,7 @@ export default function ChatPage() {
         
         // Replace optimistic message with saved message
         setMessages(prev => 
-          prev.map(msg => msg.id === tempId ? savedMessage : msg)
+          prev.map (msg => msg.id === tempId ? savedMessage : msg)
         );
         
         // Try to emit via socket, but don't block if socket is not connected
@@ -330,6 +331,13 @@ export default function ChatPage() {
     setLoveNoteAnswer('');
     setShowLoveNote(false);
   };
+
+  useEffect(() => {
+    const userIdFromQuery = searchParams.get('userId');
+    if (userIdFromQuery) {
+      handleSelectConversation(userIdFromQuery);
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins']">
@@ -760,5 +768,13 @@ export default function ChatPage() {
         }} />
       )}
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense>
+      <ChatPageInner />
+    </Suspense>
   );
 }
