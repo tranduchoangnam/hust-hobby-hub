@@ -371,23 +371,23 @@ export default function ProfilePage() {
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const interestsPerPage = 12; // Show 12 interests per page (3 rows of 4)
-  
+
   // Derived state for limit check
   const isLimitReached = selectedHobbyIds.length >= MAX_INTERESTS;
 
   // Filter hobbies based on search query and category
   const filteredHobbies = useMemo(() => {
     return allHobbies.filter(hobby => {
-      const matchesSearch = searchQuery === "" || 
+      const matchesSearch = searchQuery === "" ||
         hobby.name.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesCategory = selectedCategory === "All Categories" || 
+
+      const matchesCategory = selectedCategory === "All Categories" ||
         getCategoryForHobby(hobby.name) === selectedCategory;
-      
+
       return matchesSearch && matchesCategory;
     });
   }, [allHobbies, searchQuery, selectedCategory]);
@@ -539,21 +539,6 @@ export default function ProfilePage() {
     setShowFollowing(true);
     fetchFollowing();
   };
-
-  // Filter hobbies based on search query and category
-  const filteredHobbies = useMemo(() => {
-    return allHobbies.filter((hobby) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        hobby.name.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesCategory =
-        selectedCategory === "All Categories" ||
-        getCategoryForHobby(hobby.name) === selectedCategory;
-
-      return matchesSearch && matchesCategory;
-    });
-  }, [allHobbies, searchQuery, selectedCategory]);
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
@@ -990,7 +975,7 @@ export default function ProfilePage() {
                   </select>
                 </div>
               </div>
-              
+
               {/* Interests Grid */}
               {/* Interest Selection */}
               <div
@@ -1013,7 +998,7 @@ export default function ProfilePage() {
                         onClick={() =>
                           !isDisabled && toggleHobbySelection(hobby.id)
                         }
-                        className={`py-2 px-6 rounded-[20px] shadow-sm transition-all 
+                        className={`py-2 px-6 rounded-[20px] shadow-sm transition-all
                           ${
                             isSelected
                               ? "bg-[#FF3366] text-white hover:-translate-y-[2px] hover:shadow-md"

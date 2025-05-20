@@ -25,7 +25,6 @@ function ChatPageInner() {
   const searchParams = useSearchParams();
   const userIdFromQuery = searchParams.get("userId");
 
-  const searchParams = useSearchParams();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -106,7 +105,7 @@ function ChatPageInner() {
           // If this message has a tempId, it's a confirmation of a message we sent
           if (data.tempId) {
             // Replace the temporary message with the real one from the database
-            return prev.map(msg => 
+            return prev.map(msg =>
               msg.id === data.tempId ? { ...data, tempId: undefined } : msg
             );
           } else {
@@ -181,8 +180,8 @@ function ChatPageInner() {
       });
 
       // Update local state
-      setMessages(prev => 
-        prev.map(msg => 
+      setMessages(prev =>
+        prev.map(msg =>
           msg.recipientId === session.user.id && !msg.read
             ? { ...msg, read: true }
             : msg
@@ -274,7 +273,7 @@ function ChatPageInner() {
             setLoveNote(loveNoteData);
             // Show love note popup if it's new (within last hour) or not answered by current user
             const isNew = new Date(loveNoteData.createdAt) > new Date(Date.now() - 3600000);
-            const isUnanswered = session?.user?.id === loveNoteData.senderId 
+            const isUnanswered = session?.user?.id === loveNoteData.senderId
                 ? !loveNoteData.senderAnswer
                 : !loveNoteData.recipientAnswer;
 
@@ -329,7 +328,7 @@ function ChatPageInner() {
         const savedMessage = await response.json();
 
         // Replace optimistic message with saved message
-        setMessages(prev => 
+        setMessages(prev =>
           prev.map (msg => msg.id === tempId ? savedMessage : msg)
         );
 
@@ -510,12 +509,12 @@ function ChatPageInner() {
                         </div>
                         <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
                       </div>
-                      
+
                       <div>
                         <h2 className="font-semibold text-lg font-poppins">{selectedUser.name}</h2>
                         <p className="text-xs text-[#4CAF50] font-poppins">Online</p>
                       </div>
-                      
+
                       {/* Music interests section */}
                       {selectedUser.hobbies?.includes('music') && (
                         <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
@@ -524,9 +523,9 @@ function ChatPageInner() {
                         </div>
                       )}
                     </div>
-                    
+
                     {loveNote && (
-                      <button 
+                      <button
                         onClick={() => setShowLoveNote(true)}
                         className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
                       >
@@ -534,7 +533,7 @@ function ChatPageInner() {
                       </button>
                     )}
                   </div>
-                  
+
                   {/* Messages Area */}
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {messages.map((message) => {
@@ -631,12 +630,12 @@ function ChatPageInner() {
                         </div>
                         <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
                       </div>
-                      
+
                       <div>
                         <h2 className="font-semibold text-lg font-poppins">{selectedUser.name}</h2>
                         <p className="text-xs text-[#4CAF50] font-poppins">Online</p>
                       </div>
-                      
+
                       {/* Music interests section */}
                       {selectedUser.hobbies?.includes('music') && (
                         <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
@@ -645,9 +644,9 @@ function ChatPageInner() {
                         </div>
                       )}
                     </div>
-                    
+
                     {loveNote && (
-                      <button 
+                      <button
                         onClick={() => setShowLoveNote(true)}
                         className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
                       >
