@@ -17,6 +17,7 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
+  bio           String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -27,6 +28,8 @@ model User {
   receivedMessages Message[] @relation("ReceivedMessages")
   sentLoveNotes LoveNote[]   @relation("SentLoveNotes")
   receivedLoveNotes LoveNote[] @relation("ReceivedLoveNotes")
+  followers     Follow[]     @relation("Followers")
+  following     Follow[]     @relation("Following")
 }
 
 model Account {
@@ -103,4 +106,15 @@ model LoveNote {
   senderId    String
   recipient   User      @relation("ReceivedLoveNotes", fields: [recipientId], references: [id])
   recipientId String
-} 
+}
+
+model Follow {
+  id          String    @id @default(cuid())
+  follower    User      @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId  String
+  following   User      @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String
+  createdAt   DateTime  @default(now())
+
+  @@unique([followerId, followingId])
+}
