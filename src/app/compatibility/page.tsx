@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -42,7 +42,9 @@ export default function CompatibilityPage() {
         setCompatibleUsers(data.users || []);
       } catch (error) {
         console.error("Error fetching compatible users:", error);
-        setError("Failed to load compatibility matches. Please try again later.");
+        setError(
+          "Failed to load compatibility matches. Please try again later."
+        );
       } finally {
         setIsLoading(false);
       }
@@ -58,7 +60,7 @@ export default function CompatibilityPage() {
   // Function to render compatibility badges
   const renderCompatibilityBadge = (score: number) => {
     let color = "bg-gray-200 text-gray-700";
-    
+
     if (score >= 80) {
       color = "bg-green-100 text-green-800";
     } else if (score >= 60) {
@@ -95,9 +97,12 @@ export default function CompatibilityPage() {
         <main>
           {!session ? (
             <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
-              <h2 className="text-2xl font-semibold text-[#333] mb-4">Find Your Best Matches</h2>
+              <h2 className="text-2xl font-semibold text-[#333] mb-4">
+                Find Your Best Matches
+              </h2>
               <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                Sign in to see people who share your interests and are most compatible with you.
+                Sign in to see people who share your interests and are most
+                compatible with you.
               </p>
               <button
                 onClick={handleLoginClick}
@@ -123,9 +128,12 @@ export default function CompatibilityPage() {
             </div>
           ) : compatibleUsers.length === 0 ? (
             <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
-              <h2 className="text-2xl font-semibold text-[#333] mb-4">No Matches Found</h2>
+              <h2 className="text-2xl font-semibold text-[#333] mb-4">
+                No Matches Found
+              </h2>
               <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                We couldn't find any users who share your interests. Add more hobbies to your profile or check back later.
+                We couldn't find any users who share your interests. Add more
+                hobbies to your profile or check back later.
               </p>
             </div>
           ) : (
@@ -140,7 +148,7 @@ export default function CompatibilityPage() {
                       {renderCompatibilityBadge(user.compatibilityScore)}
                     </div>
                   </div>
-                  
+
                   <div className="w-20 h-20 rounded-full bg-[#f5f5f5] mb-4 self-center overflow-hidden border-2 border-white shadow-sm">
                     {user.image && (
                       <Image
@@ -162,7 +170,9 @@ export default function CompatibilityPage() {
                       {user.commonHobbies}
                     </span>
                     <span className="text-sm text-[#666]">
-                      {user.commonHobbies === 1 ? 'shared interest' : 'shared interests'}
+                      {user.commonHobbies === 1
+                        ? "shared interest"
+                        : "shared interests"}
                     </span>
                   </div>
 
@@ -213,6 +223,14 @@ export default function CompatibilityPage() {
           </li>
           <li>
             <Link
+              href="/profile"
+              className="text-[#666] no-underline font-medium"
+            >
+              Profile
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/compatibility"
               className="text-[#BE185D] no-underline font-medium"
             >
@@ -223,7 +241,9 @@ export default function CompatibilityPage() {
             <Link
               href="/chat"
               className="text-[#666] no-underline font-medium"
-              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+              onClick={(e) =>
+                !session && (e.preventDefault(), handleLoginClick())
+              }
             >
               Chat
             </Link>
@@ -232,11 +252,23 @@ export default function CompatibilityPage() {
             <Link
               href="/love-note"
               className="text-[#666] no-underline font-medium"
-              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+              onClick={(e) =>
+                !session && (e.preventDefault(), handleLoginClick())
+              }
             >
               Love Note
             </Link>
           </li>
+          {session && (
+            <li>
+              <button
+                onClick={() => signOut()}
+                className="text-gray-500 font-poppins hover:text-[#FF3366]"
+              >
+                Log out
+              </button>
+            </li>
+          )}
         </ul>
       </nav>
 
@@ -245,4 +277,4 @@ export default function CompatibilityPage() {
       )}
     </div>
   );
-} 
+}

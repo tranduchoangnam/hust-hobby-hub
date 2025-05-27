@@ -1,11 +1,12 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Prisma } from "@prisma/client";
 import LoginModal from "@/components/LoginModal";
+import { HOBBY_CATEGORIES, getCategoryForHobby } from "@/lib/hobbyCategories";
 
 // Type for users with their hobbies
 type UserWithHobbies = Prisma.UserGetPayload<{
@@ -52,6 +53,7 @@ export default function Home() {
   const [showOnlyUserInterests, setShowOnlyUserInterests] =
     useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
 
   // Pagination state for users
   const [currentPage, setCurrentPage] = useState(1);
@@ -160,11 +162,11 @@ export default function Home() {
     fetchCompatibleUsers();
   }, [session, viewMode]);
 
-  // Filter hobbies based on user interests and search query
+  // Cập nhật displayedHobbies để lọc theo category
   const displayedHobbies = useMemo(() => {
     let filteredHobbies = hobbies;
 
-    // First filter by user interests if enabled
+    // Filter theo interests của user nếu bật
     if (session && showOnlyUserInterests && userHobbies.length > 0) {
       const userHobbiesIds = userHobbies.map((hobby) => hobby.id);
       filteredHobbies = hobbies.filter((hobby) =>
@@ -172,16 +174,30 @@ export default function Home() {
       );
     }
 
-    // Then filter by search query if provided
+    // Filter theo search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      filteredHobbies = hobbies.filter((hobby) =>
+      filteredHobbies = filteredHobbies.filter((hobby) =>
         hobby.name.toLowerCase().includes(query)
       );
     }
 
+    // Filter theo category
+    if (selectedCategory !== "All Categories") {
+      filteredHobbies = filteredHobbies.filter(
+        (hobby) => getCategoryForHobby(hobby.name) === selectedCategory
+      );
+    }
+
     return filteredHobbies;
-  }, [hobbies, userHobbies, showOnlyUserInterests, session, searchQuery]);
+  }, [
+    hobbies,
+    userHobbies,
+    showOnlyUserInterests,
+    session,
+    searchQuery,
+    selectedCategory,
+  ]);
 
   // Calculate total pages for interests
   const totalInterestPages = Math.ceil(
@@ -244,10 +260,10 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins']"
+      className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins'] py-6"
       id="home-screen"
     >
-      <div className="max-w-[1200px] mx-auto p-8 bg-white rounded-[20px] shadow-md my-6">
+      <div className="max-w-[1200px] mx-auto p-8 bg-white rounded-[20px] shadow-md">
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#FF3366] to-[#FF6B98] text-transparent bg-clip-text mb-2">
@@ -369,7 +385,20 @@ export default function Home() {
                   </svg>
                 </div>
               </div>
-
+              {/* Category Filter */}
+              <div className="w-full max-w-xs">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
+                >
+                  {HOBBY_CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
               {/* My Interests Toggle */}
               {session && userHobbies.length > 0 && (
                 <button
@@ -864,6 +893,16 @@ export default function Home() {
               Love Note
             </Link>
           </li>
+          {session && (
+            <li>
+              <button
+                onClick={() => signOut()}
+                className="text-gray-500 font-poppins hover:text-[#FF3366]"
+              >
+                Log out
+              </button>
+            </li>
+          )}
         </ul>
       </nav>
 
