@@ -6,11 +6,334 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import LoginModal from "@/components/LoginModal";
+import UserList from "@/components/UserList";
 import { HOBBY_CATEGORIES, getCategoryForHobby } from "@/lib/hobbyCategories";
 
 type Hobby = {
   id: string;
   name: string;
+};
+
+// Categories for grouping interests
+const HOBBY_CATEGORIES = [
+  "All Categories",
+  "Arts & Creativity",
+  "Music",
+  "Literature & Writing",
+  "Performing Arts",
+  "Food & Beverages",
+  "Sports & Fitness",
+  "Travel & Culture",
+  "Nature & Outdoors",
+  "Technology & Gaming",
+  "Media & Entertainment",
+  "Wellness & Spirituality",
+  "Science & Learning",
+  "Collecting & Appreciation",
+  "Social Activities",
+];
+
+// Function to determine category based on hobby name
+const getCategoryForHobby = (hobbyName: string): string => {
+  const lowerName = hobbyName.toLowerCase();
+
+  // Arts & Creativity
+  if (
+    [
+      "art",
+      "paint",
+      "draw",
+      "sculpt",
+      "digital",
+      "illustrat",
+      "design",
+      "animation",
+      "calligraphy",
+      "pottery",
+      "jewelry",
+      "knit",
+      "crochet",
+      "quilt",
+      "sew",
+      "embroidery",
+      "candle",
+      "diy",
+      "craft",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Arts & Creativity";
+  }
+
+  // Music
+  if (
+    [
+      "music",
+      "guitar",
+      "piano",
+      "drum",
+      "violin",
+      "sing",
+      "song",
+      "dj",
+      "classical",
+      "jazz",
+      "rock",
+      "pop",
+      "hip hop",
+      "electronic",
+      "country",
+      "r&b",
+      "opera",
+      "choir",
+      "musical",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Music";
+  }
+
+  // Literature & Writing
+  if (
+    [
+      "book",
+      "read",
+      "writ",
+      "poetry",
+      "fiction",
+      "non-fiction",
+      "screen",
+      "play",
+      "blog",
+      "journal",
+      "literary",
+      "story",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Literature & Writing";
+  }
+
+  // Performing Arts
+  if (
+    [
+      "act",
+      "theater",
+      "dance",
+      "ballet",
+      "contemporary",
+      "ballroom",
+      "salsa",
+      "comedy",
+      "improv",
+      "magic",
+      "circus",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Performing Arts";
+  }
+
+  // Food & Beverages
+  if (
+    [
+      "cook",
+      "bak",
+      "mix",
+      "bartend",
+      "coffee",
+      "tea",
+      "wine",
+      "beer",
+      "whiskey",
+      "ferment",
+      "sourdough",
+      "cheese",
+      "food",
+      "vegetarian",
+      "vegan",
+      "gluten",
+      "barbecue",
+      "sushi",
+      "italian",
+      "french",
+      "asian",
+      "mexican",
+      "middle eastern",
+      "indian",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Food & Beverages";
+  }
+
+  // Sports & Fitness
+  if (
+    [
+      "yoga",
+      "pilates",
+      "run",
+      "hik",
+      "climb",
+      "swim",
+      "cycl",
+      "bik",
+      "weight",
+      "crossfit",
+      "soccer",
+      "basketball",
+      "tennis",
+      "volleyball",
+      "badminton",
+      "golf",
+      "baseball",
+      "snow",
+      "ski",
+      "surf",
+      "skat",
+      "martial",
+      "box",
+      "wrestl",
+      "fenc",
+      "archer",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Sports & Fitness";
+  }
+
+  // Travel & Culture
+  if (
+    [
+      "travel",
+      "backpack",
+      "road trip",
+      "camp",
+      "cultural",
+      "histor",
+      "museum",
+      "galler",
+      "language",
+      "anthropology",
+      "archaeology",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Travel & Culture";
+  }
+
+  // Nature & Outdoors
+  if (
+    [
+      "garden",
+      "plant",
+      "bird",
+      "fish",
+      "hunt",
+      "forag",
+      "wildlife",
+      "stargaz",
+      "astronom",
+      "bee",
+      "ecology",
+      "conservation",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Nature & Outdoors";
+  }
+
+  // Technology & Gaming
+  if (
+    [
+      "program",
+      "develop",
+      "game",
+      "chess",
+      "puzzle",
+      "vr",
+      "robot",
+      "electronic",
+      "drone",
+      "print",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Technology & Gaming";
+  }
+
+  // Media & Entertainment
+  if (
+    [
+      "film",
+      "documentary",
+      "tv",
+      "anime",
+      "comic",
+      "manga",
+      "podcast",
+      "radio",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Media & Entertainment";
+  }
+
+  // Wellness & Spirituality
+  if (
+    [
+      "meditat",
+      "mindful",
+      "spiritual",
+      "tarot",
+      "astrology",
+      "essential oil",
+      "aromatherapy",
+      "herbal",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Wellness & Spirituality";
+  }
+
+  // Science & Learning
+  if (
+    [
+      "science",
+      "physics",
+      "chemistry",
+      "biology",
+      "psychology",
+      "neuroscience",
+      "history",
+      "philosophy",
+      "linguistic",
+      "math",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Science & Learning";
+  }
+
+  // Collecting & Appreciation
+  if (
+    [
+      "collect",
+      "antique",
+      "coin",
+      "stamp",
+      "vinyl",
+      "vintage",
+      "enthusiasm",
+      "sneaker",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Collecting & Appreciation";
+  }
+
+  // Social Activities
+  if (
+    [
+      "volunteer",
+      "community",
+      "activism",
+      "speak",
+      "debate",
+      "event plan",
+    ].some((term) => lowerName.includes(term))
+  ) {
+    return "Social Activities";
+  }
+
+  return "All Categories";
 };
 
 // Maximum number of interests a user can select
@@ -29,6 +352,23 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  // User bio state
+  const [bio, setBio] = useState("");
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [isSavingBio, setIsSavingBio] = useState(false);
+  const [bioError, setBioError] = useState<string | null>(null);
+  const [showFullBio, setShowFullBio] = useState(false);
+
+  // Follower related states
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [followers, setFollowers] = useState<any[]>([]);
+  const [following, setFollowing] = useState<any[]>([]);
+  const [isLoadingFollowers, setIsLoadingFollowers] = useState(false);
+  const [isLoadingFollowing, setIsLoadingFollowing] = useState(false);
+
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
@@ -42,13 +382,11 @@ export default function ProfilePage() {
 
   // Filter hobbies based on search query and category
   const filteredHobbies = useMemo(() => {
-    return allHobbies.filter((hobby) => {
-      const matchesSearch =
-        searchQuery === "" ||
+    return allHobbies.filter(hobby => {
+      const matchesSearch = searchQuery === "" ||
         hobby.name.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesCategory =
-        selectedCategory === "All Categories" ||
+      const matchesCategory = selectedCategory === "All Categories" ||
         getCategoryForHobby(hobby.name) === selectedCategory;
 
       return matchesSearch && matchesCategory;
@@ -119,6 +457,90 @@ export default function ProfilePage() {
     fetchUserHobbies();
   }, [session]);
 
+  // Fetch user's bio and stats
+  useEffect(() => {
+    if (!session?.user) {
+      return;
+    }
+
+    const fetchUserBio = async () => {
+      try {
+        const response = await fetch("/api/users/profile/bio");
+        if (!response.ok) {
+          throw new Error("Failed to fetch user bio");
+        }
+        const data = await response.json();
+        setBio(data.bio || "");
+      } catch (error) {
+        console.error("Error fetching user bio:", error);
+        setBioError("Failed to load your bio. Please refresh and try again.");
+      }
+    };
+
+    const fetchUserStats = async () => {
+      try {
+        const response = await fetch("/api/users/profile/stats");
+        if (!response.ok) {
+          throw new Error("Failed to fetch user stats");
+        }
+        const data = await response.json();
+        setFollowerCount(data.followerCount || 0);
+        setFollowingCount(data.followingCount || 0);
+      } catch (error) {
+        console.error("Error fetching user stats:", error);
+      }
+    };
+
+    fetchUserBio();
+    fetchUserStats();
+  }, [session]);
+
+  // Function to fetch followers
+  const fetchFollowers = async () => {
+    setIsLoadingFollowers(true);
+    try {
+      const response = await fetch("/api/users/profile/followers");
+      if (!response.ok) {
+        throw new Error("Failed to fetch followers");
+      }
+      const data = await response.json();
+      setFollowers(data);
+    } catch (error) {
+      console.error("Error fetching followers:", error);
+    } finally {
+      setIsLoadingFollowers(false);
+    }
+  };
+
+  // Function to fetch following
+  const fetchFollowing = async () => {
+    setIsLoadingFollowing(true);
+    try {
+      const response = await fetch("/api/users/profile/following");
+      if (!response.ok) {
+        throw new Error("Failed to fetch following");
+      }
+      const data = await response.json();
+      setFollowing(data);
+    } catch (error) {
+      console.error("Error fetching following:", error);
+    } finally {
+      setIsLoadingFollowing(false);
+    }
+  };
+
+  // Handle opening followers modal
+  const handleOpenFollowers = () => {
+    setShowFollowers(true);
+    fetchFollowers();
+  };
+
+  // Handle opening following modal
+  const handleOpenFollowing = () => {
+    setShowFollowing(true);
+    fetchFollowing();
+  };
+
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
   };
@@ -175,6 +597,48 @@ export default function ProfilePage() {
     }
   };
 
+  // Handle bio text change
+  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBio(e.target.value);
+  };
+
+  // Save user bio
+  const saveBio = async () => {
+    setIsSavingBio(true);
+    setBioError(null);
+
+    try {
+      const response = await fetch("/api/users/profile/bio", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ bio }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update bio");
+      }
+
+      setIsEditingBio(false);
+      // Show success message
+      setSuccessMessage("Your bio has been updated successfully!");
+
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+    } catch (error) {
+      console.error("Error updating bio:", error);
+      setBioError(
+        error instanceof Error ? error.message : "Failed to update bio"
+      );
+    } finally {
+      setIsSavingBio(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins'] py-6">
       <div className="max-w-[900px] mx-auto p-8 bg-white rounded-[20px] shadow-md">
@@ -227,21 +691,126 @@ export default function ProfilePage() {
           <div className="flex flex-col">
             {/* User Info */}
             <div className="flex flex-col items-center mb-10">
-              <div className="w-24 h-24 rounded-full bg-[#f5f5f5] overflow-hidden border-2 border-white shadow-sm mb-4">
+              {/* Large Avatar */}
+              <div className="w-36 h-36 rounded-full bg-[#f5f5f5] overflow-hidden border-4 border-[#FFE0E9] shadow-lg mb-6 relative hover:scale-105 transition-transform">
                 {session.user?.image && (
                   <Image
                     src={session.user.image}
                     alt={session.user.name || "User profile"}
-                    width={96}
-                    height={96}
+                    width={144}
+                    height={144}
                     className="object-cover w-full h-full"
                   />
                 )}
               </div>
-              <h2 className="text-xl font-semibold text-[#333] mb-1">
+
+              {/* User Name */}
+              <h2 className="text-3xl font-bold text-[#333] mb-2">
                 {session.user?.name}
               </h2>
-              <p className="text-sm text-[#666]">{session.user?.email}</p>
+
+              {/* Email and Stats */}
+              <div className="flex items-center gap-4 mb-4 text-sm text-[#666]">
+                <span>{session.user?.email}</span>
+                <span className="w-1 h-1 bg-[#999] rounded-full"></span>
+                <button
+                  onClick={handleOpenFollowers}
+                  className="text-[#666] hover:text-[#FF3366] hover:underline transition-colors"
+                >
+                  <span className="font-medium">{followerCount}</span> follower
+                  {followerCount !== 1 ? "s" : ""}
+                </button>
+                <span className="w-1 h-1 bg-[#999] rounded-full"></span>
+                <button
+                  onClick={handleOpenFollowing}
+                  className="text-[#666] hover:text-[#FF3366] hover:underline transition-colors"
+                >
+                  <span className="font-medium">{followingCount}</span>{" "}
+                  following
+                </button>
+              </div>
+
+              {/* Bio Section */}
+              <div className="w-full max-w-xl bg-[#FFF9FB] rounded-xl p-5 mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-semibold text-[#333]">Bio</h3>
+                  {!isEditingBio ? (
+                    <button
+                      onClick={() => setIsEditingBio(true)}
+                      className="text-[#FF3366] text-sm hover:underline"
+                    >
+                      Edit
+                    </button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setIsEditingBio(false)}
+                        className="text-[#666] text-sm hover:underline"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={saveBio}
+                        disabled={isSavingBio}
+                        className={`text-[#FF3366] text-sm hover:underline ${
+                          isSavingBio ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                      >
+                        {isSavingBio ? "Saving..." : "Save"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {bioError && (
+                  <div className="text-red-500 text-sm mb-2">{bioError}</div>
+                )}
+
+                {isEditingBio ? (
+                  <textarea
+                    value={bio}
+                    onChange={handleBioChange}
+                    className="w-full p-3 border border-[#FFD9E4] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
+                    rows={5}
+                    placeholder="Write something about yourself..."
+                  />
+                ) : (
+                  <div>
+                    {bio ? (
+                      <div className="prose text-[#666]">
+                        {showFullBio || bio.length <= 200 ? (
+                          <p className="whitespace-pre-wrap">{bio}</p>
+                        ) : (
+                          <>
+                            <p className="whitespace-pre-wrap">
+                              {bio.substring(0, 200)}...
+                            </p>
+                            <button
+                              onClick={() => setShowFullBio(true)}
+                              className="text-[#FF3366] text-sm mt-1 hover:underline"
+                            >
+                              Read more
+                            </button>
+                          </>
+                        )}
+
+                        {showFullBio && bio.length > 200 && (
+                          <button
+                            onClick={() => setShowFullBio(false)}
+                            className="text-[#FF3366] text-sm mt-1 hover:underline"
+                          >
+                            Show less
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-[#999] italic">
+                        No bio yet. Click edit to add something about yourself.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Interests Section */}
@@ -311,15 +880,15 @@ export default function ProfilePage() {
                   <h4 className="font-medium text-[#333] mb-3">
                     Your Selected Interests
                   </h4>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-3">
                     {userHobbies
                       .filter((hobby) => selectedHobbyIds.includes(hobby.id))
                       .map((hobby) => (
                         <div
                           key={hobby.id}
-                          className="bg-[#FF3366] text-white px-4 py-1 rounded-full flex items-center"
+                          className="bg-[#FF3366] text-white px-5 py-2 rounded-full flex items-center shadow-sm hover:shadow-md transition-shadow"
                         >
-                          <span>{hobby.name}</span>
+                          <span className="text-md">{hobby.name}</span>
                           <button
                             onClick={() => toggleHobbySelection(hobby.id)}
                             className="ml-2 flex items-center justify-center hover:bg-[#ff1a53] rounded-full w-5 h-5"
@@ -430,7 +999,7 @@ export default function ProfilePage() {
                         onClick={() =>
                           !isDisabled && toggleHobbySelection(hobby.id)
                         }
-                        className={`py-2 px-6 rounded-[20px] shadow-sm transition-all 
+                        className={`py-2 px-6 rounded-[20px] shadow-sm transition-all
                           ${
                             isSelected
                               ? "bg-[#FF3366] text-white hover:-translate-y-[2px] hover:shadow-md"
@@ -571,6 +1140,27 @@ export default function ProfilePage() {
           )}
         </ul>
       </nav>
+
+      {/* Modals */}
+      {showFollowers && (
+        <UserList
+          title="Followers"
+          users={followers}
+          isLoading={isLoadingFollowers}
+          emptyMessage="You don't have any followers yet."
+          onClose={() => setShowFollowers(false)}
+        />
+      )}
+
+      {showFollowing && (
+        <UserList
+          title="Following"
+          users={following}
+          isLoading={isLoadingFollowing}
+          emptyMessage="You're not following anyone yet."
+          onClose={() => setShowFollowing(false)}
+        />
+      )}
 
       {isLoginModalOpen && (
         <LoginModal onClose={() => setIsLoginModalOpen(false)} />

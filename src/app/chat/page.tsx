@@ -23,6 +23,8 @@ function ChatPageInner() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const userIdFromQuery = searchParams.get("userId");
+
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +56,14 @@ function ChatPageInner() {
           if (response.ok) {
             const data = await response.json();
             setConversations(data);
+
+            // If userId in url select that convo
+            if (
+              userIdFromQuery &&
+              data.some((conv: Conversation) => conv.id === userIdFromQuery)
+            ) {
+              handleSelectConversation(userIdFromQuery);
+            }
           }
         } catch (error) {
           console.error("Error fetching conversations:", error);
@@ -64,7 +74,7 @@ function ChatPageInner() {
 
       fetchConversations();
     }
-  }, [session, status]);
+  }, [session, status, userIdFromQuery]);
 
   // Listen for new messages via Socket.IO
   useEffect(() => {
@@ -74,9 +84,7 @@ function ChatPageInner() {
       // Update conversations with the new message
       setConversations((prev) => {
         const updatedConversations = [...prev];
-        const conversationIndex = updatedConversations.findIndex(
-          (c) => c.id === data.senderId || c.id === data.recipientId
-        );
+        const conversationIndex = updatedConversations.findIndex(c => c.id === data.senderId || c.id === data.recipientId);
 
         if (conversationIndex >= 0) {
           const conversation = { ...updatedConversations[conversationIndex] };
@@ -100,7 +108,7 @@ function ChatPageInner() {
           // If this message has a tempId, it's a confirmation of a message we sent
           if (data.tempId) {
             // Replace the temporary message with the real one from the database
-            return prev.map((msg) =>
+            return prev.map(msg =>
               msg.id === data.tempId ? { ...data, tempId: undefined } : msg
             );
           } else {
@@ -181,8 +189,8 @@ function ChatPageInner() {
       });
 
       // Update local state
-      setMessages((prev) =>
-        prev.map((msg) =>
+      setMessages(prev =>
+        prev.map(msg =>
           msg.recipientId === session.user.id && !msg.read
             ? { ...msg, read: true }
             : msg
@@ -191,10 +199,63 @@ function ChatPageInner() {
     }
   }, [messages, session, socket]);
 
+  // Handle direct chat load from URL
+  useEffect(() => {
+    if (!userIdFromQuery || !session?.user || isLoading) return;
+
+    // If we don't have the user in conversations yet but have userId in URL
+    // attempt to fetch their information and create a chat with them
+    if (!conversations.some((conv) => conv.id === userIdFromQuery)) {
+      const loadUserChat = async () => {
+        try {
+          const userResponse = await fetch(`/api/users/${userIdFromQuery}`);
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            // Add to conversations if not already there
+            setConversations((prev) => {
+              // Make sure we don't add duplicates
+              if (!prev.some((c) => c.id === userData.id)) {
+                return [
+                  {
+                    id: userData.id,
+                    name: userData.name || "User",
+                    image: userData.image,
+                    lastMessage: "Start a conversation...",
+                    unreadCount: 0,
+                    isOnline: false,
+                    lastActive: "unknown",
+                  },
+                  ...prev,
+                ];
+              }
+              return prev;
+            });
+
+            // Now that we've added them to conversations, select their chat
+            handleSelectConversation(userIdFromQuery);
+          } else {
+            console.error("User not found");
+          }
+        } catch (error) {
+          console.error("Error loading user chat:", error);
+        }
+      };
+
+      loadUserChat();
+    }
+  }, [userIdFromQuery, session, conversations, isLoading]);
+
   // Function to handle selecting a conversation
   const handleSelectConversation = async (userId: string) => {
     setSelectedUserId(userId);
     setIsChatLoading(true);
+
+    // Update chat
+    if (userIdFromQuery !== userId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("userId", userId);
+      window.history.pushState({}, "", url);
+    }
 
     try {
       // Fetch user details
@@ -220,10 +281,8 @@ function ChatPageInner() {
           if (loveNoteData.senderId && loveNoteData.recipientId) {
             setLoveNote(loveNoteData);
             // Show love note popup if it's new (within last hour) or not answered by current user
-            const isNew =
-              new Date(loveNoteData.createdAt) > new Date(Date.now() - 3600000);
-            const isUnanswered =
-              session?.user?.id === loveNoteData.senderId
+            const isNew = new Date(loveNoteData.createdAt) > new Date(Date.now() - 3600000);
+            const isUnanswered = session?.user?.id === loveNoteData.senderId
                 ? !loveNoteData.senderAnswer
                 : !loveNoteData.recipientAnswer;
 
@@ -257,8 +316,8 @@ function ChatPageInner() {
       read: false,
     };
 
-    setMessages((prev) => [...prev, optimisticMessage]);
-    setNewMessage("");
+    setMessages(prev => [...prev, optimisticMessage]);
+    setNewMessage('');
 
     try {
       // Save message using API
@@ -278,9 +337,8 @@ function ChatPageInner() {
         const savedMessage = await response.json();
 
         // Replace optimistic message with saved message
-        setMessages((prev) =>
-          prev.map((msg) => (msg.id === tempId ? savedMessage : msg))
-        );
+        setMessages(prev =>
+          prev.map (msg => msg.id === tempId ? savedMessage : msg)
 
         // Try to emit via socket, but don't block if socket is not connected
         if (socket && isConnected) {
@@ -322,12 +380,11 @@ function ChatPageInner() {
   };
 
   const handleSubmitLoveNote = () => {
-    if (!loveNoteAnswer.trim() || !socket || !session?.user || !loveNote)
-      return;
+    if (!loveNoteAnswer.trim() || !socket || !session?.user || !loveNote) return;
 
     const isRecipient = loveNote.recipientId === session.user.id;
 
-    socket.emit("answer_love_note", {
+    socket.emit('answer_love_note', {
       loveNoteId: loveNote.id,
       answer: loveNoteAnswer,
       isRecipient,
@@ -344,7 +401,7 @@ function ChatPageInner() {
       };
     });
 
-    setLoveNoteAnswer("");
+    setLoveNoteAnswer('');
     setShowLoveNote(false);
   };
 
@@ -380,9 +437,7 @@ function ChatPageInner() {
                   {conversations.map((conversation) => (
                     <li key={conversation.id}>
                       <button
-                        onClick={() =>
-                          handleSelectConversation(conversation.id)
-                        }
+                        onClick={() => handleSelectConversation(conversation.id)}
                         className={`flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors w-full text-left ${
                           selectedUserId === conversation.id ? "bg-pink-50" : ""
                         }`}
@@ -869,14 +924,12 @@ function ChatPageInner() {
 
       {/* Login Modal */}
       {isLoginModalOpen && (
-        <LoginModal
-          onClose={() => {
+        <LoginModal onClose={() => {
             setIsLoginModalOpen(false);
-            if (status === "unauthenticated") {
-              router.push("/");
+          if (status === 'unauthenticated') {
+            router.push('/');
             }
-          }}
-        />
+        }} />
       )}
     </div>
   );
