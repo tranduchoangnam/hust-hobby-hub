@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { Suspense, useEffect, useRef, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import LoginModal from '@/components/LoginModal';
-import { useSocket } from '@/components/providers/SocketProvider';
-import { Message, LoveNote, User } from '@/types/models';
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import LoginModal from "@/components/LoginModal";
+import { useSocket } from "@/components/providers/SocketProvider";
+import { Message, LoveNote, User } from "@/types/models";
 
 interface Conversation {
   id: string;
@@ -34,16 +34,16 @@ function ChatPageInner() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [showLoveNote, setShowLoveNote] = useState(false);
   const [loveNote, setLoveNote] = useState<LoveNote | null>(null);
-  const [loveNoteAnswer, setLoveNoteAnswer] = useState('');
+  const [loveNoteAnswer, setLoveNoteAnswer] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // If not logged in, prompt the user to log in
-    if (status === 'unauthenticated') {
+    if (status === "unauthenticated") {
       setIsLoginModalOpen(true);
     }
 
@@ -52,7 +52,7 @@ function ChatPageInner() {
       const fetchConversations = async () => {
         setIsLoading(true);
         try {
-          const response = await fetch('/api/conversations');
+          const response = await fetch("/api/conversations");
           if (response.ok) {
             const data = await response.json();
             setConversations(data);
@@ -66,7 +66,7 @@ function ChatPageInner() {
             }
           }
         } catch (error) {
-          console.error('Error fetching conversations:', error);
+          console.error("Error fetching conversations:", error);
         } finally {
           setIsLoading(false);
         }
@@ -80,14 +80,14 @@ function ChatPageInner() {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('new_message', (data) => {
+    socket.on("new_message", (data) => {
       // Update conversations with the new message
-      setConversations(prev => {
+      setConversations((prev) => {
         const updatedConversations = [...prev];
         const conversationIndex = updatedConversations.findIndex(c => c.id === data.senderId || c.id === data.recipientId);
 
         if (conversationIndex >= 0) {
-          const conversation = {...updatedConversations[conversationIndex]};
+          const conversation = { ...updatedConversations[conversationIndex] };
           conversation.lastMessage = data.content;
           conversation.unreadCount += 1;
 
@@ -100,8 +100,11 @@ function ChatPageInner() {
       });
 
       // If we're in a chat with the sender/recipient, update the messages
-      if (selectedUserId === data.senderId || selectedUserId === data.recipientId) {
-        setMessages(prev => {
+      if (
+        selectedUserId === data.senderId ||
+        selectedUserId === data.recipientId
+      ) {
+        setMessages((prev) => {
           // If this message has a tempId, it's a confirmation of a message we sent
           if (data.tempId) {
             // Replace the temporary message with the real one from the database
@@ -116,20 +119,20 @@ function ChatPageInner() {
 
         // Mark message as read if it's to the current user
         if (data.recipientId === session?.user?.id) {
-          socket.emit('mark_read', { messageId: data.id });
+          socket.emit("mark_read", { messageId: data.id });
         }
       }
     });
 
-    socket.on('user_status_change', (data) => {
+    socket.on("user_status_change", (data) => {
       // Update user online status
-      setConversations(prev => {
-        return prev.map(conversation => {
+      setConversations((prev) => {
+        return prev.map((conversation) => {
           if (conversation.id === data.userId) {
             return {
               ...conversation,
               isOnline: data.isOnline,
-              lastActive: data.isOnline ? 'now' : 'a moment ago'
+              lastActive: data.isOnline ? "now" : "a moment ago",
             };
           }
           return conversation;
@@ -138,31 +141,37 @@ function ChatPageInner() {
     });
 
     // Listen for love notes
-    socket.on('new_love_note', (data: LoveNote) => {
-      if (data.senderId === selectedUserId || data.recipientId === selectedUserId) {
+    socket.on("new_love_note", (data: LoveNote) => {
+      if (
+        data.senderId === selectedUserId ||
+        data.recipientId === selectedUserId
+      ) {
         setLoveNote(data);
         setShowLoveNote(true);
       }
     });
 
     // Listen for love note updates
-    socket.on('love_note_updated', (data: LoveNote) => {
-      if (data.senderId === selectedUserId || data.recipientId === selectedUserId) {
+    socket.on("love_note_updated", (data: LoveNote) => {
+      if (
+        data.senderId === selectedUserId ||
+        data.recipientId === selectedUserId
+      ) {
         setLoveNote(data);
       }
     });
 
     return () => {
-      socket.off('new_message');
-      socket.off('user_status_change');
-      socket.off('new_love_note');
-      socket.off('love_note_updated');
+      socket.off("new_message");
+      socket.off("user_status_change");
+      socket.off("new_love_note");
+      socket.off("love_note_updated");
     };
   }, [socket, session, selectedUserId]);
 
   // Auto-scroll to bottom of messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   // Mark messages as read when viewed
@@ -170,13 +179,13 @@ function ChatPageInner() {
     if (!socket || !session?.user || !messages.length) return;
 
     const unreadMessages = messages.filter(
-      msg => msg.recipientId === session.user.id && !msg.read
+      (msg) => msg.recipientId === session.user.id && !msg.read
     );
 
     if (unreadMessages.length > 0) {
       // Mark messages as read
-      unreadMessages.forEach(msg => {
-        socket.emit('mark_read', { messageId: msg.id });
+      unreadMessages.forEach((msg) => {
+        socket.emit("mark_read", { messageId: msg.id });
       });
 
       // Update local state
@@ -284,7 +293,7 @@ function ChatPageInner() {
         }
       }
     } catch (error) {
-      console.error('Error fetching chat data:', error);
+      console.error("Error fetching chat data:", error);
     } finally {
       setIsChatLoading(false);
     }
@@ -312,10 +321,10 @@ function ChatPageInner() {
 
     try {
       // Save message using API
-      const response = await fetch('/api/messages', {
-        method: 'POST',
+      const response = await fetch("/api/messages", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           content: newMessage,
@@ -330,42 +339,43 @@ function ChatPageInner() {
         // Replace optimistic message with saved message
         setMessages(prev =>
           prev.map (msg => msg.id === tempId ? savedMessage : msg)
-        );
 
         // Try to emit via socket, but don't block if socket is not connected
         if (socket && isConnected) {
           // Simplified payload with only necessary data
           try {
-            socket.emit('send_message', {
+            socket.emit("send_message", {
               messageId: savedMessage.id,
               recipientId: selectedUserId,
             });
-            console.log('Socket message emitted successfully');
+            console.log("Socket message emitted successfully");
           } catch (socketError) {
-            console.error('Socket emit error:', socketError);
+            console.error("Socket emit error:", socketError);
             // Message is already saved to DB, so we can continue without the socket
           }
         } else {
-          console.log('Socket not connected, message saved to DB only');
+          console.log("Socket not connected, message saved to DB only");
         }
 
         // Maybe trigger a love note after a few messages
-        const messageCount = messages.filter(msg => msg.senderId === session.user.id).length;
+        const messageCount = messages.filter(
+          (msg) => msg.senderId === session.user.id
+        ).length;
         if (messageCount === 2 && !loveNote && socket && isConnected) {
           // After 2 messages, generate a love note
           setTimeout(() => {
-            socket.emit('create_love_note', { recipientId: selectedUserId });
+            socket.emit("create_love_note", { recipientId: selectedUserId });
           }, 1000);
         }
       } else {
-        console.error('Failed to send message');
+        console.error("Failed to send message");
         // Rollback optimistic update
-        setMessages(prev => prev.filter(msg => msg.id !== tempId));
+        setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
       // Rollback optimistic update
-      setMessages(prev => prev.filter(msg => msg.id !== tempId));
+      setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
     }
   };
 
@@ -381,7 +391,7 @@ function ChatPageInner() {
     });
 
     // Optimistically update UI
-    setLoveNote(prev => {
+    setLoveNote((prev) => {
       if (!prev) return null;
 
       return {
@@ -396,7 +406,7 @@ function ChatPageInner() {
   };
 
   useEffect(() => {
-    const userIdFromQuery = searchParams.get('userId');
+    const userIdFromQuery = searchParams.get("userId");
     if (userIdFromQuery) {
       handleSelectConversation(userIdFromQuery);
     }
@@ -410,9 +420,11 @@ function ChatPageInner() {
             {/* Conversations List */}
             <div className="w-full md:w-1/3 lg:w-1/4 border-r border-gray-200 overflow-y-auto">
               <div className="p-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-800 font-poppins">Messages</h2>
+                <h2 className="text-xl font-semibold text-gray-800 font-poppins">
+                  Messages
+                </h2>
                 <p className="text-sm text-gray-500 font-poppins">
-                  {isConnected ? 'Connected' : 'Connecting...'}
+                  {isConnected ? "Connected" : "Connecting..."}
                 </p>
               </div>
 
@@ -427,7 +439,7 @@ function ChatPageInner() {
                       <button
                         onClick={() => handleSelectConversation(conversation.id)}
                         className={`flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors w-full text-left ${
-                          selectedUserId === conversation.id ? 'bg-pink-50' : ''
+                          selectedUserId === conversation.id ? "bg-pink-50" : ""
                         }`}
                       >
                         <div className="relative">
@@ -476,8 +488,13 @@ function ChatPageInner() {
                 </ul>
               ) : (
                 <div className="flex flex-col items-center justify-center p-8 text-center h-64">
-                  <p className="text-gray-500 mb-4 font-poppins">No conversations yet.</p>
-                  <Link href="/" className="text-[#FF3366] hover:underline font-poppins">
+                  <p className="text-gray-500 mb-4 font-poppins">
+                    No conversations yet.
+                  </p>
+                  <Link
+                    href="/"
+                    className="text-[#FF3366] hover:underline font-poppins"
+                  >
                     Find people to chat with
                   </Link>
                 </div>
@@ -511,15 +528,21 @@ function ChatPageInner() {
                       </div>
 
                       <div>
-                        <h2 className="font-semibold text-lg font-poppins">{selectedUser.name}</h2>
-                        <p className="text-xs text-[#4CAF50] font-poppins">Online</p>
+                        <h2 className="font-semibold text-lg font-poppins">
+                          {selectedUser.name}
+                        </h2>
+                        <p className="text-xs text-[#4CAF50] font-poppins">
+                          Online
+                        </p>
                       </div>
 
                       {/* Music interests section */}
-                      {selectedUser.hobbies?.includes('music') && (
+                      {selectedUser.hobbies?.includes("music") && (
                         <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
                           <span className="text-gray-600 mr-1">🎵</span>
-                          <span className="text-sm text-gray-600 font-poppins">Music Lover</span>
+                          <span className="text-sm text-gray-600 font-poppins">
+                            Music Lover
+                          </span>
                         </div>
                       )}
                     </div>
@@ -537,34 +560,38 @@ function ChatPageInner() {
                   {/* Messages Area */}
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {messages.map((message) => {
-                      const isOwnMessage = message.senderId === session?.user?.id;
+                      const isOwnMessage =
+                        message.senderId === session?.user?.id;
                       return (
                         <div
                           key={message.id}
-                          className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                          className={`flex ${
+                            isOwnMessage ? "justify-end" : "justify-start"
+                          }`}
                         >
                           <div
                             className={`relative max-w-[70%] rounded-2xl px-4 py-2 ${
                               isOwnMessage
-                                ? 'bg-[#FF3366] text-white rounded-tr-none'
-                                : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                                ? "bg-[#FF3366] text-white rounded-tr-none"
+                                : "bg-gray-100 text-gray-800 rounded-tl-none"
                             }`}
                           >
-                            <div className="break-words">
-                              {message.content}
-                            </div>
+                            <div className="break-words">{message.content}</div>
                             <div
                               className={`text-xs mt-1 ${
-                                isOwnMessage ? 'text-white/80' : 'text-gray-500'
+                                isOwnMessage ? "text-white/80" : "text-gray-500"
                               }`}
                             >
-                              {new Date(message.createdAt).toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
+                              {new Date(message.createdAt).toLocaleTimeString(
+                                [],
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
                               {isOwnMessage && (
                                 <span className="ml-2">
-                                  {message.read ? '✓✓' : '✓'}
+                                  {message.read ? "✓✓" : "✓"}
                                 </span>
                               )}
                             </div>
@@ -598,7 +625,9 @@ function ChatPageInner() {
               ) : (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center text-gray-500">
-                    <p className="text-lg mb-2">Select a conversation to start chatting</p>
+                    <p className="text-lg mb-2">
+                      Select a conversation to start chatting
+                    </p>
                     <p className="text-sm">Your messages will appear here</p>
                   </div>
                 </div>
@@ -632,15 +661,21 @@ function ChatPageInner() {
                       </div>
 
                       <div>
-                        <h2 className="font-semibold text-lg font-poppins">{selectedUser.name}</h2>
-                        <p className="text-xs text-[#4CAF50] font-poppins">Online</p>
+                        <h2 className="font-semibold text-lg font-poppins">
+                          {selectedUser.name}
+                        </h2>
+                        <p className="text-xs text-[#4CAF50] font-poppins">
+                          Online
+                        </p>
                       </div>
 
                       {/* Music interests section */}
-                      {selectedUser.hobbies?.includes('music') && (
+                      {selectedUser.hobbies?.includes("music") && (
                         <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
                           <span className="text-gray-600 mr-1">🎵</span>
-                          <span className="text-sm text-gray-600 font-poppins">Music Lover</span>
+                          <span className="text-sm text-gray-600 font-poppins">
+                            Music Lover
+                          </span>
                         </div>
                       )}
                     </div>
@@ -658,34 +693,38 @@ function ChatPageInner() {
                   {/* Mobile Messages Area */}
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {messages.map((message) => {
-                      const isOwnMessage = message.senderId === session?.user?.id;
+                      const isOwnMessage =
+                        message.senderId === session?.user?.id;
                       return (
                         <div
                           key={message.id}
-                          className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                          className={`flex ${
+                            isOwnMessage ? "justify-end" : "justify-start"
+                          }`}
                         >
                           <div
                             className={`relative max-w-[70%] rounded-2xl px-4 py-2 ${
                               isOwnMessage
-                                ? 'bg-[#FF3366] text-white rounded-tr-none'
-                                : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                                ? "bg-[#FF3366] text-white rounded-tr-none"
+                                : "bg-gray-100 text-gray-800 rounded-tl-none"
                             }`}
                           >
-                            <div className="break-words">
-                              {message.content}
-                            </div>
+                            <div className="break-words">{message.content}</div>
                             <div
                               className={`text-xs mt-1 ${
-                                isOwnMessage ? 'text-white/80' : 'text-gray-500'
+                                isOwnMessage ? "text-white/80" : "text-gray-500"
                               }`}
                             >
-                              {new Date(message.createdAt).toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
+                              {new Date(message.createdAt).toLocaleTimeString(
+                                [],
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
                               {isOwnMessage && (
                                 <span className="ml-2">
-                                  {message.read ? '✓✓' : '✓'}
+                                  {message.read ? "✓✓" : "✓"}
                                 </span>
                               )}
                             </div>
@@ -719,7 +758,9 @@ function ChatPageInner() {
               ) : (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center text-gray-500">
-                    <p className="text-lg mb-2">Select a conversation to start chatting</p>
+                    <p className="text-lg mb-2">
+                      Select a conversation to start chatting
+                    </p>
                     <p className="text-sm">Your messages will appear here</p>
                   </div>
                 </div>
@@ -735,7 +776,12 @@ function ChatPageInner() {
           <div className="bg-white rounded-3xl p-6 w-full max-w-md mx-4">
             <div className="text-center mb-6">
               <div className="bg-pink-50 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 text-[#FF3366]">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-8 h-8 text-[#FF3366]"
+                >
                   <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
                 </svg>
               </div>
@@ -752,10 +798,14 @@ function ChatPageInner() {
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
                 Your Answer
               </label>
-              {((session?.user?.id === loveNote.senderId && loveNote.senderAnswer) ||
-                (session?.user?.id === loveNote.recipientId && loveNote.recipientAnswer)) ? (
+              {(session?.user?.id === loveNote.senderId &&
+                loveNote.senderAnswer) ||
+              (session?.user?.id === loveNote.recipientId &&
+                loveNote.recipientAnswer) ? (
                 <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-poppins">
-                  {session?.user?.id === loveNote.senderId ? loveNote.senderAnswer : loveNote.recipientAnswer}
+                  {session?.user?.id === loveNote.senderId
+                    ? loveNote.senderAnswer
+                    : loveNote.recipientAnswer}
                 </p>
               ) : (
                 <textarea
@@ -773,15 +823,28 @@ function ChatPageInner() {
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
                 {selectedUser?.name}'s Answer
               </label>
-              {((session?.user?.id === loveNote.senderId && loveNote.recipientAnswer) ||
-                (session?.user?.id === loveNote.recipientId && loveNote.senderAnswer)) ? (
+              {(session?.user?.id === loveNote.senderId &&
+                loveNote.recipientAnswer) ||
+              (session?.user?.id === loveNote.recipientId &&
+                loveNote.senderAnswer) ? (
                 <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-poppins">
-                  {session?.user?.id === loveNote.senderId ? loveNote.recipientAnswer : loveNote.senderAnswer}
+                  {session?.user?.id === loveNote.senderId
+                    ? loveNote.recipientAnswer
+                    : loveNote.senderAnswer}
                 </p>
               ) : (
                 <div className="bg-gray-100 p-3 rounded-lg text-gray-400 flex items-center justify-center space-x-2 font-poppins">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                    <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clipRule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   <span>Waiting for response...</span>
                 </div>
@@ -789,8 +852,12 @@ function ChatPageInner() {
             </div>
 
             <div className="flex justify-center space-x-4">
-              {!((session?.user?.id === loveNote.senderId && loveNote.senderAnswer) ||
-                 (session?.user?.id === loveNote.recipientId && loveNote.recipientAnswer)) && (
+              {!(
+                (session?.user?.id === loveNote.senderId &&
+                  loveNote.senderAnswer) ||
+                (session?.user?.id === loveNote.recipientId &&
+                  loveNote.recipientAnswer)
+              ) && (
                 <button
                   onClick={handleSubmitLoveNote}
                   disabled={!loveNoteAnswer.trim()}
@@ -811,17 +878,47 @@ function ChatPageInner() {
       )}
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 w-full bg-white shadow-lg">
-        <ul className="flex justify-around">
-          <li className="py-3">
-            <Link href="/" className="text-gray-500 font-poppins">Browse</Link>
+      <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md z-10">
+        <ul className="flex justify-around list-none p-4">
+          <li>
+            <Link href="/" className="text-[#666] no-underline font-medium">
+              Browse
+            </Link>
           </li>
-          <li className="py-3">
-            <Link href="/chat" className="text-[#FF3366] font-medium font-poppins">Chat</Link>
+          <li>
+            <Link
+              href="/profile"
+              className="text-[#666] no-underline font-medium"
+            >
+              Profile
+            </Link>
           </li>
-          <li className="py-3">
-            <Link href="/love-note" className="text-gray-500 font-poppins">Love Note</Link>
+          <li>
+            <Link
+              href="/chat"
+              className="text-[#BE185D] no-underline font-medium"
+            >
+              Chat
+            </Link>
           </li>
+          <li>
+            <Link
+              href="/love-note"
+              className="text-[#666] no-underline font-medium"
+            >
+              Love Note
+            </Link>
+          </li>
+          {session && (
+            <li>
+              <button
+                onClick={() => signOut()}
+                className="text-gray-500 font-poppins hover:text-[#FF3366]"
+              >
+                Log out
+              </button>
+            </li>
+          )}
         </ul>
       </nav>
 

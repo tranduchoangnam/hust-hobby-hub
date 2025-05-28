@@ -1,12 +1,13 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import LoginModal from "@/components/LoginModal";
 import UserList from "@/components/UserList";
+import { HOBBY_CATEGORIES, getCategoryForHobby } from "@/lib/hobbyCategories";
 
 type Hobby = {
   id: string;
@@ -639,8 +640,8 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins']">
-      <div className="max-w-[900px] mx-auto p-8 bg-white rounded-[20px] shadow-md my-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins'] py-6">
+      <div className="max-w-[900px] mx-auto p-8 bg-white rounded-[20px] shadow-md">
         <div className="flex items-center mb-8">
           <button
             onClick={() => router.back()}
@@ -1127,6 +1128,16 @@ export default function ProfilePage() {
               Love Note
             </Link>
           </li>
+          {session && (
+            <li>
+              <button
+                onClick={() => signOut()}
+                className="text-gray-500 font-poppins hover:text-[#FF3366]"
+              >
+                Log out
+              </button>
+            </li>
+          )}
         </ul>
       </nav>
 
