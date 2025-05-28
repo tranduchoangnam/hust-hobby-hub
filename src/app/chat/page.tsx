@@ -338,7 +338,7 @@ function ChatPageInner() {
 
         // Replace optimistic message with saved message
         setMessages(prev =>
-          prev.map (msg => msg.id === tempId ? savedMessage : msg)
+          prev.map (msg => msg.id === tempId ? savedMessage : msg))
 
         // Try to emit via socket, but don't block if socket is not connected
         if (socket && isConnected) {
