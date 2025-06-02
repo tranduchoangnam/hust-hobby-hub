@@ -1281,7 +1281,7 @@ export default function ProfilePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Love Note</span>
+              <span className="text-sm">Note</span>
             </Link>
           </li>
           {session && (
