@@ -256,7 +256,7 @@ export default function CompatibilityPage() {
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Love Note
+              Note
             </Link>
           </li>
           {session && (

@@ -573,7 +573,7 @@ export default function UserProfilePage() {
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Love Note
+              Note
             </Link>
           </li>
         </ul>

@@ -132,7 +132,7 @@ export default function LoveNotePage() {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-[#FF3366] mb-2 font-poppins">
-            Daily Love Notes
+            Daily Notes
           </h1>
           <p className="text-gray-600 max-w-md mx-auto font-poppins">
             Meaningful questions to help you connect more deeply with your loved
@@ -223,7 +223,7 @@ export default function LoveNotePage() {
         )}
       </div>
 
-      {/* Selected Love Note Modal */}
+      {/* Selected Note Modal */}
       {selectedLoveNote && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-3xl p-6 w-full max-w-md mx-4">
@@ -239,7 +239,7 @@ export default function LoveNotePage() {
                 </svg>
               </div>
               <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
-                Daily Love Note
+                Daily Note
               </h2>
               <p className="text-gray-700 mt-2 font-poppins">
                 {selectedLoveNote.question}
@@ -334,8 +334,8 @@ export default function LoveNotePage() {
       <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl z-20 border-t border-gray-100">
         <ul className="flex justify-around list-none p-4">
           <li className="flex-1">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
             >
               <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
@@ -426,7 +426,7 @@ export default function LoveNotePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-bold">Love Note</span>
+              <span className="text-sm font-bold">Note</span>
             </Link>
           </li>
           {session && (
@@ -457,7 +457,7 @@ export default function LoveNotePage() {
           )}
         </ul>
       </nav>
-      
+
       {/* Custom CSS for glassmorphism effects */}
       <style jsx>{`
         .backdrop-blur-md {
