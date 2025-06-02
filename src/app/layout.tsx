@@ -12,8 +12,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Love Connection App",
-  description: "Connect with people who share your interests",
+  title: "Friend Connection App",
+  description: "Kết nối những người bạn tuyệt vời nhất với nhau",
 };
 
 export default function RootLayout({
@@ -25,9 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable} font-poppins`}>
         <NextAuthProvider>
-          <SocketProvider>
-            {children}
-          </SocketProvider>
+          <SocketProvider>{children}</SocketProvider>
         </NextAuthProvider>
       </body>
     </html>

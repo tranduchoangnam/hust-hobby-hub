@@ -132,17 +132,18 @@ export default function LoveNotePage() {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-[#FF3366] mb-2 font-poppins">
-            Daily Love Notes
+            Ghi chú mỗi ngày
           </h1>
           <p className="text-gray-600 max-w-md mx-auto font-poppins">
-            Meaningful questions to help you connect more deeply with your loved
-            ones
+            Ghi chú mỗi ngày là một cách tuyệt vời để kết nối với người bạn của
+            bạn. Chia sẻ những câu hỏi thú vị và nhận câu trả lời từ họ. Hãy bắt
+            đầu ngay hôm nay!
           </p>
         </div>
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <p className="font-poppins text-gray-600">Loading love notes...</p>
+            <p className="font-poppins text-gray-600">Đang tải ghi chú...</p>
           </div>
         ) : loveNotes.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-6">
@@ -190,7 +191,9 @@ export default function LoveNotePage() {
                         : "bg-gray-50 text-gray-500"
                     }`}
                   >
-                    {getUserAnswer(loveNote) ? "You answered" : "Not answered"}
+                    {getUserAnswer(loveNote)
+                      ? "Câu trả lời của bạn"
+                      : "Chưa trả lời"}
                   </span>
                   <span
                     className={`px-2 py-1 rounded font-poppins ${
@@ -199,9 +202,7 @@ export default function LoveNotePage() {
                         : "bg-gray-50 text-gray-500"
                     }`}
                   >
-                    {getPartnerAnswer(loveNote)
-                      ? "They answered"
-                      : "Waiting for answer"}
+                    {getPartnerAnswer(loveNote) ? "Phản hồi" : "Chờ phản hồi"}
                   </span>
                 </div>
               </div>
@@ -210,14 +211,14 @@ export default function LoveNotePage() {
         ) : (
           <div className="bg-white rounded-xl p-8 shadow-md text-center">
             <p className="text-gray-600 mb-4 font-poppins">
-              You don't have any love notes yet. Start a conversation with
-              someone to receive your first love note.
+              Bạn chưa có ghi chú nào. Hãy tạo một ghi chú mới để bắt đầu kết
+              nối với người bạn của bạn!
             </p>
             <Link
               href="/chat"
               className="text-[#FF3366] hover:underline font-poppins"
             >
-              Go to messages
+              Bắt đầu trò chuyện
             </Link>
           </div>
         )}
@@ -239,13 +240,13 @@ export default function LoveNotePage() {
                 </svg>
               </div>
               <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
-                Daily Love Note
+                Ghi chú mỗi ngày
               </h2>
               <p className="text-gray-700 mt-2 font-poppins">
                 {selectedLoveNote.question}
               </p>
               <p className="text-sm text-gray-500 mt-1 font-poppins">
-                With {getPartnerName(selectedLoveNote)} •{" "}
+                với {getPartnerName(selectedLoveNote)} •{" "}
                 {new Date(selectedLoveNote.createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -253,7 +254,7 @@ export default function LoveNotePage() {
             {/* My Answer */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
-                Your Answer
+                Câu trả lời của bạn
               </label>
               {getUserAnswer(selectedLoveNote) ? (
                 <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-poppins">
@@ -273,7 +274,7 @@ export default function LoveNotePage() {
                     disabled={!loveNoteAnswer.trim()}
                     className="mt-2 bg-[#FF3366] text-white rounded-xl px-4 py-2 text-sm font-medium disabled:opacity-50 font-poppins"
                   >
-                    Share Answer
+                    Chia sẻ
                   </button>
                 </div>
               )}
@@ -282,7 +283,7 @@ export default function LoveNotePage() {
             {/* Partner's Answer */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
-                {getPartnerName(selectedLoveNote)}'s Answer
+                {getPartnerName(selectedLoveNote)}'s câu trả lời
               </label>
               {getPartnerAnswer(selectedLoveNote) ? (
                 <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-poppins">
@@ -302,7 +303,7 @@ export default function LoveNotePage() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span>Waiting for response...</span>
+                  <span>Chờ phản hồi...</span>
                 </div>
               )}
             </div>
@@ -312,7 +313,7 @@ export default function LoveNotePage() {
                 onClick={() => setSelectedLoveNote(null)}
                 className="text-gray-500 rounded-xl px-6 py-2 font-medium font-poppins"
               >
-                Close
+                Đóng
               </button>
 
               <Link
@@ -323,7 +324,7 @@ export default function LoveNotePage() {
                 }`}
                 className="ml-3 bg-[#FF3366] text-white rounded-xl px-6 py-2 font-medium font-poppins"
               >
-                Go to Chat
+                Trò chuyện
               </Link>
             </div>
           </div>
@@ -335,7 +336,7 @@ export default function LoveNotePage() {
         <ul className="flex justify-around list-none p-4">
           <li>
             <Link href="/" className="text-[#666] no-underline font-medium">
-              Browse
+              Trang chủ
             </Link>
           </li>
           <li>
@@ -343,12 +344,12 @@ export default function LoveNotePage() {
               href="/profile"
               className="text-[#666] no-underline font-medium"
             >
-              Profile
+              Hồ sơ
             </Link>
           </li>
           <li>
             <Link href="/chat" className="text-[#666] no-underline font-medium">
-              Chat
+              Trò chuyện
             </Link>
           </li>
           <li>
@@ -356,7 +357,7 @@ export default function LoveNotePage() {
               href="/love-note"
               className="text-[#BE185D] no-underline font-medium"
             >
-              Love Note
+              Ghi chú
             </Link>
           </li>
           {session && (
@@ -365,7 +366,7 @@ export default function LoveNotePage() {
                 onClick={() => signOut()}
                 className="text-gray-500 font-poppins hover:text-[#FF3366]"
               >
-                Log out
+                Đăng xuất
               </button>
             </li>
           )}

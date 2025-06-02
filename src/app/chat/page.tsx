@@ -364,16 +364,16 @@ function ChatPageInner() {
             <div className="w-full md:w-1/3 lg:w-1/4 border-r border-gray-200 overflow-y-auto">
               <div className="p-4 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-800 font-poppins">
-                  Messages
+                  Tin nhắn
                 </h2>
                 <p className="text-sm text-gray-500 font-poppins">
-                  {isConnected ? "Connected" : "Connecting..."}
+                  {isConnected ? "Kết nối" : "Đang kết nối..."}
                 </p>
               </div>
 
               {isLoading ? (
                 <div className="flex justify-center items-center h-32">
-                  <p className="font-poppins">Loading conversations...</p>
+                  <p className="font-poppins">Đang tải...</p>
                 </div>
               ) : conversations.length > 0 ? (
                 <ul>
@@ -434,13 +434,13 @@ function ChatPageInner() {
               ) : (
                 <div className="flex flex-col items-center justify-center p-8 text-center h-64">
                   <p className="text-gray-500 mb-4 font-poppins">
-                    No conversations yet.
+                    Bạn chưa có cuộc trò chuyện nào.
                   </p>
                   <Link
                     href="/"
                     className="text-[#FF3366] hover:underline font-poppins"
                   >
-                    Find people to chat with
+                    Tạo cuộc trò chuyện mới
                   </Link>
                 </div>
               )}
@@ -477,7 +477,7 @@ function ChatPageInner() {
                           {selectedUser.name}
                         </h2>
                         <p className="text-xs text-[#4CAF50] font-poppins">
-                          Online
+                          Đang hoạt động
                         </p>
                       </div>
 
@@ -486,7 +486,7 @@ function ChatPageInner() {
                         <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
                           <span className="text-gray-600 mr-1">🎵</span>
                           <span className="text-sm text-gray-600 font-poppins">
-                            Music Lover
+                            Yêu thích âm nhạc
                           </span>
                         </div>
                       )}
@@ -497,7 +497,7 @@ function ChatPageInner() {
                         onClick={() => setShowLoveNote(true)}
                         className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
                       >
-                        ❤️ Love Note
+                        ❤️ Ghi chú
                       </button>
                     )}
                   </div>
@@ -554,7 +554,7 @@ function ChatPageInner() {
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
+                        placeholder="Gửi tin nhắn..."
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
                       />
                       <button
@@ -562,7 +562,7 @@ function ChatPageInner() {
                         disabled={!newMessage.trim()}
                         className="bg-[#FF3366] text-white px-6 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#E62E5C] transition-colors"
                       >
-                        Send
+                        Gửi
                       </button>
                     </form>
                   </div>
@@ -571,9 +571,9 @@ function ChatPageInner() {
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center text-gray-500">
                     <p className="text-lg mb-2">
-                      Select a conversation to start chatting
+                      Chọn một cuộc trò chuyện để bắt đầu trò chuyện
                     </p>
-                    <p className="text-sm">Your messages will appear here</p>
+                    <p className="text-sm">Tin nhắn của bạn sẽ ở đây</p>
                   </div>
                 </div>
               )}
@@ -610,7 +610,7 @@ function ChatPageInner() {
                           {selectedUser.name}
                         </h2>
                         <p className="text-xs text-[#4CAF50] font-poppins">
-                          Online
+                          Đang hoạt động
                         </p>
                       </div>
 
@@ -619,7 +619,7 @@ function ChatPageInner() {
                         <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
                           <span className="text-gray-600 mr-1">🎵</span>
                           <span className="text-sm text-gray-600 font-poppins">
-                            Music Lover
+                            Yêu thích âm nhạc
                           </span>
                         </div>
                       )}
@@ -630,7 +630,7 @@ function ChatPageInner() {
                         onClick={() => setShowLoveNote(true)}
                         className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
                       >
-                        ❤️ Love Note
+                        ❤️ Ghi chú
                       </button>
                     )}
                   </div>
@@ -687,7 +687,7 @@ function ChatPageInner() {
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
+                        placeholder="Gửi tin nhắn..."
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
                       />
                       <button
@@ -695,7 +695,7 @@ function ChatPageInner() {
                         disabled={!newMessage.trim()}
                         className="bg-[#FF3366] text-white px-6 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#E62E5C] transition-colors"
                       >
-                        Send
+                        Ghi chú
                       </button>
                     </form>
                   </div>
@@ -704,9 +704,9 @@ function ChatPageInner() {
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center text-gray-500">
                     <p className="text-lg mb-2">
-                      Select a conversation to start chatting
+                      Chọn một cuộc trò chuyện để bắt đầu trò chuyện
                     </p>
-                    <p className="text-sm">Your messages will appear here</p>
+                    <p className="text-sm">Tin nhắn của bạn sẽ ở đây</p>
                   </div>
                 </div>
               )}
@@ -731,7 +731,7 @@ function ChatPageInner() {
                 </svg>
               </div>
               <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
-                Daily Love Note
+                Ghi chú hàng ngày
               </h2>
               <p className="text-gray-700 mt-2 font-poppins">
                 {loveNote.question}
@@ -741,7 +741,7 @@ function ChatPageInner() {
             {/* My Answer */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
-                Your Answer
+                Câu trả lời của bạn
               </label>
               {(session?.user?.id === loveNote.senderId &&
                 loveNote.senderAnswer) ||
@@ -791,7 +791,7 @@ function ChatPageInner() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span>Waiting for response...</span>
+                  <span>Đang dợi phản hồi </span>
                 </div>
               )}
             </div>
@@ -808,14 +808,14 @@ function ChatPageInner() {
                   disabled={!loveNoteAnswer.trim()}
                   className="bg-[#FF3366] text-white rounded-xl px-6 py-2 font-medium disabled:opacity-50 font-poppins"
                 >
-                  Share
+                  Chia sẻ
                 </button>
               )}
               <button
                 onClick={() => setShowLoveNote(false)}
                 className="text-gray-500 rounded-xl px-6 py-2 font-medium font-poppins"
               >
-                Close
+                Đóng
               </button>
             </div>
           </div>
@@ -827,7 +827,7 @@ function ChatPageInner() {
         <ul className="flex justify-around list-none p-4">
           <li>
             <Link href="/" className="text-[#666] no-underline font-medium">
-              Browse
+              Trang chủ
             </Link>
           </li>
           <li>
@@ -835,7 +835,7 @@ function ChatPageInner() {
               href="/profile"
               className="text-[#666] no-underline font-medium"
             >
-              Profile
+              Hồ sơ
             </Link>
           </li>
           <li>
@@ -843,7 +843,7 @@ function ChatPageInner() {
               href="/chat"
               className="text-[#BE185D] no-underline font-medium"
             >
-              Chat
+              Trò chuyện
             </Link>
           </li>
           <li>
@@ -851,7 +851,7 @@ function ChatPageInner() {
               href="/love-note"
               className="text-[#666] no-underline font-medium"
             >
-              Love Note
+              Ghi chú
             </Link>
           </li>
           {session && (
@@ -860,7 +860,7 @@ function ChatPageInner() {
                 onClick={() => signOut()}
                 className="text-gray-500 font-poppins hover:text-[#FF3366]"
               >
-                Log out
+                Đăng xuất
               </button>
             </li>
           )}

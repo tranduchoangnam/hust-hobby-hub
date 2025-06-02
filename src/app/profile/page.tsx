@@ -31,7 +31,8 @@ export default function ProfilePage() {
 
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedCategory, setSelectedCategory] =
+    useState("🌈 Tất cả danh mục");
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,7 +49,7 @@ export default function ProfilePage() {
         hobby.name.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesCategory =
-        selectedCategory === "All Categories" ||
+        selectedCategory === "🌈 Tất cả danh mục" ||
         getCategoryForHobby(hobby.name) === selectedCategory;
 
       return matchesSearch && matchesCategory;
@@ -196,32 +197,34 @@ export default function ProfilePage() {
             >
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
-            Back
+            Quay lại
           </button>
           <h1 className="text-2xl font-bold text-[#333] flex-grow text-center mr-12">
-            Your Profile
+            Thông tin cá nhân
           </h1>
         </div>
 
         {!session ? (
           <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
             <h2 className="text-2xl font-semibold text-[#333] mb-4">
-              Sign In Required
+              Bạn chưa đăng nhập
             </h2>
             <p className="text-[#666] mb-6 max-w-lg mx-auto">
-              Please sign in to view and edit your profile.
+              Để truy cập trang cá nhân và quản lý sở thích của bạn, vui lòng
+              đăng nhập. Chúng tôi sẽ giúp bạn kết nối với những người bạn có
+              cùng sở thích.
             </p>
             <button
               onClick={handleLoginClick}
               className="bg-[#FF3366] text-white rounded-2xl py-3 px-8 font-medium transition-all hover:bg-[#E62E5C] shadow-md"
             >
-              Sign In
+              Đăng nhập
             </button>
           </div>
         ) : isLoading ? (
           <div className="text-center py-16">
             <div className="w-16 h-16 border-4 border-[#FF3366] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-[#666]">Loading your profile...</p>
+            <p className="text-[#666]">Đang tải thông tin...</p>
           </div>
         ) : (
           <div className="flex flex-col">
@@ -248,7 +251,7 @@ export default function ProfilePage() {
             <div className="mb-8">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold text-[#333]">
-                  Your Interests
+                  Sở thích của bạn
                 </h3>
                 <div className="text-sm text-[#666] font-medium">
                   <span
@@ -290,26 +293,30 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <p className="text-red-600 font-medium">
-                      Maximum limit reached
+                      Tối đa số sở thích đã được chọn
                     </p>
                     <p className="text-red-500 text-sm">
-                      You can select up to {MAX_INTERESTS} interests. Please
-                      deselect an interest before selecting another one.
+                      Bạn chỉ có thể chọn tối đa {MAX_INTERESTS} sở thích.
                     </p>
                   </div>
                 </div>
               )}
 
               <p className="text-[#666] mb-6">
-                Select your interests below. This will help us match you with
-                people who share similar passions.
+                Chọn sở thích của bạn để giúp chúng tôi tìm kiếm những người bạn
+                có cùng đam mê. Bạn có thể chọn tối đa{" "}
+                <span className="font-semibold text-[#FF3366]">
+                  {MAX_INTERESTS} sở thích
+                </span>
+                . Hãy chắc chắn rằng sở thích của bạn là chính xác để có trải
+                nghiệm tốt nhất!
               </p>
 
               {/* Selected Interests */}
               {selectedHobbyIds.length > 0 && (
                 <div className="mb-6">
                   <h4 className="font-medium text-[#333] mb-3">
-                    Your Selected Interests
+                    Sở thích đã chọn
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {userHobbies
@@ -352,7 +359,7 @@ export default function ProfilePage() {
                     htmlFor="search-interests"
                     className="block text-sm font-medium text-[#666] mb-1"
                   >
-                    Search Interests
+                    Tìm kiếm Sở Thích
                   </label>
                   <div className="relative">
                     <input
@@ -360,7 +367,7 @@ export default function ProfilePage() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Type to search..."
+                      placeholder="Nhập sở thích..."
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
                     />
                     {searchQuery && (
@@ -391,7 +398,7 @@ export default function ProfilePage() {
                     htmlFor="category-filter"
                     className="block text-sm font-medium text-[#666] mb-1"
                   >
-                    Filter by Category
+                    Lọc theo Danh mục
                   </label>
                   <select
                     id="category-filter"
@@ -417,7 +424,9 @@ export default function ProfilePage() {
               >
                 {filteredHobbies.length === 0 ? (
                   <div className="w-full text-center py-4 text-gray-500">
-                    No interests found matching your search criteria
+                    Không có sở thích nào phù hợp với tìm kiếm của bạn.
+                    <br />
+                    Hãy thử tìm kiếm khác hoặc chọn một danh mục khác.
                   </div>
                 ) : (
                   filteredHobbies.map((hobby) => {
@@ -430,7 +439,7 @@ export default function ProfilePage() {
                         onClick={() =>
                           !isDisabled && toggleHobbySelection(hobby.id)
                         }
-                        className={`py-2 px-6 rounded-[20px] shadow-sm transition-all 
+                        className={`py-2 px-6 rounded-[20px] shadow-sm transition-all
                           ${
                             isSelected
                               ? "bg-[#FF3366] text-white hover:-translate-y-[2px] hover:shadow-md"
@@ -475,10 +484,10 @@ export default function ProfilePage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Saving...
+                    Đang lưu...
                   </span>
                 ) : (
-                  "Save Interests"
+                  "Lưu sở thích"
                 )}
               </button>
             </div>
@@ -486,21 +495,25 @@ export default function ProfilePage() {
             {/* Compatibility Info */}
             <div className="bg-[#FFF0F3] rounded-[20px] p-6 mb-4">
               <h3 className="text-lg font-semibold text-[#333] mb-4">
-                Compatibility Matching
+                Tại sao chọn sở thích quan trọng?
               </h3>
               <p className="text-[#666] mb-2">
-                Your selected interests will be used to find people who share
-                similar passions.
+                Việc chọn sở thích giúp chúng tôi hiểu rõ hơn về bạn và tìm kiếm
+                những người bạn có cùng đam mê. Điều này sẽ giúp tăng khả năng
+                kết nối với những người có cùng sở thích, từ đó tạo ra những mối
+                quan hệ ý nghĩa hơn.
               </p>
               <p className="text-[#666] mb-2">
-                The more interests you select, the better matches we can find
-                for you.
+                Khi bạn chọn sở thích, chúng tôi sẽ sử dụng thông tin này để gợi
+                ý những người dùng khác có cùng sở thích với bạn. Điều này giúp
+                tăng cường khả năng tìm kiếm và kết nối với những người bạn có
+                thể hợp tác, chia sẻ và phát triển cùng nhau.
               </p>
               <Link
                 href="/"
                 className="text-[#FF3366] font-medium hover:underline inline-flex items-center mt-2"
               >
-                Go to browse matches
+                Về trang chủ
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -526,7 +539,7 @@ export default function ProfilePage() {
         <ul className="flex justify-around list-none p-4">
           <li>
             <Link href="/" className="text-[#666] font-medium no-underline">
-              Browse
+              Trang chủ
             </Link>
           </li>
           <li>
@@ -534,7 +547,7 @@ export default function ProfilePage() {
               href="/profile"
               className="text-[#BE185D] no-underline font-medium"
             >
-              Profile
+              Hồ sơ
             </Link>
           </li>
           <li>
@@ -545,7 +558,7 @@ export default function ProfilePage() {
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Chat
+              Trò chuyện
             </Link>
           </li>
           <li>
@@ -556,7 +569,7 @@ export default function ProfilePage() {
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Love Note
+              Ghi chú
             </Link>
           </li>
           {session && (
@@ -565,7 +578,7 @@ export default function ProfilePage() {
                 onClick={() => signOut()}
                 className="text-gray-500 font-poppins hover:text-[#FF3366]"
               >
-                Log out
+                Đăng xuất
               </button>
             </li>
           )}

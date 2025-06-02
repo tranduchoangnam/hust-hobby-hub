@@ -86,10 +86,11 @@ export default function CompatibilityPage() {
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#FF3366] to-[#FF6B98] text-transparent bg-clip-text mb-2">
-            Compatibility Matches
+            Người dùng phù hợp
           </h1>
           <p className="text-lg text-[#666] mb-6">
-            People who share your interests and passions
+            Tìm kiếm những người bạn có sở thích chung và điểm tương thích cao
+            nhất với bạn.
           </p>
         </header>
 
@@ -98,23 +99,24 @@ export default function CompatibilityPage() {
           {!session ? (
             <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
               <h2 className="text-2xl font-semibold text-[#333] mb-4">
-                Find Your Best Matches
+                Bạn cần đăng nhập để xem người dùng phù hợp
               </h2>
               <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                Sign in to see people who share your interests and are most
-                compatible with you.
+                Đăng nhập để khám phá những người bạn có sở thích chung và điểm
+                tương thích cao nhất với bạn. Chúng tôi sẽ giúp bạn kết nối với
+                những người bạn tuyệt vời nhất!
               </p>
               <button
                 onClick={handleLoginClick}
                 className="bg-[#FF3366] text-white rounded-2xl py-3 px-8 font-medium transition-all hover:bg-[#E62E5C] shadow-md"
               >
-                Sign In
+                Đăng nhập
               </button>
             </div>
           ) : isLoading ? (
             <div className="text-center py-16">
               <div className="w-16 h-16 border-4 border-[#FF3366] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-[#666]">Finding your best matches...</p>
+              <p className="text-[#666]">Tìm kiếm người dùng phù hợp nhất...</p>
             </div>
           ) : error ? (
             <div className="text-center py-12 bg-red-50 rounded-[20px] shadow-sm">
@@ -123,17 +125,17 @@ export default function CompatibilityPage() {
                 onClick={() => window.location.reload()}
                 className="bg-[#FF3366] text-white rounded-2xl py-2 px-6 font-medium transition-all hover:bg-[#E62E5C]"
               >
-                Try Again
+                Thử lại
               </button>
             </div>
           ) : compatibleUsers.length === 0 ? (
             <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
               <h2 className="text-2xl font-semibold text-[#333] mb-4">
-                No Matches Found
+                Không tìm thấy người dùng phù hợp
               </h2>
               <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                We couldn't find any users who share your interests. Add more
-                hobbies to your profile or check back later.
+                Hiện tại không có người dùng nào phù hợp với sở thích của bạn.
+                Hãy thử lại sau hoặc mời bạn bè tham gia để tăng cơ hội kết nối!
               </p>
             </div>
           ) : (
@@ -197,13 +199,13 @@ export default function CompatibilityPage() {
                       href={`/users/${user.id}`}
                       className="flex-1 text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#FFF0F3]"
                     >
-                      View Profile
+                      Hồ sơ
                     </Link>
                     <Link
                       href={`/chat?userId=${user.id}`}
                       className="flex-1 text-center bg-[#FF3366] text-white border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#E62E5C]"
                     >
-                      Chat
+                      Trò chuyện
                     </Link>
                   </div>
                 </div>
@@ -218,7 +220,7 @@ export default function CompatibilityPage() {
         <ul className="flex justify-around list-none p-4">
           <li>
             <Link href="/" className="text-[#666] font-medium no-underline">
-              Browse
+              Trang chủ
             </Link>
           </li>
           <li>
@@ -226,7 +228,7 @@ export default function CompatibilityPage() {
               href="/profile"
               className="text-[#666] no-underline font-medium"
             >
-              Profile
+              Hồ sơ
             </Link>
           </li>
           <li>
@@ -234,7 +236,7 @@ export default function CompatibilityPage() {
               href="/compatibility"
               className="text-[#BE185D] no-underline font-medium"
             >
-              Matches
+              Kết nối
             </Link>
           </li>
           <li>
@@ -245,7 +247,7 @@ export default function CompatibilityPage() {
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Chat
+              Trò chuyện
             </Link>
           </li>
           <li>
@@ -256,7 +258,7 @@ export default function CompatibilityPage() {
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Love Note
+              Ghi chú
             </Link>
           </li>
           {session && (
@@ -265,7 +267,7 @@ export default function CompatibilityPage() {
                 onClick={() => signOut()}
                 className="text-gray-500 font-poppins hover:text-[#FF3366]"
               >
-                Log out
+                Đăng xuất
               </button>
             </li>
           )}

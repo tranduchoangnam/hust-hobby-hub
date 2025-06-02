@@ -53,7 +53,8 @@ export default function Home() {
   const [showOnlyUserInterests, setShowOnlyUserInterests] =
     useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedCategory, setSelectedCategory] =
+    useState("🌈 Tất cả danh mục");
 
   // Pagination state for users
   const [currentPage, setCurrentPage] = useState(1);
@@ -183,7 +184,7 @@ export default function Home() {
     }
 
     // Filter theo category
-    if (selectedCategory !== "All Categories") {
+    if (selectedCategory !== "🌈 Tất cả danh mục") {
       filteredHobbies = filteredHobbies.filter(
         (hobby) => getCategoryForHobby(hobby.name) === selectedCategory
       );
@@ -267,10 +268,10 @@ export default function Home() {
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#FF3366] to-[#FF6B98] text-transparent bg-clip-text mb-2">
-            Find Your Connection
+            Tìm kiếm kết nối của bạn
           </h1>
           <p className="text-lg text-[#666] mb-6">
-            Discover people who share your passions
+            Khám phá những người có cùng sở thích và kết nối với họ
           </p>
         </header>
 
@@ -286,7 +287,7 @@ export default function Home() {
                 }`}
                 onClick={() => setViewMode("browse")}
               >
-                Browse by Interest
+                Sở thích
               </button>
               <button
                 className={`px-6 py-2 rounded-full transition-all ${
@@ -296,7 +297,7 @@ export default function Home() {
                 }`}
                 onClick={() => setViewMode("compatibility")}
               >
-                Best Matches
+                Tương thích
               </button>
             </div>
           </div>
@@ -325,17 +326,17 @@ export default function Home() {
               </div>
               <div className="flex-grow">
                 <h3 className="font-semibold text-[#333] mb-1">
-                  Set up your interests
+                  Thêm sở thích để tìm kiếm những người bạn
                 </h3>
                 <p className="text-sm text-[#666] mb-2">
-                  To see your compatibility matches, you need to select your
-                  interests in your profile.
+                  Để tìm kiếm những người bạn tuyệt vời, hãy thêm sở thích vào
+                  hồ sơ của bạn.
                 </p>
                 <Link
                   href="/profile"
                   className="text-[#FF3366] font-medium inline-flex items-center text-sm"
                 >
-                  Go to profile settings
+                  Cài đặt
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -365,7 +366,7 @@ export default function Home() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for interests..."
+                  placeholder="Tìm kiếm sở thích..."
                   className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
                 />
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -425,7 +426,7 @@ export default function Home() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span>My Interests</span>
+                      <span>Sở thích của tôi</span>
                     </>
                   ) : (
                     <>
@@ -441,7 +442,7 @@ export default function Home() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span>All Interests</span>
+                      <span>Tất cả sở thích</span>
                     </>
                   )}
                 </button>
@@ -479,10 +480,10 @@ export default function Home() {
                     disabled={currentInterestPage === 1}
                     className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Previous
+                    Trước
                   </button>
                   <span className="text-[#666]">
-                    Page {currentInterestPage} of {totalInterestPages}
+                    Trang {currentInterestPage} of {totalInterestPages}
                   </span>
                   <button
                     onClick={() =>
@@ -493,7 +494,7 @@ export default function Home() {
                     disabled={currentInterestPage === totalInterestPages}
                     className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Next
+                    Sau
                   </button>
                 </div>
               )}
@@ -503,18 +504,20 @@ export default function Home() {
                 <div className="text-center w-full py-6 bg-[#FFF0F3] rounded-[20px] mt-4">
                   {searchQuery ? (
                     <p className="text-[#666] mb-3">
-                      No interests found matching "{searchQuery}".
+                      Không có ai có cùng sở thích&nbsp;&quot;{searchQuery}
+                      &quot;.
                     </p>
                   ) : session && showOnlyUserInterests ? (
                     <>
                       <p className="text-[#666] mb-3">
-                        You haven't selected any interests yet.
+                        Bạn chưa chọn sở thích nào. Hãy thêm sở thích vào hồ sơ
+                        của bạn.
                       </p>
                       <Link
                         href="/profile"
                         className="text-[#FF3366] font-medium inline-flex items-center"
                       >
-                        Go to profile to add interests
+                        Thêm Sở Thích
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="16"
@@ -533,7 +536,8 @@ export default function Home() {
                     </>
                   ) : (
                     <p className="text-[#666] mb-3">
-                      No interests available. Please try another search.
+                      Không có sở thích nào phù hợp với tìm kiếm của bạn. Hãy
+                      thử tìm kiếm khác hoặc chọn một sở thích từ danh sách.
                     </p>
                   )}
                 </div>
@@ -551,11 +555,11 @@ export default function Home() {
                 ) : users.length === 0 ? (
                   <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
                     <h2 className="text-2xl font-semibold text-[#333] mb-4">
-                      No users found
+                      Không có người dùng nào
                     </h2>
                     <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                      There are no users matching this interest. Try selecting
-                      another interest or check back later.
+                      Hiện tại không có người dùng nào với sở thích này. Hãy thử
+                      chọn sở thích khác hoặc thêm sở thích vào hồ sơ của bạn.
                     </p>
                   </div>
                 ) : (
@@ -633,7 +637,7 @@ export default function Home() {
                                     {Math.min(user.hobbies.length, 3)}
                                   </span>
                                   <span className="text-sm text-[#666]">
-                                    mutual interests
+                                    sở thích chung
                                   </span>
                                 </>
                               )}
@@ -655,7 +659,7 @@ export default function Home() {
                                 }
                                 className="flex-1 text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#FFF0F3]"
                               >
-                                Profile
+                                Thông tin
                               </Link>
                               <Link
                                 href={session ? `/chat?userId=${user.id}` : "#"}
@@ -665,7 +669,7 @@ export default function Home() {
                                 }
                                 className="flex-1 text-center bg-[#FF3366] text-white border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#E62E5C]"
                               >
-                                Chat
+                                Nhắn tin{" "}
                               </Link>
                             </div>
                           </div>
@@ -683,10 +687,10 @@ export default function Home() {
                           disabled={currentPage === 1}
                           className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Previous
+                          Trước
                         </button>
                         <span className="text-[#666]">
-                          Page {currentPage} of {totalPages}
+                          Trang {currentPage} of {totalPages}
                         </span>
                         <button
                           onClick={() =>
@@ -697,7 +701,7 @@ export default function Home() {
                           disabled={currentPage === totalPages}
                           className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Next
+                          Sau
                         </button>
                       </div>
                     )}
@@ -711,38 +715,40 @@ export default function Home() {
         {viewMode === "compatibility" && (
           <>
             <h2 className="text-2xl font-semibold text-center text-[#333] mb-8">
-              Your Best Matches
+              Kết nối hoàn hảo
             </h2>
 
             {!session ? (
               <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
                 <h2 className="text-2xl font-semibold text-[#333] mb-4">
-                  Find Your Best Matches
+                  Đăng nhập để tìm kiếm kết nối của bạn
                 </h2>
                 <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                  Sign in to see people who share your interests and are most
-                  compatible with you.
+                  Đăng nhập để xem những người bạn tương thích nhất với sở thích
+                  của bạn. Tạo tài khoản miễn phí và bắt đầu kết nối ngay hôm
+                  nay!
                 </p>
                 <button
                   onClick={handleLoginClick}
                   className="bg-[#FF3366] text-white rounded-2xl py-3 px-8 font-medium transition-all hover:bg-[#E62E5C] shadow-md"
                 >
-                  Sign In
+                  Đăng nhập
                 </button>
               </div>
             ) : isLoading ? (
               <div className="text-center py-16">
                 <div className="w-16 h-16 border-4 border-[#FF3366] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-[#666]">Finding your best matches...</p>
+                <p className="text-[#666]">Đang tìm kết nối...</p>
               </div>
             ) : compatibleUsers.length === 0 ? (
               <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
                 <h2 className="text-2xl font-semibold text-[#333] mb-4">
-                  No Matches Found
+                  Không có người dùng phù hợp
                 </h2>
                 <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                  We couldn't find any users who share your interests. Add more
-                  hobbies to your profile or check back later.
+                  Hiện tại không có người dùng nào phù hợp với sở thích của bạn.
+                  Hãy thử chọn sở thích khác hoặc thêm sở thích vào hồ sơ của
+                  bạn.
                 </p>
               </div>
             ) : (
@@ -807,13 +813,13 @@ export default function Home() {
                           href={`/users/${user.id}`}
                           className="flex-1 text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#FFF0F3]"
                         >
-                          Profile
+                          Hồ sơ
                         </Link>
                         <Link
                           href={`/chat?userId=${user.id}`}
                           className="flex-1 text-center bg-[#FF3366] text-white border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#E62E5C]"
                         >
-                          Chat
+                          Trò chuyện
                         </Link>
                       </div>
                     </div>
@@ -831,10 +837,10 @@ export default function Home() {
                       disabled={currentCompatiblePage === 1}
                       className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Previous
+                      Trước
                     </button>
                     <span className="text-[#666]">
-                      Page {currentCompatiblePage} of {totalCompatiblePages}
+                      Trang {currentCompatiblePage} of {totalCompatiblePages}
                     </span>
                     <button
                       onClick={() =>
@@ -845,7 +851,7 @@ export default function Home() {
                       disabled={currentCompatiblePage === totalCompatiblePages}
                       className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Next
+                      Sau
                     </button>
                   </div>
                 )}
@@ -860,7 +866,7 @@ export default function Home() {
         <ul className="flex justify-around list-none p-4">
           <li>
             <Link href="/" className="text-[#BE185D] font-medium no-underline">
-              Browse
+              Trang chủ
             </Link>
           </li>
           <li>
@@ -868,7 +874,7 @@ export default function Home() {
               href="/profile"
               className="text-[#666] no-underline font-medium"
             >
-              Profile
+              Hồ sơ
             </Link>
           </li>
           <li>
@@ -879,7 +885,7 @@ export default function Home() {
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Chat
+              Trò chuyện
             </Link>
           </li>
           <li>
@@ -890,7 +896,7 @@ export default function Home() {
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Love Note
+              Ghi chú
             </Link>
           </li>
           {session && (
@@ -899,7 +905,7 @@ export default function Home() {
                 onClick={() => signOut()}
                 className="text-gray-500 font-poppins hover:text-[#FF3366]"
               >
-                Log out
+                Đăng xuất{" "}
               </button>
             </li>
           )}
