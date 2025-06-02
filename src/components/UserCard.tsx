@@ -108,7 +108,11 @@ export default function UserCard({
         ) : null}
 
         {/* Enhanced mutual connections display */}
-        {renderMutualDots && <div className="mb-4">{renderMutualDots()}</div>}
+        {renderMutualDots && (
+          <div className="mb-4">
+            {renderMutualDots(user.commonHobbies ?? 0)}
+          </div>
+        )}
       </div>
 
       {/* Enhanced hobbies section */}

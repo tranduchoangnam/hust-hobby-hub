@@ -3,6 +3,29 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+// Helper function to format last active time
+function formatLastActive(lastMessageTime: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - lastMessageTime.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMinutes < 1) {
+    return "Just now";
+  } else if (diffMinutes < 60) {
+    return `${diffMinutes} phút trước`;
+  } else if (diffHours < 24) {
+    return `${diffHours} giờ trước`;
+  } else if (diffDays === 1) {
+    return "Yesterday";
+  } else if (diffDays < 7) {
+    return `${diffDays} ngày trước`;
+  } else {
+    return lastMessageTime.toLocaleDateString();
+  }
+}
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -68,7 +91,7 @@ export async function GET() {
       }
     }
 
-    // Count unread messages for each conversation
+    // Count unread messages for each conversation and get the most recent message for lastActive
     const conversations = await Promise.all(
       Array.from(conversationPartners.values()).map(async (partner) => {
         const unreadCount = await prisma.message.count({
@@ -79,11 +102,37 @@ export async function GET() {
           },
         });
 
+        // Get the most recent message between current user and this partner to determine last active
+        const mostRecentMessage = await prisma.message.findFirst({
+          where: {
+            OR: [
+              {
+                senderId: session.user.id,
+                recipientId: partner.id,
+              },
+              {
+                senderId: partner.id,
+                recipientId: session.user.id,
+              },
+            ],
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+
+        // Determine last active time based on when they last sent a message
+        const lastActiveTime = mostRecentMessage
+          ? mostRecentMessage.senderId === partner.id
+            ? mostRecentMessage.createdAt
+            : partner.lastMessageTime
+          : partner.lastMessageTime;
+
         return {
           ...partner,
           unreadCount,
           isOnline: Math.random() > 0.5, // Mock online status for demo
-          lastActive: "Vừa xong",
+          lastActive: formatLastActive(lastActiveTime),
         };
       })
     );
