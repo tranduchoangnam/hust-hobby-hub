@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import LoginModal from "@/components/LoginModal";
 import { useSocket } from "@/components/providers/SocketProvider";
-import { Message, LoveNote, User } from "@/types/models";
+import { Message, LoveNote, User, StreakInfo } from "@/types/models";
 
 interface Conversation {
   id: string;
@@ -39,6 +39,8 @@ function ChatPageInner() {
   const [showLoveNote, setShowLoveNote] = useState(false);
   const [loveNote, setLoveNote] = useState<LoveNote | null>(null);
   const [loveNoteAnswer, setLoveNoteAnswer] = useState("");
+  const [streakInfo, setStreakInfo] = useState<StreakInfo | null>(null);
+  const [showStreakModal, setShowStreakModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -258,22 +260,24 @@ function ChatPageInner() {
     }
 
     try {
-      // Fetch user details
-      const userResponse = await fetch(`/api/users/${userId}`);
+      // Fetch user details, messages, love note, and streak info in parallel
+      const [userResponse, messagesResponse, loveNoteResponse, streakResponse] = await Promise.all([
+        fetch(`/api/users/${userId}`),
+        fetch(`/api/messages?userId=${userId}`),
+        fetch(`/api/love-notes?userId=${userId}`),
+        fetch(`/api/streaks/${userId}`)
+      ]);
+
       if (userResponse.ok) {
         const userData = await userResponse.json();
         setSelectedUser(userData);
       }
 
-      // Fetch message history
-      const messagesResponse = await fetch(`/api/messages?userId=${userId}`);
       if (messagesResponse.ok) {
         const messagesData = await messagesResponse.json();
         setMessages(messagesData);
       }
 
-      // Fetch love note if exists
-      const loveNoteResponse = await fetch(`/api/love-notes?userId=${userId}`);
       if (loveNoteResponse.ok) {
         const loveNoteData = await loveNoteResponse.json();
         if (loveNoteData) {
@@ -291,6 +295,11 @@ function ChatPageInner() {
             }
           }
         }
+      }
+
+      if (streakResponse.ok) {
+        const streakData = await streakResponse.json();
+        setStreakInfo(streakData);
       }
     } catch (error) {
       console.error("Error fetching chat data:", error);
@@ -338,7 +347,19 @@ function ChatPageInner() {
 
         // Replace optimistic message with saved message
         setMessages(prev =>
-          prev.map (msg => msg.id === tempId ? savedMessage : msg))
+          prev.map(msg => msg.id === tempId ? savedMessage : msg)
+        );
+
+        // Refresh streak info after successful message
+        try {
+          const streakResponse = await fetch(`/api/streaks/${selectedUserId}`);
+          if (streakResponse.ok) {
+            const streakData = await streakResponse.json();
+            setStreakInfo(streakData);
+          }
+        } catch (streakError) {
+          console.error("Failed to update streak info:", streakError);
+        }
 
         // Try to emit via socket, but don't block if socket is not connected
         if (socket && isConnected) {
@@ -536,6 +557,16 @@ function ChatPageInner() {
                         </p>
                       </div>
 
+                      {/* Streak Display */}
+                      {streakInfo && streakInfo.currentStreak > 0 && (
+                        <div className="ml-4 flex items-center px-3 py-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full">
+                          <span className="text-white mr-1">🔥</span>
+                          <span className="text-sm text-white font-semibold font-poppins">
+                            {streakInfo.currentStreak} day{streakInfo.currentStreak !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      )}
+
                       {/* Music interests section */}
                       {selectedUser.hobbies?.includes("music") && (
                         <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
@@ -547,14 +578,26 @@ function ChatPageInner() {
                       )}
                     </div>
 
-                    {loveNote && (
-                      <button
-                        onClick={() => setShowLoveNote(true)}
-                        className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
-                      >
-                        ❤️ Love Note
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {/* Streak info button */}
+                      {streakInfo && (streakInfo.currentStreak > 0 || streakInfo.longestStreak > 0) && (
+                        <button
+                          onClick={() => setShowStreakModal(true)}
+                          className="px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
+                        >
+                          📊 Stats
+                        </button>
+                      )}
+
+                      {loveNote && (
+                        <button
+                          onClick={() => setShowLoveNote(true)}
+                          className="px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
+                        >
+                          ❤️ Love Note
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {/* Messages Area */}
@@ -669,6 +712,16 @@ function ChatPageInner() {
                         </p>
                       </div>
 
+                      {/* Streak Display */}
+                      {streakInfo && streakInfo.currentStreak > 0 && (
+                        <div className="ml-4 flex items-center px-3 py-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full">
+                          <span className="text-white mr-1">🔥</span>
+                          <span className="text-sm text-white font-semibold font-poppins">
+                            {streakInfo.currentStreak} day{streakInfo.currentStreak !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      )}
+
                       {/* Music interests section */}
                       {selectedUser.hobbies?.includes("music") && (
                         <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
@@ -680,14 +733,26 @@ function ChatPageInner() {
                       )}
                     </div>
 
-                    {loveNote && (
-                      <button
-                        onClick={() => setShowLoveNote(true)}
-                        className="ml-auto px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
-                      >
-                        ❤️ Love Note
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {/* Streak info button */}
+                      {streakInfo && (streakInfo.currentStreak > 0 || streakInfo.longestStreak > 0) && (
+                        <button
+                          onClick={() => setShowStreakModal(true)}
+                          className="px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
+                        >
+                          📊 Stats
+                        </button>
+                      )}
+
+                      {loveNote && (
+                        <button
+                          onClick={() => setShowLoveNote(true)}
+                          className="px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
+                        >
+                          ❤️ Love Note
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {/* Mobile Messages Area */}
@@ -869,6 +934,100 @@ function ChatPageInner() {
               <button
                 onClick={() => setShowLoveNote(false)}
                 className="text-gray-500 rounded-xl px-6 py-2 font-medium font-poppins"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Streak Statistics Modal */}
+      {showStreakModal && streakInfo && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-md mx-4">
+            <div className="text-center mb-6">
+              <div className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <span className="text-3xl">🔥</span>
+              </div>
+              <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
+                Chat Streak Stats
+              </h2>
+              <p className="text-gray-700 mt-2 font-poppins">
+                Your conversation streak with {selectedUser?.name}
+              </p>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              {/* Current Streak */}
+              <div className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-2xl p-4 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm opacity-90 font-poppins">Current Streak</p>
+                    <p className="text-3xl font-bold font-poppins">
+                      {streakInfo.currentStreak}
+                    </p>
+                    <p className="text-sm opacity-90 font-poppins">
+                      {streakInfo.currentStreak === 1 ? 'day' : 'days'}
+                    </p>
+                  </div>
+                  <div className="text-4xl">🔥</div>
+                </div>
+              </div>
+
+              {/* Longest Streak */}
+              <div className="bg-amber-100 rounded-2xl p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-amber-600 font-poppins">Longest Streak</p>
+                    <p className="text-3xl font-bold text-amber-700 font-poppins">
+                      {streakInfo.longestStreak}
+                    </p>
+                    <p className="text-sm text-amber-600 font-poppins">
+                      {streakInfo.longestStreak === 1 ? 'day' : 'days'}
+                    </p>
+                  </div>
+                  <div className="text-4xl">🏆</div>
+                </div>
+              </div>
+
+              {/* Last Chat Date */}
+              {streakInfo.lastChatDate && (
+                <div className="bg-blue-50 rounded-2xl p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-blue-600 font-poppins">Last Chat</p>
+                      <p className="text-lg font-semibold text-blue-700 font-poppins">
+                        {new Date(streakInfo.lastChatDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="text-2xl">📅</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Motivation message */}
+            <div className="text-center mb-6">
+              {streakInfo.currentStreak === 0 ? (
+                <p className="text-gray-600 font-poppins">
+                  Start a new streak by chatting today! 💬
+                </p>
+              ) : streakInfo.currentStreak < 7 ? (
+                <p className="text-gray-600 font-poppins">
+                  Keep it up! You're building a great connection! 🚀
+                </p>
+              ) : (
+                <p className="text-gray-600 font-poppins">
+                  Amazing streak! You two really click! ⭐
+                </p>
+              )}
+            </div>
+
+            <div className="flex justify-center">
+              <button
+                onClick={() => setShowStreakModal(false)}
+                className="bg-[#FF3366] text-white rounded-xl px-8 py-2 font-medium font-poppins hover:bg-[#E62E5C] transition-colors"
               >
                 Close
               </button>

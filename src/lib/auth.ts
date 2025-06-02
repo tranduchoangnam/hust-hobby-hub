@@ -1,4 +1,3 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { PrismaClient } from "@prisma/client"
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -7,7 +6,6 @@ import { compare } from "bcrypt";
 const prisma = new PrismaClient()
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
   },
@@ -56,11 +54,22 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.image = token.picture;
+      if (token && token.id) {
+        // Validate that the user still exists in the database
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { id: true, name: true, email: true, image: true }
+        });
+        
+        if (dbUser) {
+          session.user.id = dbUser.id;
+          session.user.name = dbUser.name;
+          session.user.email = dbUser.email;
+          session.user.image = dbUser.image;
+        } else {
+          // If user doesn't exist in database, invalidate the session
+          return null;
+        }
       }
       return session;
     },

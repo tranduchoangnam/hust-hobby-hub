@@ -17,7 +17,7 @@ export async function GET(
       );
     }
 
-    const targetUserId = params.id;
+    const { id: targetUserId } = await params;
 
     // Fetch users the target user is following
     const following = await prisma.follow.findMany({

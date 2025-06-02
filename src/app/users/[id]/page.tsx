@@ -470,12 +470,6 @@ export default function UserProfilePage() {
                   >
                     Send Message
                   </Link>
-                  <Link
-                    href={`/love-note/new?recipient=${userCompatibility.targetUser.id}`}
-                    className="bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-2 px-6 font-medium transition-all hover:bg-[#FFF0F3]"
-                  >
-                    Send Love Note
-                  </Link>
                 </div>
               </div>
             </div>

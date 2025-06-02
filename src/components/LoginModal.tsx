@@ -92,7 +92,19 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               For demo, use these credentials:
             </p>
             <p className="text-xs text-gray-400">
+              User 1:
+            </p>
+            <p className="text-xs text-gray-400">
               Email: sofia@example.com
+              <br />
+              Password: password
+            </p>
+
+            <p className="text-xs text-gray-400">
+              User 2:
+            </p>
+            <p className="text-xs text-gray-400">
+              Email: oliver@example.com
               <br />
               Password: password
             </p>
