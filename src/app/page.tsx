@@ -7,6 +7,8 @@ import Image from "next/image";
 import { Prisma } from "@prisma/client";
 import LoginModal from "@/components/LoginModal";
 import { HOBBY_CATEGORIES, getCategoryForHobby } from "@/lib/hobbyCategories";
+import UserCard from "../components/UserCard";
+import Avatar from "../components/Avatar";
 
 // Type for users with their hobbies
 type UserWithHobbies = Prisma.UserGetPayload<{
@@ -265,37 +267,77 @@ export default function Home() {
     >
       <div className="max-w-[1200px] mx-auto p-8 bg-white rounded-[20px] shadow-md">
         {/* Header */}
-        <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#FF3366] to-[#FF6B98] text-transparent bg-clip-text mb-2">
-            Find Your Connection
-          </h1>
-          <p className="text-lg text-[#666] mb-6">
-            Discover people who share your passions
+        <header className="text-center mb-10">
+          <div className="relative mb-6">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FF3366] via-[#FF6B98] to-[#FFB3C1] text-transparent bg-clip-text mb-4 font-poppins">
+              Find Your Connection
+            </h1>
+            <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full opacity-20 animate-pulse"></div>
+            <div className="absolute -bottom-1 -left-3 w-6 h-6 bg-gradient-to-r from-[#FFB3C1] to-[#FF6B8A] rounded-full opacity-30 animate-pulse animation-delay-1s"></div>
+          </div>
+          <p className="text-xl text-[#666] mb-8 font-medium">
+            Discover people who share your passions ✨
           </p>
+          
+          {/* Status indicator */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-sm text-[#666] font-medium">
+              {session ? `Welcome back, ${session.user?.name?.split(' ')[0]}!` : 'Ready to connect'}
+            </span>
+          </div>
         </header>
 
         {/* View Toggle */}
         {session && (
-          <div className="flex justify-center mb-8">
-            <div className="flex rounded-full bg-[#F5F5F5] p-1 w-fit">
+          <div className="flex justify-center mb-10">
+            <div className="flex rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 p-1.5 w-fit shadow-sm border border-gray-200">
               <button
-                className={`px-6 py-2 rounded-full transition-all ${
+                className={`px-8 py-3 rounded-xl transition-all duration-300 font-medium flex items-center gap-2 ${
                   viewMode === "browse"
-                    ? "bg-[#FF3366] text-white shadow-md"
-                    : "text-[#666]"
+                    ? "bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white shadow-lg transform scale-105"
+                    : "text-[#666] hover:text-[#FF3366] hover:bg-white/50"
                 }`}
                 onClick={() => setViewMode("browse")}
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
                 Browse by Interest
               </button>
               <button
-                className={`px-6 py-2 rounded-full transition-all ${
+                className={`px-8 py-3 rounded-xl transition-all duration-300 font-medium flex items-center gap-2 ${
                   viewMode === "compatibility"
-                    ? "bg-[#FF3366] text-white shadow-md"
-                    : "text-[#666]"
+                    ? "bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white shadow-lg transform scale-105"
+                    : "text-[#666] hover:text-[#FF3366] hover:bg-white/50"
                 }`}
                 onClick={() => setViewMode("compatibility")}
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
                 Best Matches
               </button>
             </div>
@@ -306,49 +348,48 @@ export default function Home() {
         {session &&
           viewMode === "compatibility" &&
           compatibleUsers.length === 0 && (
-            <div className="bg-[#FFF0F3] rounded-[20px] p-5 mb-8 flex items-center">
-              <div className="bg-[#FFCCD5] rounded-full p-3 mr-4 flex-shrink-0">
+            <div className="bg-gradient-to-r from-[#FFF0F3] to-[#FFE5EA] rounded-2xl p-6 mb-10 flex items-start gap-4 border border-[#FFD6DD] shadow-sm">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#FF3366] to-[#FF6B8A] rounded-full flex items-center justify-center flex-shrink-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-white"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="#FF3366"
-                  className="w-6 h-6"
+                  stroke="currentColor"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    strokeWidth={2}
                     d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
                   />
                 </svg>
               </div>
               <div className="flex-grow">
-                <h3 className="font-semibold text-[#333] mb-1">
-                  Set up your interests
+                <h3 className="font-bold text-[#333] mb-2 text-lg">
+                  Set up your interests first! 🎯
                 </h3>
-                <p className="text-sm text-[#666] mb-2">
-                  To see your compatibility matches, you need to select your
-                  interests in your profile.
+                <p className="text-[#666] mb-4 leading-relaxed">
+                  To see your compatibility matches, you need to select your interests in your profile. This helps us find people who share your passions!
                 </p>
                 <Link
                   href="/profile"
-                  className="text-[#FF3366] font-medium inline-flex items-center text-sm"
+                  className="inline-flex items-center gap-2 text-[#FF3366] font-bold hover:text-[#E62E5C] transition-colors group"
                 >
-                  Go to profile settings
+                  <span>Complete Your Profile</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
+                    className="h-5 w-5 group-hover:translate-x-1 transition-transform"
                     fill="none"
+                    viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="ml-1"
                   >
-                    <path d="M5 12h14M12 5l7 7-7 7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
                   </svg>
                 </Link>
               </div>
@@ -358,7 +399,7 @@ export default function Home() {
         {viewMode === "browse" && (
           <>
             {/* Search and Filter Controls */}
-            <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-6">
+            <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-10">
               {/* Search Input */}
               <div className="relative w-full max-w-md">
                 <input
@@ -366,16 +407,16 @@ export default function Home() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for interests..."
-                  className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
+                  className="w-full px-6 py-4 pl-14 pr-12 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-gray-50 focus:bg-white font-medium placeholder:text-gray-400 shadow-sm"
                 />
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <div className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    strokeWidth={1.5}
+                    strokeWidth={2}
                     stroke="currentColor"
-                    className="w-5 h-5"
+                    className="w-6 h-6"
                   >
                     <path
                       strokeLinecap="round"
@@ -384,13 +425,35 @@ export default function Home() {
                     />
                   </svg>
                 </div>
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
+
               {/* Category Filter */}
               <div className="w-full max-w-xs">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
+                  className="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-gray-50 focus:bg-white font-medium shadow-sm"
                 >
                   {HOBBY_CATEGORIES.map((category) => (
                     <option key={category} value={category}>
@@ -399,6 +462,7 @@ export default function Home() {
                   ))}
                 </select>
               </div>
+
               {/* My Interests Toggle */}
               {session && userHobbies.length > 0 && (
                 <button
@@ -408,7 +472,11 @@ export default function Home() {
                     setSearchQuery("");
                     setCurrentPage(1);
                   }}
-                  className="flex items-center gap-2 bg-[#FFF0F3] px-4 py-2 rounded-full text-[#FF3366] hover:bg-[#FFE5EA] transition-colors whitespace-nowrap"
+                  className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-medium transition-all duration-200 whitespace-nowrap shadow-sm border-2 ${
+                    showOnlyUserInterests
+                      ? "bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white border-[#FF3366] shadow-lg"
+                      : "bg-white text-[#FF3366] border-[#FF3366] hover:bg-[#FFF0F3]"
+                  }`}
                 >
                   {showOnlyUserInterests ? (
                     <>
@@ -449,41 +517,86 @@ export default function Home() {
             </div>
 
             {/* Interests Grid with Pagination */}
-            <section className="mb-8">
+            <section className="mb-10">
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
+                  <h2 className="text-2xl font-bold text-[#333] font-poppins">
+                    {session && showOnlyUserInterests ? 'Your Interests' : 'Explore Interests'}
+                  </h2>
+                </div>
+                <p className="text-[#666] font-medium">
+                  {session && showOnlyUserInterests 
+                    ? 'Click on any of your interests to find like-minded people'
+                    : 'Choose an interest to discover people who share your passion'
+                  }
+                </p>
+              </div>
+
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {paginatedInterests.map((hobby) => (
+                {paginatedInterests.map((hobby, index) => (
                   <button
                     key={hobby.id}
                     onClick={() => {
                       handleHobbySelect(hobby.id);
                       setCurrentPage(1);
                     }}
-                    className={`p-4 rounded-[20px] text-center transition-all ${
-                      selectedHobby === hobby.id
-                        ? "bg-[#FF3366] text-white shadow-lg transform scale-105"
-                        : "bg-white hover:bg-[#FFF0F3] text-[#333]"
-                    }`}
+                    className={`group p-6 rounded-2xl text-center transition-all duration-200 border-2 font-medium relative overflow-hidden
+                      ${
+                        selectedHobby === hobby.id
+                          ? "bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white border-[#FF3366] shadow-xl transform scale-105"
+                          : "bg-white hover:bg-gradient-to-r hover:from-[#FFF0F3] hover:to-[#FFE5EA] text-[#333] border-gray-200 hover:border-[#FF3366] hover:shadow-lg hover:scale-105"
+                      }`}
+                    style={{
+                      animationDelay: `${index * 50}ms`,
+                    }}
                   >
-                    {hobby.name}
+                    <span className="relative z-10 text-sm">#{hobby.name}</span>
+                    {selectedHobby === hobby.id && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                    )}
+                    
+                    {/* Subtle glow effect for selected hobby */}
+                    {selectedHobby === hobby.id && (
+                      <div className="absolute -inset-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-2xl blur opacity-30 -z-10"></div>
+                    )}
                   </button>
                 ))}
               </div>
 
               {/* Interest Pagination Controls */}
               {totalInterestPages > 1 && (
-                <div className="flex justify-center items-center gap-2 mt-6">
+                <div className="flex justify-center items-center gap-4 mt-8">
                   <button
                     onClick={() =>
                       setCurrentInterestPage((prev) => Math.max(prev - 1, 1))
                     }
                     disabled={currentInterestPage === 1}
-                    className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#FF3366] border-2 border-[#FF3366] font-medium transition-all duration-200 hover:bg-[#FFF0F3] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                   >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
                     Previous
                   </button>
-                  <span className="text-[#666]">
-                    Page {currentInterestPage} of {totalInterestPages}
-                  </span>
+                  
+                  <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
+                    <span className="text-[#666] font-medium">
+                      Page {currentInterestPage} of {totalInterestPages}
+                    </span>
+                  </div>
+                  
                   <button
                     onClick={() =>
                       setCurrentInterestPage((prev) =>
@@ -491,50 +604,108 @@ export default function Home() {
                       )
                     }
                     disabled={currentInterestPage === totalInterestPages}
-                    className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#FF3366] border-2 border-[#FF3366] font-medium transition-all duration-200 hover:bg-[#FFF0F3] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                   >
                     Next
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </button>
                 </div>
               )}
 
               {/* No Results Message */}
               {displayedHobbies.length === 0 && (
-                <div className="text-center w-full py-6 bg-[#FFF0F3] rounded-[20px] mt-4">
+                <div className="text-center w-full py-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl mt-6 border border-gray-200">
+                  <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    {searchQuery ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  
                   {searchQuery ? (
-                    <p className="text-[#666] mb-3">
-                      No interests found matching "{searchQuery}".
-                    </p>
+                    <div>
+                      <p className="text-[#666] mb-3 font-medium">
+                        No interests found matching "{searchQuery}".
+                      </p>
+                      <p className="text-[#999] text-sm">
+                        Try adjusting your search terms or explore other categories
+                      </p>
+                    </div>
                   ) : session && showOnlyUserInterests ? (
-                    <>
-                      <p className="text-[#666] mb-3">
+                    <div>
+                      <p className="text-[#666] mb-4 font-medium">
                         You haven't selected any interests yet.
                       </p>
                       <Link
                         href="/profile"
-                        className="text-[#FF3366] font-medium inline-flex items-center"
+                        className="inline-flex items-center gap-2 text-[#FF3366] font-bold hover:text-[#E62E5C] transition-colors group"
                       >
-                        Go to profile to add interests
+                        <span>Add Interests to Your Profile</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
+                          className="h-5 w-5 group-hover:translate-x-1 transition-transform"
                           fill="none"
+                          viewBox="0 0 24 24"
                           stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="ml-1"
                         >
-                          <path d="M5 12h14M12 5l7 7-7 7" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
                         </svg>
                       </Link>
-                    </>
+                    </div>
                   ) : (
-                    <p className="text-[#666] mb-3">
-                      No interests available. Please try another search.
-                    </p>
+                    <div>
+                      <p className="text-[#666] mb-3 font-medium">
+                        No interests available in this category.
+                      </p>
+                      <p className="text-[#999] text-sm">
+                        Try selecting a different category or search term
+                      </p>
+                    </div>
                   )}
                 </div>
               )}
@@ -544,129 +715,241 @@ export default function Home() {
             {selectedHobby && (
               <section>
                 {isLoading ? (
-                  <div className="text-center py-16">
-                    <div className="w-16 h-16 border-4 border-[#FF3366] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-[#666]">Loading users...</p>
+                  <div className="text-center py-20">
+                    <div className="relative mb-6">
+                      <div className="w-20 h-20 border-4 border-[#FF3366]/20 border-t-[#FF3366] rounded-full animate-spin mx-auto"></div>
+                      <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-t-[#FF6B8A] rounded-full animate-spin animation-delay-150 mx-auto"></div>
+                    </div>
+                    <h3 className="text-lg font-semibold text-[#333] mb-2">Finding amazing people...</h3>
+                    <p className="text-[#666] font-medium">Discovering users who share your interests</p>
                   </div>
                 ) : users.length === 0 ? (
-                  <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
-                    <h2 className="text-2xl font-semibold text-[#333] mb-4">
+                  <div className="text-center py-16 bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] rounded-2xl shadow-sm border border-[#FFD6DD]">
+                    <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-10 w-10 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M17 20h5v-2a3 3 0 00-5.196-2.121M9 20H4v-2a3 3 0 015.196-2.121M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a2 2 0 11-4 0 2 2 0 014 0zM7 2a2 2 0 11-4 0 2 2 0 014 0z"
+                        />
+                      </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-[#333] mb-3">
                       No users found
                     </h2>
-                    <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                      There are no users matching this interest. Try selecting
-                      another interest or check back later.
+                    <p className="text-[#666] mb-6 max-w-lg mx-auto leading-relaxed">
+                      There are no users matching this interest right now. Try selecting another interest or check back later when more people join!
                     </p>
+                    <button
+                      onClick={() => setSelectedHobby(null)}
+                      className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white px-6 py-3 rounded-xl font-medium transition-all hover:from-[#E62E5C] hover:to-[#FF5577] shadow-lg hover:shadow-xl"
+                    >
+                      Explore Other Interests
+                    </button>
                   </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {users.map((user) => (
+                    <div className="mb-8">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
+                        <h2 className="text-2xl font-bold text-[#333] font-poppins">
+                          People with this interest
+                        </h2>
+                      </div>
+                      <p className="text-[#666] font-medium">
+                        Found {totalUsers} {totalUsers === 1 ? 'person' : 'people'} who share this passion
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {users.map((user, index) => (
                         <div
                           key={user.id}
-                          className="bg-white rounded-[24px] p-6 shadow-md flex flex-col transition-all hover:-translate-y-1 hover:shadow-lg"
+                          className="group bg-white rounded-3xl p-8 shadow-lg flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border border-gray-100 hover:border-[#FF3366]/20 relative overflow-hidden"
+                          style={{
+                            animationDelay: `${index * 100}ms`,
+                          }}
                         >
                           {/* Compatibility Score Badge - Only show when user is logged in */}
                           {session && user.compatibilityScore !== undefined && (
-                            <div className="relative">
-                              <div className="absolute right-0 top-0">
-                                {renderCompatibilityBadge(
-                                  user.compatibilityScore
-                                )}
-                              </div>
+                            <div className="absolute right-4 top-4 z-10">
+                              {renderCompatibilityBadge(user.compatibilityScore)}
                             </div>
                           )}
 
-                          <div className="w-20 h-20 rounded-full bg-[#f5f5f5] mb-4 self-center overflow-hidden border-2 border-white shadow-sm">
-                            {user.image && (
-                              <Image
-                                src={user.image}
-                                alt={user.name || "User profile"}
-                                width={80}
-                                height={80}
-                                className="object-cover w-full h-full"
-                              />
-                            )}
-                          </div>
-                          <div>
-                            <h2 className="text-xl font-semibold text-[#333] mb-2 text-center">
-                              {user.name}
-                            </h2>
-                            <p className="text-sm text-[#666] mb-4 text-center">
-                              {user.hobbies.length > 0
-                                ? `${user.hobbies[0].hobby.name} ${
-                                    user.hobbies.length > 1 ? "and" : ""
-                                  } ${
-                                    user.hobbies.length > 1
-                                      ? user.hobbies[1].hobby.name
-                                      : ""
-                                  } enthusiast`
-                                : "New user"}
-                            </p>
+                          {/* Subtle background gradient */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[#FF3366]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                            <div className="flex flex-wrap justify-center gap-2 mb-4">
-                              {user.hobbies.slice(0, 3).map((uh) => (
-                                <span
-                                  key={uh.hobbyId}
-                                  className="bg-[#FFF0F3] text-[#FF3366] rounded-2xl px-3 py-1 text-sm font-medium"
-                                >
-                                  {uh.hobby.name}
-                                </span>
-                              ))}
-                            </div>
-
-                            <div className="flex items-center gap-2 mb-6">
-                              {session && user.commonHobbies !== undefined ? (
-                                <>
-                                  <span className="text-sm font-medium text-[#FF3366]">
-                                    {user.commonHobbies}
-                                  </span>
-                                  <span className="text-sm text-[#666]">
-                                    {user.commonHobbies === 1
-                                      ? "shared interest"
-                                      : "shared interests"}
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="text-sm text-[#666]">
-                                    {Math.min(user.hobbies.length, 3)}
-                                  </span>
-                                  <span className="text-sm text-[#666]">
-                                    mutual interests
-                                  </span>
-                                </>
-                              )}
-                              <div className="ml-auto">
-                                {renderMutualDots(
-                                  session && user.commonHobbies !== undefined
-                                    ? Math.min(user.commonHobbies, 3)
-                                    : Math.min(user.hobbies.length, 3)
-                                )}
+                          <div className="relative z-10">
+                            <div className="mb-6 self-center flex justify-center">
+                              <div className="relative">
+                                <Avatar
+                                  src={user.image}
+                                  alt={user.name || "User profile"}
+                                  size={96}
+                                  className="shadow-xl group-hover:scale-110 transition-transform duration-300"
+                                  showOnlineStatus={Math.random() > 0.5}
+                                  isOnline={Math.random() > 0.3}
+                                />
+                                {/* Subtle glow effect */}
+                                <div className="absolute -inset-2 bg-gradient-to-r from-[#FF3366]/20 to-[#FF6B8A]/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg"></div>
                               </div>
                             </div>
 
-                            <div className="flex gap-2 mt-auto">
-                              <Link
-                                href={session ? `/users/${user.id}` : "#"}
-                                onClick={(e) =>
-                                  !session &&
-                                  (e.preventDefault(), handleLoginClick())
-                                }
-                                className="flex-1 text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#FFF0F3]"
-                              >
-                                Profile
-                              </Link>
-                              <Link
-                                href={session ? `/chat?userId=${user.id}` : "#"}
-                                onClick={(e) =>
-                                  !session &&
-                                  (e.preventDefault(), handleLoginClick())
-                                }
-                                className="flex-1 text-center bg-[#FF3366] text-white border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#E62E5C]"
-                              >
-                                Chat
-                              </Link>
+                            <div>
+                              <h2 className="text-xl font-bold text-[#333] mb-3 text-center group-hover:text-[#FF3366] transition-colors duration-200">
+                                {user.name}
+                              </h2>
+                              
+                              <p className="text-sm text-[#666] mb-6 text-center font-medium">
+                                {user.hobbies.length > 0
+                                  ? `${user.hobbies[0].hobby.name} ${
+                                      user.hobbies.length > 1 ? "and" : ""
+                                    } ${
+                                      user.hobbies.length > 1
+                                        ? user.hobbies[1].hobby.name
+                                        : ""
+                                    } enthusiast`
+                                  : "New to the community"}
+                              </p>
+
+                              <div className="flex flex-wrap justify-center gap-2 mb-6">
+                                {user.hobbies.slice(0, 3).map((uh) => (
+                                  <span
+                                    key={uh.hobbyId}
+                                    className="bg-gradient-to-r from-[#FFF0F3] to-[#FFE5EA] text-[#FF3366] rounded-full px-4 py-1.5 text-sm font-medium border border-[#FFD6DD] group-hover:from-[#FF3366] group-hover:to-[#FF6B8A] group-hover:text-white transition-all duration-200"
+                                  >
+                                    #{uh.hobby.name}
+                                  </span>
+                                ))}
+                                {user.hobbies.length > 3 && (
+                                  <span className="bg-gray-100 text-[#666] rounded-full px-4 py-1.5 text-sm font-medium group-hover:bg-gray-200 transition-colors duration-200">
+                                    +{user.hobbies.length - 3}
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center justify-center gap-3 mb-8">
+                                {session && user.commonHobbies !== undefined ? (
+                                  <>
+                                    <div className="flex items-center gap-2">
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5 text-[#FF3366]"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                        />
+                                      </svg>
+                                      <span className="text-sm font-bold text-[#FF3366]">
+                                        {user.commonHobbies}
+                                      </span>
+                                    </div>
+                                    <span className="text-sm text-[#666] font-medium">
+                                      {user.commonHobbies === 1
+                                        ? "shared interest"
+                                        : "shared interests"}
+                                    </span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="flex items-center gap-2">
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5 text-[#FF3366]"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                                        />
+                                      </svg>
+                                      <span className="text-sm font-bold text-[#FF3366]">
+                                        {Math.min(user.hobbies.length, 3)}
+                                      </span>
+                                    </div>
+                                    <span className="text-sm text-[#666] font-medium">
+                                      interests shown
+                                    </span>
+                                  </>
+                                )}
+                                
+                                <div className="ml-auto">
+                                  {renderMutualDots(
+                                    session && user.commonHobbies !== undefined
+                                      ? Math.min(user.commonHobbies, 3)
+                                      : Math.min(user.hobbies.length, 3)
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex gap-3 mt-auto">
+                                <Link
+                                  href={session ? `/users/${user.id}` : "#"}
+                                  onClick={(e) =>
+                                    !session &&
+                                    (e.preventDefault(), handleLoginClick())
+                                  }
+                                  className="flex-1 text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-3 px-4 font-bold transition-all duration-200 hover:bg-[#FF3366] hover:text-white hover:shadow-lg flex items-center justify-center gap-2"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                    />
+                                  </svg>
+                                  Profile
+                                </Link>
+                                <Link
+                                  href={session ? `/chat?userId=${user.id}` : "#"}
+                                  onClick={(e) =>
+                                    !session &&
+                                    (e.preventDefault(), handleLoginClick())
+                                  }
+                                  className="flex-1 text-center bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white border-2 border-[#FF3366] rounded-2xl py-3 px-4 font-bold transition-all duration-200 hover:from-[#E62E5C] hover:to-[#FF5577] hover:shadow-lg flex items-center justify-center gap-2"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                                    />
+                                  </svg>
+                                  Chat
+                                </Link>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -675,19 +958,37 @@ export default function Home() {
 
                     {/* User Pagination Controls */}
                     {totalPages > 1 && (
-                      <div className="flex justify-center items-center gap-2 mt-8">
+                      <div className="flex justify-center items-center gap-4 mt-12">
                         <button
                           onClick={() =>
                             setCurrentPage((prev) => Math.max(prev - 1, 1))
                           }
                           disabled={currentPage === 1}
-                          className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#FF3366] border-2 border-[#FF3366] font-medium transition-all duration-200 hover:bg-[#FFF0F3] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                         >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 19l-7-7 7-7"
+                            />
+                          </svg>
                           Previous
                         </button>
-                        <span className="text-[#666]">
-                          Page {currentPage} of {totalPages}
-                        </span>
+                        
+                        <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
+                          <span className="text-[#666] font-medium">
+                            Page {currentPage} of {totalPages}
+                          </span>
+                        </div>
+                        
                         <button
                           onClick={() =>
                             setCurrentPage((prev) =>
@@ -695,9 +996,23 @@ export default function Home() {
                             )
                           }
                           disabled={currentPage === totalPages}
-                          className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#FF3366] border-2 border-[#FF3366] font-medium transition-all duration-200 hover:bg-[#FFF0F3] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                         >
                           Next
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
                         </button>
                       </div>
                     )}
@@ -710,118 +1025,243 @@ export default function Home() {
 
         {viewMode === "compatibility" && (
           <>
-            <h2 className="text-2xl font-semibold text-center text-[#333] mb-8">
-              Your Best Matches
-            </h2>
+            <div className="text-center mb-10">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
+                <h2 className="text-3xl font-bold text-[#333] font-poppins">
+                  Your Best Matches
+                </h2>
+                <div className="w-2 h-8 bg-gradient-to-b from-[#FF6B8A] to-[#FF3366] rounded-full"></div>
+              </div>
+              <p className="text-[#666] font-medium text-lg">
+                Discover people who share the most interests with you ✨
+              </p>
+            </div>
 
             {!session ? (
-              <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
-                <h2 className="text-2xl font-semibold text-[#333] mb-4">
+              <div className="text-center py-16 bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] rounded-2xl shadow-sm border border-[#FFD6DD]">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#FF3366] to-[#FF6B8A] rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-10 w-10 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-[#333] mb-4">
                   Find Your Best Matches
                 </h2>
-                <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                  Sign in to see people who share your interests and are most
-                  compatible with you.
+                <p className="text-[#666] mb-8 max-w-lg mx-auto leading-relaxed">
+                  Sign in to see people who share your interests and are most compatible with you. Discover your perfect hobby partners!
                 </p>
                 <button
                   onClick={handleLoginClick}
-                  className="bg-[#FF3366] text-white rounded-2xl py-3 px-8 font-medium transition-all hover:bg-[#E62E5C] shadow-md"
+                  className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white rounded-2xl py-4 px-8 font-bold transition-all hover:from-[#E62E5C] hover:to-[#FF5577] shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
-                  Sign In
+                  Sign In to Discover Matches
                 </button>
               </div>
             ) : isLoading ? (
-              <div className="text-center py-16">
-                <div className="w-16 h-16 border-4 border-[#FF3366] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-[#666]">Finding your best matches...</p>
+              <div className="text-center py-20">
+                <div className="relative mb-6">
+                  <div className="w-20 h-20 border-4 border-[#FF3366]/20 border-t-[#FF3366] rounded-full animate-spin mx-auto"></div>
+                  <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-t-[#FF6B8A] rounded-full animate-spin animation-delay-150 mx-auto"></div>
+                </div>
+                <h3 className="text-lg font-semibold text-[#333] mb-2">Finding your perfect matches...</h3>
+                <p className="text-[#666] font-medium">Analyzing compatibility based on your interests</p>
               </div>
             ) : compatibleUsers.length === 0 ? (
-              <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
-                <h2 className="text-2xl font-semibold text-[#333] mb-4">
-                  No Matches Found
+              <div className="text-center py-16 bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] rounded-2xl shadow-sm border border-[#FFD6DD]">
+                <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-10 w-10 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-[#333] mb-4">
+                  No Matches Found Yet
                 </h2>
-                <p className="text-[#666] mb-6 max-w-lg mx-auto">
-                  We couldn't find any users who share your interests. Add more
-                  hobbies to your profile or check back later.
+                <p className="text-[#666] mb-8 max-w-lg mx-auto leading-relaxed">
+                  We couldn't find any users who share your interests yet. Add more hobbies to your profile or check back later when more people join!
                 </p>
+                <Link
+                  href="/profile"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white px-6 py-3 rounded-xl font-bold transition-all hover:from-[#E62E5C] hover:to-[#FF5577] shadow-lg hover:shadow-xl"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                  Add More Interests
+                </Link>
               </div>
             ) : (
               <>
+                <div className="mb-8">
+                  <div className="text-center">
+                    <p className="text-[#666] font-medium">
+                      Found {compatibleUsers.length} compatible {compatibleUsers.length === 1 ? 'person' : 'people'} for you
+                    </p>
+                  </div>
+                </div>
+
                 <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {paginatedCompatibleUsers.map((user) => (
+                  {paginatedCompatibleUsers.map((user, index) => (
                     <div
                       key={user.id}
-                      className="bg-white rounded-[24px] p-6 shadow-md flex flex-col transition-all hover:-translate-y-1 hover:shadow-lg"
+                      className="group bg-white rounded-3xl p-8 shadow-lg flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border border-gray-100 hover:border-[#FF3366]/20 relative overflow-hidden"
+                      style={{
+                        animationDelay: `${index * 100}ms`,
+                      }}
                     >
-                      <div className="relative">
-                        <div className="absolute right-0 top-0">
-                          {renderCompatibilityBadge(user.compatibilityScore)}
+                      <div className="absolute right-4 top-4 z-10">
+                        {renderCompatibilityBadge(user.compatibilityScore)}
+                      </div>
+
+                      {/* Subtle background gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[#FF3366]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                      <div className="relative z-10">
+                        <div className="mb-6 self-center flex justify-center">
+                          <div className="relative">
+                            <Avatar
+                              src={user.image}
+                              alt={user.name || "User profile"}
+                              size={96}
+                              className="shadow-xl group-hover:scale-110 transition-transform duration-300"
+                              showOnlineStatus={Math.random() > 0.5}
+                              isOnline={Math.random() > 0.3}
+                            />
+                            {/* Subtle glow effect */}
+                            <div className="absolute -inset-2 bg-gradient-to-r from-[#FF3366]/20 to-[#FF6B8A]/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg"></div>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="w-20 h-20 rounded-full bg-[#f5f5f5] mb-4 self-center overflow-hidden border-2 border-white shadow-sm">
-                        {user.image && (
-                          <Image
-                            src={user.image}
-                            alt={user.name || "User profile"}
-                            width={80}
-                            height={80}
-                            className="object-cover w-full h-full"
-                          />
-                        )}
-                      </div>
+                        <h2 className="text-xl font-bold text-[#333] mb-4 text-center group-hover:text-[#FF3366] transition-colors duration-200">
+                          {user.name}
+                        </h2>
 
-                      <h2 className="text-xl font-semibold text-[#333] mb-2 text-center">
-                        {user.name}
-                      </h2>
+                        <div className="flex justify-center items-center gap-3 mb-6">
+                          <div className="flex items-center gap-2">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 text-[#FF3366]"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                              />
+                            </svg>
+                            <span className="text-sm font-bold text-[#FF3366]">
+                              {user.commonHobbies}
+                            </span>
+                          </div>
+                          <span className="text-sm text-[#666] font-medium">
+                            {user.commonHobbies === 1
+                              ? "shared interest"
+                              : "shared interests"}
+                          </span>
+                        </div>
 
-                      <div className="flex justify-center items-center gap-1 mb-4">
-                        <span className="text-sm font-medium text-[#FF3366]">
-                          {user.commonHobbies}
-                        </span>
-                        <span className="text-sm text-[#666]">
-                          {user.commonHobbies === 1
-                            ? "shared interest"
-                            : "shared interests"}
-                        </span>
-                      </div>
+                        <div className="flex flex-wrap justify-center gap-2 mb-8">
+                          {user.hobbies.slice(0, 3).map((hobby) => (
+                            <span
+                              key={hobby.id}
+                              className="bg-gradient-to-r from-[#FFF0F3] to-[#FFE5EA] text-[#FF3366] rounded-full px-4 py-1.5 text-sm font-medium border border-[#FFD6DD] group-hover:from-[#FF3366] group-hover:to-[#FF6B8A] group-hover:text-white transition-all duration-200"
+                            >
+                              #{hobby.name}
+                            </span>
+                          ))}
+                          {user.hobbies.length > 3 && (
+                            <span className="bg-gray-100 text-[#666] rounded-full px-4 py-1.5 text-sm font-medium group-hover:bg-gray-200 transition-colors duration-200">
+                              +{user.hobbies.length - 3} more
+                            </span>
+                          )}
+                        </div>
 
-                      <div className="flex flex-wrap justify-center gap-2 mb-6">
-                        {user.hobbies.slice(0, 3).map((hobby) => (
-                          <span
-                            key={hobby.id}
-                            className="bg-[#FFF0F3] text-[#FF3366] rounded-2xl px-3 py-1 text-sm font-medium"
+                        <div className="flex gap-3 mt-auto">
+                          <Link
+                            href={`/users/${user.id}`}
+                            className="flex-1 text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-3 px-4 font-bold transition-all duration-200 hover:bg-[#FF3366] hover:text-white hover:shadow-lg flex items-center justify-center gap-2"
                           >
-                            {hobby.name}
-                          </span>
-                        ))}
-                        {user.hobbies.length > 3 && (
-                          <span className="bg-[#FFF0F3] text-[#FF3366] rounded-2xl px-3 py-1 text-sm font-medium">
-                            +{user.hobbies.length - 3} more
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2 mt-auto">
-                        <Link
-                          href={`/users/${user.id}`}
-                          className="flex-1 text-center bg-transparent text-[#FF3366] border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#FFF0F3]"
-                        >
-                          Profile
-                        </Link>
-                        <Link
-                          href={`/chat?userId=${user.id}`}
-                          className="flex-1 text-center bg-[#FF3366] text-white border-2 border-[#FF3366] rounded-2xl py-2 px-4 font-medium transition-all hover:bg-[#E62E5C]"
-                        >
-                          Chat
-                        </Link>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
+                            </svg>
+                            Profile
+                          </Link>
+                          <Link
+                            href={`/chat?userId=${user.id}`}
+                            className="flex-1 text-center bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white border-2 border-[#FF3366] rounded-2xl py-3 px-4 font-bold transition-all duration-200 hover:from-[#E62E5C] hover:to-[#FF5577] hover:shadow-lg flex items-center justify-center gap-2"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                              />
+                            </svg>
+                            Chat
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </section>
+
                 {/* Pagination controls for best matches */}
                 {totalCompatiblePages > 1 && (
-                  <div className="flex justify-center items-center gap-2 mt-8">
+                  <div className="flex justify-center items-center gap-4 mt-12">
                     <button
                       onClick={() =>
                         setCurrentCompatiblePage((prev) =>
@@ -829,13 +1269,31 @@ export default function Home() {
                         )
                       }
                       disabled={currentCompatiblePage === 1}
-                      className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#FF3366] border-2 border-[#FF3366] font-medium transition-all duration-200 hover:bg-[#FFF0F3] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
                       Previous
                     </button>
-                    <span className="text-[#666]">
-                      Page {currentCompatiblePage} of {totalCompatiblePages}
-                    </span>
+                    
+                    <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
+                      <span className="text-[#666] font-medium">
+                        Page {currentCompatiblePage} of {totalCompatiblePages}
+                      </span>
+                    </div>
+                    
                     <button
                       onClick={() =>
                         setCurrentCompatiblePage((prev) =>
@@ -843,9 +1301,23 @@ export default function Home() {
                         )
                       }
                       disabled={currentCompatiblePage === totalCompatiblePages}
-                      className="px-4 py-2 rounded-full bg-white text-[#FF3366] border border-[#FF3366] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#FF3366] border-2 border-[#FF3366] font-medium transition-all duration-200 hover:bg-[#FFF0F3] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                     >
                       Next
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
                     </button>
                   </div>
                 )}
@@ -856,50 +1328,130 @@ export default function Home() {
       </div>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md z-10">
+      <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl z-20 border-t border-gray-100">
         <ul className="flex justify-around list-none p-4">
-          <li>
-            <Link href="/" className="text-[#BE185D] font-medium no-underline">
-              Browse
+          <li className="flex-1">
+            <Link 
+              href="/" 
+              className="flex items-center justify-center gap-2 text-[#FF3366] font-medium no-underline p-3 rounded-xl transition-all duration-200 hover:bg-[#FF3366]/10"
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-[#FF3366] to-[#FF6B8A] rounded-xl flex items-center justify-center shadow-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-bold">Browse</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/profile"
-              className="text-[#666] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
             >
-              Profile
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Profile</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/chat"
-              className="text-[#666] no-underline font-medium"
-              onClick={(e) =>
-                !session && (e.preventDefault(), handleLoginClick())
-              }
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
             >
-              Chat
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Chat</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/love-note"
-              className="text-[#666] no-underline font-medium"
-              onClick={(e) =>
-                !session && (e.preventDefault(), handleLoginClick())
-              }
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
             >
-              Love Note
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Love Note</span>
             </Link>
           </li>
           {session && (
-            <li>
+            <li className="flex-1">
               <button
                 onClick={() => signOut()}
-                className="text-gray-500 font-poppins hover:text-[#FF3366]"
+                className="flex items-center justify-center gap-2 text-gray-500 font-medium hover:text-[#FF3366] p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 w-full"
               >
-                Log out
+                <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                </div>
+                <span className="text-sm">Logout</span>
               </button>
             </li>
           )}
@@ -909,6 +1461,59 @@ export default function Home() {
       {isLoginModalOpen && (
         <LoginModal onClose={() => setIsLoginModalOpen(false)} />
       )}
+
+      {/* Custom CSS for animations */}
+      <style jsx>{`
+        .animation-delay-150 {
+          animation-delay: 150ms;
+        }
+        .animation-delay-1s {
+          animation-delay: 1s;
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeInUp {
+          animation: fadeInUp 0.6s ease-out forwards;
+        }
+        .hover\\:scale-110:hover {
+          transform: scale(1.1);
+        }
+        .hover\\:scale-105:hover {
+          transform: scale(1.05);
+        }
+        .group:hover .group-hover\\:scale-110 {
+          transform: scale(1.1);
+        }
+        .group:hover .group-hover\\:translate-x-1 {
+          transform: translateX(0.25rem);
+        }
+        .group:hover .group-hover\\:rotate-90 {
+          transform: rotate(90deg);
+        }
+        .group:hover .group-hover\\:from-\\[\\#FF3366\\] {
+          background: linear-gradient(to right, #FF3366, #FF6B8A);
+        }
+        .group:hover .group-hover\\:to-\\[\\#FF6B8A\\] {
+          background: linear-gradient(to right, #FF3366, #FF6B8A);
+        }
+        .group:hover .group-hover\\:text-white {
+          color: white;
+        }
+        .backdrop-blur-md {
+          backdrop-filter: blur(12px);
+        }
+        .bg-white\\/95 {
+          background-color: rgba(255, 255, 255, 0.95);
+        }
+      `}</style>
     </div>
   );
 }

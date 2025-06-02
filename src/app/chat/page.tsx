@@ -8,6 +8,7 @@ import Image from "next/image";
 import LoginModal from "@/components/LoginModal";
 import { useSocket } from "@/components/providers/SocketProvider";
 import { Message, LoveNote, User, StreakInfo } from "@/types/models";
+import Avatar from "../../components/Avatar";
 
 interface Conversation {
   id: string;
@@ -438,20 +439,46 @@ function ChatPageInner() {
       <div className="max-w-[1200px] mx-auto p-4 md:p-8">
         <div className="bg-white rounded-[20px] shadow-md overflow-hidden">
           <div className="flex h-[calc(100vh-200px)]">
-            {/* Conversations List */}
-            <div className="w-full md:w-1/3 lg:w-1/4 border-r border-gray-200 overflow-y-auto">
+            {/* Conversation List */}
+            <div className="w-full md:w-80 border-r border-gray-200 bg-white">
               <div className="p-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-800 font-poppins">
-                  Messages
-                </h2>
-                <p className="text-sm text-gray-500 font-poppins">
-                  {isConnected ? "Connected" : "Connecting..."}
-                </p>
+                <div className="flex items-center justify-between mb-4">
+                  <h1 className="text-xl font-bold text-[#333] font-poppins">
+                    Messages
+                  </h1>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-gray-500 font-poppins">Online</span>
+                  </div>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search conversations..."
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent text-sm font-poppins"
+                  />
+                  <svg
+                    className="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
               </div>
 
               {isLoading ? (
                 <div className="flex justify-center items-center h-32">
-                  <p className="font-poppins">Loading conversations...</p>
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-8 h-8 border-3 border-[#FF3366] border-t-transparent rounded-full animate-spin"></div>
+                    <p className="font-poppins text-gray-600 text-sm">Loading conversations...</p>
+                  </div>
                 </div>
               ) : conversations.length > 0 ? (
                 <ul>
@@ -459,63 +486,77 @@ function ChatPageInner() {
                     <li key={conversation.id}>
                       <button
                         onClick={() => handleSelectConversation(conversation.id)}
-                        className={`flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors w-full text-left ${
-                          selectedUserId === conversation.id ? "bg-pink-50" : ""
+                        className={`flex items-center gap-3 p-4 hover:bg-gray-50 transition-all duration-200 w-full text-left border-l-4 ${
+                          selectedUserId === conversation.id 
+                            ? "bg-pink-50 border-[#FF3366] shadow-sm" 
+                            : "border-transparent hover:border-pink-200"
                         }`}
                       >
-                        <div className="relative">
-                          <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
-                            {conversation.image ? (
-                              <Image
-                                src={conversation.image}
-                                alt={conversation.name}
-                                width={48}
-                                height={48}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                {conversation.name.charAt(0)}
+                        <Avatar
+                          src={conversation.image}
+                          alt={conversation.name}
+                          size={48}
+                          showOnlineStatus={true}
+                          isOnline={conversation.isOnline}
+                        />
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start">
+                            <h3 className={`font-medium truncate font-poppins ${
+                              conversation.unreadCount > 0 ? 'text-gray-900 font-semibold' : 'text-gray-700'
+                            }`}>
+                              {conversation.name}
+                            </h3>
+                            <div className="flex flex-col items-end gap-1">
+                              <span className="text-xs text-gray-500 font-poppins">
+                                {conversation.lastActive}
+                              </span>
+                              {conversation.unreadCount > 0 && (
+                                <div className="bg-[#FF3366] text-white text-xs font-medium rounded-full px-2 py-1 min-w-[20px] flex items-center justify-center font-poppins animate-pulse">
+                                  {conversation.unreadCount}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <p className={`text-sm truncate font-poppins ${
+                              conversation.unreadCount > 0 ? 'text-gray-700 font-medium' : 'text-gray-500'
+                            }`}>
+                              {conversation.lastMessage}
+                            </p>
+                            {conversation.lastMessage && (
+                              <div className="flex-shrink-0">
+                                <svg className="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                                </svg>
                               </div>
                             )}
                           </div>
-                          {conversation.isOnline && (
-                            <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
-                          )}
                         </div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between">
-                            <h3 className="font-medium text-gray-900 truncate font-poppins">
-                              {conversation.name}
-                            </h3>
-                            <span className="text-xs text-gray-500 font-poppins">
-                              {conversation.lastActive}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-500 truncate font-poppins">
-                            {conversation.lastMessage}
-                          </p>
-                        </div>
-
-                        {conversation.unreadCount > 0 && (
-                          <div className="ml-2 bg-[#FF3366] text-white text-xs font-medium rounded-full w-5 h-5 flex items-center justify-center font-poppins">
-                            {conversation.unreadCount}
-                          </div>
-                        )}
                       </button>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <div className="flex flex-col items-center justify-center p-8 text-center h-64">
-                  <p className="text-gray-500 mb-4 font-poppins">
+                  <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-pink-200 rounded-full flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-500 mb-4 font-poppins font-medium">
                     No conversations yet.
+                  </p>
+                  <p className="text-gray-400 mb-4 font-poppins text-sm">
+                    Start chatting with people who share your interests!
                   </p>
                   <Link
                     href="/"
-                    className="text-[#FF3366] hover:underline font-poppins"
+                    className="inline-flex items-center gap-2 text-[#FF3366] hover:text-[#E62E5C] font-poppins font-medium transition-colors"
                   >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
                     Find people to chat with
                   </Link>
                 </div>
@@ -526,117 +567,145 @@ function ChatPageInner() {
             <div className="hidden md:flex flex-col flex-1">
               {selectedUser ? (
                 <>
-                  {/* Chat Header */}
-                  <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="relative mr-3">
-                        <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
-                          {selectedUser.image ? (
-                            <Image
-                              src={selectedUser.image}
-                              alt={selectedUser.name}
-                              width={48}
-                              height={48}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                              {selectedUser.name.charAt(0)}
+                  {/* Enhanced Chat Header */}
+                  <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-white to-pink-50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Avatar
+                          src={selectedUser.image}
+                          alt={selectedUser.name}
+                          size={48}
+                          showOnlineStatus={true}
+                          isOnline={true}
+                        />
+
+                        <div className="ml-3">
+                          <h2 className="font-semibold text-lg font-poppins text-gray-800">
+                            {selectedUser.name}
+                          </h2>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <p className="text-xs text-green-600 font-poppins font-medium">
+                              Online now
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Enhanced Streak Display */}
+                        {streakInfo && streakInfo.currentStreak > 0 && (
+                          <div className="ml-4 flex items-center px-4 py-2 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full shadow-lg hover:shadow-xl transition-all">
+                            <span className="text-white mr-2 text-lg">🔥</span>
+                            <div className="text-white">
+                              <span className="text-sm font-bold font-poppins">
+                                {streakInfo.currentStreak}
+                              </span>
+                              <span className="text-xs font-poppins ml-1">
+                                day{streakInfo.currentStreak !== 1 ? 's' : ''}
+                              </span>
                             </div>
-                          )}
-                        </div>
-                        <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
+                          </div>
+                        )}
+
+                        {/* Enhanced Interest Badges */}
+                        {selectedUser.hobbies?.includes("music") && (
+                          <div className="ml-3 flex items-center px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full border border-purple-200 shadow-sm">
+                            <span className="text-purple-500 mr-2">🎵</span>
+                            <span className="text-sm text-purple-600 font-poppins font-medium">
+                              Music Lover
+                            </span>
+                          </div>
+                        )}
                       </div>
 
-                      <div>
-                        <h2 className="font-semibold text-lg font-poppins">
-                          {selectedUser.name}
-                        </h2>
-                        <p className="text-xs text-[#4CAF50] font-poppins">
-                          Online
-                        </p>
+                      <div className="flex items-center gap-3">
+                        {/* Enhanced Action Buttons */}
+                        {streakInfo && (streakInfo.currentStreak > 0 || streakInfo.longestStreak > 0) && (
+                          <button
+                            onClick={() => setShowStreakModal(true)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm bg-white text-[#FF3366] rounded-full hover:bg-pink-50 transition-all border border-pink-200 shadow-sm hover:shadow-md font-poppins"
+                          >
+                            <span>📊</span>
+                            <span className="font-medium">Stats</span>
+                          </button>
+                        )}
+
+                        {loveNote && (
+                          <button
+                            onClick={() => setShowLoveNote(true)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full hover:from-pink-600 hover:to-red-600 transition-all shadow-md hover:shadow-lg font-poppins"
+                          >
+                            <span>❤️</span>
+                            <span className="font-medium">Love Note</span>
+                          </button>
+                        )}
+
+                        <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                          </svg>
+                        </button>
                       </div>
-
-                      {/* Streak Display */}
-                      {streakInfo && streakInfo.currentStreak > 0 && (
-                        <div className="ml-4 flex items-center px-3 py-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full">
-                          <span className="text-white mr-1">🔥</span>
-                          <span className="text-sm text-white font-semibold font-poppins">
-                            {streakInfo.currentStreak} day{streakInfo.currentStreak !== 1 ? 's' : ''}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Music interests section */}
-                      {selectedUser.hobbies?.includes("music") && (
-                        <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
-                          <span className="text-gray-600 mr-1">🎵</span>
-                          <span className="text-sm text-gray-600 font-poppins">
-                            Music Lover
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {/* Streak info button */}
-                      {streakInfo && (streakInfo.currentStreak > 0 || streakInfo.longestStreak > 0) && (
-                        <button
-                          onClick={() => setShowStreakModal(true)}
-                          className="px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
-                        >
-                          📊 Stats
-                        </button>
-                      )}
-
-                      {loveNote && (
-                        <button
-                          onClick={() => setShowLoveNote(true)}
-                          className="px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
-                        >
-                          ❤️ Love Note
-                        </button>
-                      )}
                     </div>
                   </div>
 
                   {/* Messages Area */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {messages.map((message) => {
-                      const isOwnMessage =
-                        message.senderId === session?.user?.id;
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+                    {messages.map((message, index) => {
+                      const isOwnMessage = message.senderId === session?.user?.id;
+                      const showAvatar = !isOwnMessage && (index === 0 || messages[index - 1].senderId !== message.senderId);
+                      
                       return (
                         <div
                           key={message.id}
-                          className={`flex ${
-                            isOwnMessage ? "justify-end" : "justify-start"
-                          }`}
+                          className={`flex ${isOwnMessage ? "justify-end" : "justify-start"} items-end gap-2`}
                         >
+                          {!isOwnMessage && (
+                            <div className="w-8 h-8 flex-shrink-0">
+                              {showAvatar ? (
+                                <Avatar
+                                  src={selectedUser.image}
+                                  alt={selectedUser.name}
+                                  size={32}
+                                />
+                              ) : null}
+                            </div>
+                          )}
+                          
                           <div
-                            className={`relative max-w-[70%] rounded-2xl px-4 py-2 ${
-                              isOwnMessage
-                                ? "bg-[#FF3366] text-white rounded-tr-none"
-                                : "bg-gray-100 text-gray-800 rounded-tl-none"
+                            className={`relative max-w-[70%] group ${
+                              isOwnMessage ? "order-first" : ""
                             }`}
                           >
-                            <div className="break-words">{message.content}</div>
                             <div
-                              className={`text-xs mt-1 ${
-                                isOwnMessage ? "text-white/80" : "text-gray-500"
+                              className={`rounded-2xl px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md ${
+                                isOwnMessage
+                                  ? "bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white rounded-tr-sm"
+                                  : "bg-white text-gray-800 rounded-tl-sm border border-gray-100"
                               }`}
                             >
-                              {new Date(message.createdAt).toLocaleTimeString(
-                                [],
-                                {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }
-                              )}
-                              {isOwnMessage && (
-                                <span className="ml-2">
-                                  {message.read ? "✓✓" : "✓"}
+                              <div className="break-words leading-relaxed">{message.content}</div>
+                              <div
+                                className={`text-xs mt-2 flex items-center gap-1 ${
+                                  isOwnMessage ? "text-white/80 justify-end" : "text-gray-500"
+                                }`}
+                              >
+                                <span>
+                                  {new Date(message.createdAt).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
                                 </span>
-                              )}
+                                {isOwnMessage && (
+                                  <span className={`ml-1 ${message.read ? "text-white/90" : "text-white/70"}`}>
+                                    {message.read ? "✓✓" : "✓"}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Message reactions placeholder */}
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3 right-0 flex gap-1 text-xs">
+                              {/* Add reaction buttons here if needed */}
                             </div>
                           </div>
                         </div>
@@ -645,34 +714,66 @@ function ChatPageInner() {
                     <div ref={messagesEndRef} />
                   </div>
 
-                  {/* Message Input */}
-                  <div className="p-4 border-t border-gray-200">
-                    <form onSubmit={handleSubmitMessage} className="flex gap-2">
-                      <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
-                      />
+                  {/* Enhanced Message Input */}
+                  <div className="p-4 border-t border-gray-200 bg-white">
+                    <form onSubmit={handleSubmitMessage} className="flex gap-3 items-end">
+                      <div className="flex-1 relative">
+                        <input
+                          type="text"
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          placeholder="Type a message..."
+                          className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent bg-gray-50 focus:bg-white transition-all text-sm font-poppins"
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </button>
+                      </div>
                       <button
                         type="submit"
                         disabled={!newMessage.trim()}
-                        className="bg-[#FF3366] text-white px-6 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#E62E5C] transition-colors"
+                        className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white rounded-full p-3 hover:from-[#E62E5C] hover:to-[#FF5577] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none"
                       >
-                        Send
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                          />
+                        </svg>
                       </button>
                     </form>
+                    
+                    {/* Typing indicator */}
+                    <div className="mt-2 h-4">
+                      {/* Add typing indicator here if needed */}
+                    </div>
                   </div>
                 </>
               ) : (
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <p className="text-lg mb-2">
-                      Select a conversation to start chatting
-                    </p>
-                    <p className="text-sm">Your messages will appear here</p>
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+                  <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-pink-200 rounded-full flex items-center justify-center mb-6">
+                    <svg className="w-12 h-12 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
                   </div>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2 font-poppins">
+                    Start a conversation
+                  </h3>
+                  <p className="text-gray-500 font-poppins">
+                    Select a conversation from the sidebar to start chatting
+                  </p>
                 </div>
               )}
             </div>
@@ -681,117 +782,118 @@ function ChatPageInner() {
             <div className="md:hidden flex-1">
               {selectedUser ? (
                 <div className="flex flex-col h-full">
-                  {/* Mobile Chat Header */}
-                  <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="relative mr-3">
-                        <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
-                          {selectedUser.image ? (
-                            <Image
-                              src={selectedUser.image}
-                              alt={selectedUser.name}
-                              width={48}
-                              height={48}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                              {selectedUser.name.charAt(0)}
-                            </div>
-                          )}
+                  {/* Enhanced Mobile Chat Header */}
+                  <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-white to-pink-50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <button
+                          onClick={() => setSelectedUserId(null)}
+                          className="mr-3 p-1 text-gray-500 hover:text-gray-700 transition-colors"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                        
+                        <Avatar
+                          src={selectedUser.image}
+                          alt={selectedUser.name}
+                          size={40}
+                          showOnlineStatus={true}
+                          isOnline={true}
+                        />
+
+                        <div className="ml-3">
+                          <h2 className="font-semibold text-lg font-poppins text-gray-800">
+                            {selectedUser.name}
+                          </h2>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <p className="text-xs text-green-600 font-poppins font-medium">
+                              Online now
+                            </p>
+                          </div>
                         </div>
-                        <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#4CAF50] border-2 border-white"></div>
                       </div>
 
-                      <div>
-                        <h2 className="font-semibold text-lg font-poppins">
-                          {selectedUser.name}
-                        </h2>
-                        <p className="text-xs text-[#4CAF50] font-poppins">
-                          Online
-                        </p>
+                      <div className="flex items-center gap-2">
+                        {/* Mobile Streak Display */}
+                        {streakInfo && streakInfo.currentStreak > 0 && (
+                          <div className="flex items-center px-2 py-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full">
+                            <span className="text-white mr-1 text-sm">🔥</span>
+                            <span className="text-xs text-white font-bold font-poppins">
+                              {streakInfo.currentStreak}
+                            </span>
+                          </div>
+                        )}
+                        
+                        <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                          </svg>
+                        </button>
                       </div>
-
-                      {/* Streak Display */}
-                      {streakInfo && streakInfo.currentStreak > 0 && (
-                        <div className="ml-4 flex items-center px-3 py-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full">
-                          <span className="text-white mr-1">🔥</span>
-                          <span className="text-sm text-white font-semibold font-poppins">
-                            {streakInfo.currentStreak} day{streakInfo.currentStreak !== 1 ? 's' : ''}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Music interests section */}
-                      {selectedUser.hobbies?.includes("music") && (
-                        <div className="ml-5 flex items-center px-3 py-1 bg-white/60 rounded-full">
-                          <span className="text-gray-600 mr-1">🎵</span>
-                          <span className="text-sm text-gray-600 font-poppins">
-                            Music Lover
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {/* Streak info button */}
-                      {streakInfo && (streakInfo.currentStreak > 0 || streakInfo.longestStreak > 0) && (
-                        <button
-                          onClick={() => setShowStreakModal(true)}
-                          className="px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
-                        >
-                          📊 Stats
-                        </button>
-                      )}
-
-                      {loveNote && (
-                        <button
-                          onClick={() => setShowLoveNote(true)}
-                          className="px-3 py-1 text-sm bg-[#F5F5F5] text-[#FF3366] rounded-full hover:bg-pink-50 transition-colors font-poppins"
-                        >
-                          ❤️ Love Note
-                        </button>
-                      )}
                     </div>
                   </div>
 
-                  {/* Mobile Messages Area */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {messages.map((message) => {
-                      const isOwnMessage =
-                        message.senderId === session?.user?.id;
+                  {/* Messages Area */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+                    {messages.map((message, index) => {
+                      const isOwnMessage = message.senderId === session?.user?.id;
+                      const showAvatar = !isOwnMessage && (index === 0 || messages[index - 1].senderId !== message.senderId);
+                      
                       return (
                         <div
                           key={message.id}
-                          className={`flex ${
-                            isOwnMessage ? "justify-end" : "justify-start"
-                          }`}
+                          className={`flex ${isOwnMessage ? "justify-end" : "justify-start"} items-end gap-2`}
                         >
+                          {!isOwnMessage && (
+                            <div className="w-8 h-8 flex-shrink-0">
+                              {showAvatar ? (
+                                <Avatar
+                                  src={selectedUser.image}
+                                  alt={selectedUser.name}
+                                  size={32}
+                                />
+                              ) : null}
+                            </div>
+                          )}
+                          
                           <div
-                            className={`relative max-w-[70%] rounded-2xl px-4 py-2 ${
-                              isOwnMessage
-                                ? "bg-[#FF3366] text-white rounded-tr-none"
-                                : "bg-gray-100 text-gray-800 rounded-tl-none"
+                            className={`relative max-w-[70%] group ${
+                              isOwnMessage ? "order-first" : ""
                             }`}
                           >
-                            <div className="break-words">{message.content}</div>
                             <div
-                              className={`text-xs mt-1 ${
-                                isOwnMessage ? "text-white/80" : "text-gray-500"
+                              className={`rounded-2xl px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md ${
+                                isOwnMessage
+                                  ? "bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white rounded-tr-sm"
+                                  : "bg-white text-gray-800 rounded-tl-sm border border-gray-100"
                               }`}
                             >
-                              {new Date(message.createdAt).toLocaleTimeString(
-                                [],
-                                {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }
-                              )}
-                              {isOwnMessage && (
-                                <span className="ml-2">
-                                  {message.read ? "✓✓" : "✓"}
+                              <div className="break-words leading-relaxed">{message.content}</div>
+                              <div
+                                className={`text-xs mt-2 flex items-center gap-1 ${
+                                  isOwnMessage ? "text-white/80 justify-end" : "text-gray-500"
+                                }`}
+                              >
+                                <span>
+                                  {new Date(message.createdAt).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
                                 </span>
-                              )}
+                                {isOwnMessage && (
+                                  <span className={`ml-1 ${message.read ? "text-white/90" : "text-white/70"}`}>
+                                    {message.read ? "✓✓" : "✓"}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Message reactions placeholder */}
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3 right-0 flex gap-1 text-xs">
+                              {/* Add reaction buttons here if needed */}
                             </div>
                           </div>
                         </div>
@@ -800,24 +902,51 @@ function ChatPageInner() {
                     <div ref={messagesEndRef} />
                   </div>
 
-                  {/* Mobile Message Input */}
-                  <div className="p-4 border-t border-gray-200">
-                    <form onSubmit={handleSubmitMessage} className="flex gap-2">
-                      <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
-                      />
+                  {/* Enhanced Message Input */}
+                  <div className="p-4 border-t border-gray-200 bg-white">
+                    <form onSubmit={handleSubmitMessage} className="flex gap-3 items-end">
+                      <div className="flex-1 relative">
+                        <input
+                          type="text"
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          placeholder="Type a message..."
+                          className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent bg-gray-50 focus:bg-white transition-all text-sm font-poppins"
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </button>
+                      </div>
                       <button
                         type="submit"
                         disabled={!newMessage.trim()}
-                        className="bg-[#FF3366] text-white px-6 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#E62E5C] transition-colors"
+                        className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white rounded-full p-3 hover:from-[#E62E5C] hover:to-[#FF5577] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none"
                       >
-                        Send
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                          />
+                        </svg>
                       </button>
                     </form>
+                    
+                    {/* Typing indicator */}
+                    <div className="mt-2 h-4">
+                      {/* Add typing indicator here if needed */}
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -1037,44 +1166,127 @@ function ChatPageInner() {
       )}
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md z-10">
+      <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl z-20 border-t border-gray-100">
         <ul className="flex justify-around list-none p-4">
-          <li>
-            <Link href="/" className="text-[#666] no-underline font-medium">
-              Browse
+          <li className="flex-1">
+            <Link 
+              href="/" 
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+            >
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Browse</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/profile"
-              className="text-[#666] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
             >
-              Profile
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Profile</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/chat"
-              className="text-[#BE185D] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#FF3366] font-medium no-underline p-3 rounded-xl transition-all duration-200 hover:bg-[#FF3366]/10"
             >
-              Chat
+              <div className="w-8 h-8 bg-gradient-to-br from-[#FF3366] to-[#FF6B8A] rounded-xl flex items-center justify-center shadow-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-bold">Chat</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/love-note"
-              className="text-[#666] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
             >
-              Love Note
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Love Note</span>
             </Link>
           </li>
           {session && (
-            <li>
+            <li className="flex-1">
               <button
                 onClick={() => signOut()}
-                className="text-gray-500 font-poppins hover:text-[#FF3366]"
+                className="flex items-center justify-center gap-2 text-gray-500 font-medium hover:text-[#FF3366] p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 w-full"
               >
-                Log out
+                <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                </div>
+                <span className="text-sm">Logout</span>
               </button>
             </li>
           )}
@@ -1090,6 +1302,16 @@ function ChatPageInner() {
             }
         }} />
       )}
+      
+      {/* Custom CSS for glassmorphism effects */}
+      <style jsx>{`
+        .backdrop-blur-md {
+          backdrop-filter: blur(12px);
+        }
+        .bg-white\\/95 {
+          background-color: rgba(255, 255, 255, 0.95);
+        }
+      `}</style>
     </div>
   );
 }
