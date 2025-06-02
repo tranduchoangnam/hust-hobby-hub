@@ -20,14 +20,14 @@ export default function LoveNotePage() {
   );
   const [loveNoteAnswer, setLoveNoteAnswer] = useState("");
 
-  // Check authentication
+  // Kiểm tra xác thực
   useEffect(() => {
     if (status === "unauthenticated") {
       setIsLoginModalOpen(true);
     }
   }, [status]);
 
-  // Fetch all love notes for the current user
+  // Lấy tất cả ghi chú cho người dùng hiện tại
   useEffect(() => {
     if (!session?.user) return;
 
@@ -40,7 +40,7 @@ export default function LoveNotePage() {
           setLoveNotes(data);
         }
       } catch (error) {
-        console.error("Error fetching love notes:", error);
+        console.error("Lỗi khi lấy ghi chú:", error);
       } finally {
         setIsLoading(false);
       }
@@ -70,19 +70,19 @@ export default function LoveNotePage() {
       if (response.ok) {
         const updatedLoveNote = await response.json();
 
-        // Update love notes list
+        // Cập nhật danh sách ghi chú
         setLoveNotes((prev) =>
           prev.map((note) =>
             note.id === updatedLoveNote.id ? updatedLoveNote : note
           )
         );
 
-        // Update selected love note
+        // Cập nhật ghi chú đang chọn
         setSelectedLoveNote(updatedLoveNote);
         setLoveNoteAnswer("");
       }
     } catch (error) {
-      console.error("Error answering love note:", error);
+      console.error("Lỗi khi trả lời ghi chú:", error);
     }
   };
 
@@ -251,7 +251,7 @@ export default function LoveNotePage() {
               </p>
             </div>
 
-            {/* My Answer */}
+            {/* Câu trả lời của bạn */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
                 Câu trả lời của bạn
@@ -265,7 +265,7 @@ export default function LoveNotePage() {
                   <textarea
                     value={loveNoteAnswer}
                     onChange={(e) => setLoveNoteAnswer(e.target.value)}
-                    placeholder="Take a moment to reflect..."
+                    placeholder="Hãy dành một chút thời gian để suy ngẫm..."
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF3366] font-poppins"
                     rows={4}
                   />
@@ -280,10 +280,10 @@ export default function LoveNotePage() {
               )}
             </div>
 
-            {/* Partner's Answer */}
+            {/* Câu trả lời của {đối phương} */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
-                {getPartnerName(selectedLoveNote)}'s câu trả lời
+                Câu trả lời của {getPartnerName(selectedLoveNote)}
               </label>
               {getPartnerAnswer(selectedLoveNote) ? (
                 <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-poppins">
@@ -331,47 +331,143 @@ export default function LoveNotePage() {
         </div>
       )}
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md z-10">
+      {/* Thanh điều hướng dưới cùng */}
+      <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl z-20 border-t border-gray-100">
         <ul className="flex justify-around list-none p-4">
-          <li>
-            <Link href="/" className="text-[#666] no-underline font-medium">
-              Trang chủ
+          <li className="flex-1">
+            <Link
+              href="/"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+            >
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Duyệt</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/profile"
-              className="text-[#666] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
             >
-              Hồ sơ
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Hồ sơ</span>
             </Link>
           </li>
-          <li>
-            <Link href="/chat" className="text-[#666] no-underline font-medium">
-              Trò chuyện
+          <li className="flex-1">
+            <Link
+              href="/chat"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+            >
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Trò chuyện</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/love-note"
-              className="text-[#BE185D] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#FF3366] font-medium no-underline p-3 rounded-xl transition-all duration-200 hover:bg-[#FF3366]/10"
             >
-              Ghi chú
+              <div className="w-8 h-8 bg-gradient-to-br from-[#FF3366] to-[#FF6B8A] rounded-xl flex items-center justify-center shadow-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-bold">Ghi chú mỗi ngày</span>
             </Link>
           </li>
           {session && (
-            <li>
+            <li className="flex-1">
               <button
                 onClick={() => signOut()}
-                className="text-gray-500 font-poppins hover:text-[#FF3366]"
+                className="flex items-center justify-center gap-2 text-gray-500 font-medium hover:text-[#FF3366] p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 w-full"
               >
-                Đăng xuất
+                <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                </div>
+                <span className="text-sm">Đăng xuất</span>
               </button>
             </li>
           )}
         </ul>
       </nav>
+
+      {/* CSS tùy chỉnh cho hiệu ứng glassmorphism */}
+      <style jsx>{`
+        .backdrop-blur-md {
+          backdrop-filter: blur(12px);
+        }
+        .bg-white\\/95 {
+          background-color: rgba(255, 255, 255, 0.95);
+        }
+      `}</style>
     </main>
   );
 }

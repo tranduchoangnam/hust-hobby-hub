@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const targetUserId = params.id;
+    const { id: targetUserId } = await params;
     
     // Get current user from session
     const session = await getServerSession(authOptions);

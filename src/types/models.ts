@@ -54,3 +54,20 @@ export interface LoveNote {
     image?: string | null;
   };
 }
+
+export interface Streak {
+  id: string;
+  user1Id: string;
+  user2Id: string;
+  currentStreak: number;
+  longestStreak: number;
+  lastChatDate: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface StreakInfo {
+  currentStreak: number;
+  longestStreak: number;
+  lastChatDate: Date | null;
+}
