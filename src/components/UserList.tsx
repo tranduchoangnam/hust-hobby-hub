@@ -45,7 +45,9 @@ export default function UserList({
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
-            <h2 className="text-xl font-bold text-[#333] font-poppins">{title}</h2>
+            <h2 className="text-xl font-bold text-[#333] font-poppins">
+              {title}
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -75,7 +77,7 @@ export default function UserList({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by name..."
+              placeholder="Tìm kiếm theo tên..."
               className="w-full px-4 py-3 pl-12 pr-10 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-gray-50 focus:bg-white font-medium placeholder:text-gray-400"
             />
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
@@ -219,9 +221,11 @@ export default function UserList({
                               fill="currentColor"
                               viewBox="0 0 24 24"
                             >
-                              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                             </svg>
-                            <span className="text-xs font-medium">Following</span>
+                            <span className="text-xs font-medium">
+                              Following
+                            </span>
                           </div>
                         )}
                       </div>
@@ -262,10 +266,20 @@ export default function UserList({
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="flex-shrink-0 text-gray-300 group-hover:text-[#FF3366] group-hover:translate-x-1 transition-all duration-200">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </div>
 
@@ -297,7 +311,8 @@ export default function UserList({
                 />
               </svg>
               <span className="font-medium">
-                {filteredUsers.length} {filteredUsers.length === 1 ? 'user' : 'users'}
+                {filteredUsers.length}{" "}
+                {filteredUsers.length === 1 ? "user" : "users"}
                 {searchQuery && ` matching "${searchQuery}"`}
               </span>
             </div>
@@ -314,11 +329,11 @@ export default function UserList({
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #E5E7EB;
+          background: #e5e7eb;
           border-radius: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #D1D5DB;
+          background: #d1d5db;
         }
         .animation-delay-150 {
           animation-delay: 150ms;

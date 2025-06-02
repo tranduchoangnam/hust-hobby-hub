@@ -1,21 +1,21 @@
 // Hobby categories and category detection utility for reuse
 
 export const HOBBY_CATEGORIES = [
-  "All Categories",
-  "Arts & Creativity",
-  "Music",
-  "Literature & Writing",
-  "Performing Arts",
-  "Food & Beverages",
-  "Sports & Fitness",
-  "Travel & Culture",
-  "Nature & Outdoors",
-  "Technology & Gaming",
-  "Media & Entertainment",
-  "Wellness & Spirituality",
-  "Science & Learning",
-  "Collecting & Appreciation",
-  "Social Activities",
+  "🌈 Tất cả danh mục",
+  "🎨 Nghệ thuật & Sáng tạo",
+  "🎵 Âm nhạc",
+  "📚 Văn học & Viết lách",
+  "🎭 Nghệ thuật biểu diễn",
+  "🍜 Ẩm thực & Đồ uống",
+  "🏃‍♂️ Thể thao & Rèn luyện",
+  "✈️ Du lịch & Văn hóa",
+  "🌳 Thiên nhiên & Hoạt động ngoài trời",
+  "💻 Công nghệ & Trò chơi",
+  "🎬 Phim ảnh & Giải trí",
+  "🧘 Sức khỏe & Tâm linh",
+  "🔬 Khoa học & Học tập",
+  "🪙 Sưu tầm & Đam mê",
+  "🤝 Hoạt động xã hội",
 ];
 
 export const getCategoryForHobby = (hobbyName: string): string => {
@@ -45,7 +45,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "craft",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Arts & Creativity";
+    return "🎨 Nghệ thuật & Sáng tạo";
   }
 
   // Music
@@ -72,7 +72,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "musical",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Music";
+    return "🎵 Âm nhạc";
   }
 
   // Literature & Writing
@@ -92,7 +92,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "story",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Literature & Writing";
+    return "📚 Văn học & Viết lách";
   }
 
   // Performing Arts
@@ -111,7 +111,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "circus",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Performing Arts";
+    return "🎭 Nghệ thuật biểu diễn";
   }
 
   // Food & Beverages
@@ -143,7 +143,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "indian",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Food & Beverages";
+    return "🍜 Ẩm thực & Đồ uống";
   }
 
   // Sports & Fitness
@@ -177,7 +177,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "archer",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Sports & Fitness";
+    return "🏃‍♂️ Thể thao & Rèn luyện";
   }
 
   // Travel & Culture
@@ -196,7 +196,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "archaeology",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Travel & Culture";
+    return "✈️ Du lịch & Văn hóa";
   }
 
   // Nature & Outdoors
@@ -216,7 +216,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "conservation",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Nature & Outdoors";
+    return "🌳 Thiên nhiên & Hoạt động ngoài trời";
   }
 
   // Technology & Gaming
@@ -234,7 +234,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "print",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Technology & Gaming";
+    return "💻 Công nghệ & Trò chơi";
   }
 
   // Media & Entertainment
@@ -250,7 +250,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "radio",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Media & Entertainment";
+    return "🎬 Phim ảnh & Giải trí";
   }
 
   // Wellness & Spirituality
@@ -266,7 +266,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "herbal",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Wellness & Spirituality";
+    return "🧘 Sức khỏe & Tâm linh";
   }
 
   // Science & Learning
@@ -284,7 +284,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "math",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Science & Learning";
+    return "🔬 Khoa học & Học tập";
   }
 
   // Collecting & Appreciation
@@ -300,7 +300,7 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "sneaker",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Collecting & Appreciation";
+    return "🪙 Sưu tầm & Đam mê";
   }
 
   // Social Activities
@@ -314,8 +314,8 @@ export const getCategoryForHobby = (hobbyName: string): string => {
       "event plan",
     ].some((term) => lowerName.includes(term))
   ) {
-    return "Social Activities";
+    return "🤝 Hoạt động xã hội";
   }
 
-  return "All Categories";
+  return "🌈 Tất cả danh mục";
 };

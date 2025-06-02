@@ -69,7 +69,7 @@ export default function UserCard({
     <div className="bg-white rounded-[24px] p-6 shadow-md flex flex-col transition-all hover:-translate-y-1 hover:shadow-lg relative overflow-hidden group">
       {/* Decorative background pattern */}
       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-pink-100 to-transparent rounded-bl-full opacity-50"></div>
-      
+
       {/* Compatibility Score Badge - Only show when user is logged in */}
       {session && user.compatibilityScore !== undefined && (
         <div className="relative z-10">
@@ -101,9 +101,7 @@ export default function UserCard({
                 {user.commonHobbies}
               </span>
               <span className="text-sm text-[#666]">
-                {user.commonHobbies === 1
-                  ? "shared interest"
-                  : "shared interests"}
+                {user.commonHobbies === 1 ? "sở thích chung" : "sở thích chung"}
               </span>
             </div>
           </div>
@@ -112,7 +110,7 @@ export default function UserCard({
         {/* Enhanced mutual connections display */}
         {renderMutualDots && (
           <div className="mb-4">
-            {renderMutualDots()}
+            {renderMutualDots(user.commonHobbies ?? 0)}
           </div>
         )}
       </div>
@@ -121,7 +119,9 @@ export default function UserCard({
       <div className="flex-1 mb-4">
         {isBrowse && user.hobbies && user.hobbies.length > 0 && (
           <div>
-            <h3 className="text-sm font-medium text-[#666] mb-2 text-center">Interests</h3>
+            <h3 className="text-sm font-medium text-[#666] mb-2 text-center">
+              Interests
+            </h3>
             <div className="flex flex-wrap gap-2 justify-center">
               {(showAllHobbies ? user.hobbies : user.hobbies.slice(0, 3)).map(
                 (userHobby: any) => (
@@ -162,8 +162,18 @@ export default function UserCard({
               href={`/chat?userId=${user.id}`}
               className="px-4 py-3 bg-white border-2 border-[#FF3366] text-[#FF3366] rounded-full font-medium transition-all hover:bg-[#FF3366] hover:text-white hover:scale-105 transform font-poppins"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
               </svg>
             </Link>
           </>

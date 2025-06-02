@@ -61,11 +61,13 @@ export default function ProfilePage() {
 
   // Filter hobbies based on search query and category
   const filteredHobbies = useMemo(() => {
-    return allHobbies.filter(hobby => {
-      const matchesSearch = searchQuery === "" ||
+    return allHobbies.filter((hobby) => {
+      const matchesSearch =
+        searchQuery === "" ||
         hobby.name.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesCategory = selectedCategory === "All Categories" ||
+      const matchesCategory =
+        selectedCategory === "All Categories" ||
         getCategoryForHobby(hobby.name) === selectedCategory;
 
       return matchesSearch && matchesCategory;
@@ -99,7 +101,7 @@ export default function ProfilePage() {
         setAllHobbies(data);
       } catch (error) {
         console.error("Error fetching hobbies:", error);
-        setError("Failed to load interests. Please refresh and try again.");
+        setError("Không thể tải sở thích. Vui lòng làm mới và thử lại.");
       }
     };
 
@@ -126,7 +128,7 @@ export default function ProfilePage() {
       } catch (error) {
         console.error("Error fetching user hobbies:", error);
         setError(
-          "Failed to load your interests. Please refresh and try again."
+          "Không thể tải sở thích của bạn. Vui lòng làm mới và thử lại."
         );
       } finally {
         setIsLoading(false);
@@ -152,7 +154,9 @@ export default function ProfilePage() {
         setBio(data.bio || "");
       } catch (error) {
         console.error("Error fetching user bio:", error);
-        setBioError("Failed to load your bio. Please refresh and try again.");
+        setBioError(
+          "Không thể tải thông tin giới thiệu của bạn. Vui lòng làm mới và thử lại."
+        );
       }
     };
 
@@ -255,12 +259,12 @@ export default function ProfilePage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update interests");
+        throw new Error(errorData.error || "Không thể cập nhật sở thích");
       }
 
       const data = await response.json();
       setUserHobbies(data.hobbies);
-      setSuccessMessage("Your interests have been updated successfully!");
+      setSuccessMessage("Sở thích của bạn đã được cập nhật thành công!");
 
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -269,7 +273,7 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Error updating hobbies:", error);
       setError(
-        error instanceof Error ? error.message : "Failed to update interests"
+        error instanceof Error ? error.message : "Không thể cập nhật sở thích"
       );
     } finally {
       setIsSaving(false);
@@ -297,12 +301,16 @@ export default function ProfilePage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update bio");
+        throw new Error(
+          errorData.error || "Không thể cập nhật thông tin giới thiệu"
+        );
       }
 
       setIsEditingBio(false);
       // Show success message
-      setSuccessMessage("Your bio has been updated successfully!");
+      setSuccessMessage(
+        "Thông tin giới thiệu của bạn đã được cập nhật thành công!"
+      );
 
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -311,7 +319,9 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Error updating bio:", error);
       setBioError(
-        error instanceof Error ? error.message : "Failed to update bio"
+        error instanceof Error
+          ? error.message
+          : "Không thể cập nhật thông tin giới thiệu"
       );
     } finally {
       setIsSavingBio(false);
@@ -339,32 +349,32 @@ export default function ProfilePage() {
             >
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
-            Back
+            Quay lại
           </button>
           <h1 className="text-2xl font-bold text-[#333] flex-grow text-center mr-12">
-            Your Profile
+            Hồ sơ của bạn
           </h1>
         </div>
 
         {!session ? (
           <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
             <h2 className="text-2xl font-semibold text-[#333] mb-4">
-              Sign In Required
+              Yêu cầu đăng nhập
             </h2>
             <p className="text-[#666] mb-6 max-w-lg mx-auto">
-              Please sign in to view and edit your profile.
+              Vui lòng đăng nhập để xem và chỉnh sửa hồ sơ của bạn.
             </p>
             <button
               onClick={handleLoginClick}
               className="bg-[#FF3366] text-white rounded-2xl py-3 px-8 font-medium transition-all hover:bg-[#E62E5C] shadow-md"
             >
-              Sign In
+              Đăng nhập
             </button>
           </div>
         ) : isLoading ? (
           <div className="text-center py-16">
             <div className="w-16 h-16 border-4 border-[#FF3366] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-[#666]">Loading your profile...</p>
+            <p className="text-[#666]">Đang tải hồ sơ của bạn...</p>
           </div>
         ) : (
           <div className="flex flex-col">
@@ -415,7 +425,7 @@ export default function ProfilePage() {
                 <h2 className="text-4xl font-bold text-[#333] mb-2 font-poppins">
                   {session.user?.name}
                 </h2>
-                
+
                 {/* Email with icon */}
                 <div className="flex items-center justify-center gap-2 text-[#666] mb-4">
                   <svg
@@ -515,7 +525,9 @@ export default function ProfilePage() {
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                       />
                     </svg>
-                    <h3 className="font-bold text-[#333] text-lg">About Me</h3>
+                    <h3 className="font-bold text-[#333] text-lg">
+                      Giới thiệu
+                    </h3>
                   </div>
                   {!isEditingBio ? (
                     <button
@@ -641,7 +653,7 @@ export default function ProfilePage() {
                     onChange={handleBioChange}
                     className="w-full p-4 border-2 border-[#FFD9E4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-white/80 backdrop-blur-sm font-medium resize-none"
                     rows={6}
-                    placeholder="Tell people about yourself... What are your passions? What makes you unique? 🌟"
+                    placeholder="Hãy nói về bản thân... Sở thích của bạn là gì? Điều gì làm bạn trở nên đặc biệt? 🌟"
                   />
                 ) : (
                   <div>
@@ -660,7 +672,7 @@ export default function ProfilePage() {
                               onClick={() => setShowFullBio(true)}
                               className="text-[#FF3366] text-sm mt-2 hover:underline font-medium inline-flex items-center gap-1"
                             >
-                              Read more
+                              Xem thêm
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-3 w-3"
@@ -684,7 +696,7 @@ export default function ProfilePage() {
                             onClick={() => setShowFullBio(false)}
                             className="text-[#FF3366] text-sm mt-2 hover:underline font-medium inline-flex items-center gap-1"
                           >
-                            Show less
+                            Thu gọn
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="h-3 w-3"
@@ -719,8 +731,12 @@ export default function ProfilePage() {
                           />
                         </svg>
                         <div>
-                          <p className="font-medium">No bio yet</p>
-                          <p className="text-sm">Click edit to tell people about yourself!</p>
+                          <p className="font-medium">
+                            Chưa có thông tin giới thiệu
+                          </p>
+                          <p className="text-sm">
+                            Nhấp vào chỉnh sửa để kể về bản thân bạn!
+                          </p>
                         </div>
                       </div>
                     )}
@@ -733,13 +749,17 @@ export default function ProfilePage() {
             <div className="mb-8">
               <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
-                  <h3 className="text-2xl font-bold text-[#333] font-poppins">Your Interests</h3>
+                  <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>{" "}
+                  <h3 className="text-2xl font-bold text-[#333] font-poppins">
+                    Sở thích của bạn
+                  </h3>
                 </div>
                 <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 border border-gray-200 shadow-sm">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className={`h-4 w-4 ${isLimitReached ? "text-red-500" : "text-[#FF3366]"}`}
+                    className={`h-4 w-4 ${
+                      isLimitReached ? "text-red-500" : "text-[#FF3366]"
+                    }`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -752,7 +772,11 @@ export default function ProfilePage() {
                     />
                   </svg>
                   <span className="text-sm font-medium text-[#666]">
-                    <span className={`font-bold ${isLimitReached ? "text-red-500" : "text-[#FF3366]"}`}>
+                    <span
+                      className={`font-bold ${
+                        isLimitReached ? "text-red-500" : "text-[#FF3366]"
+                      }`}
+                    >
                       {selectedHobbyIds.length}
                     </span>
                     <span> / {MAX_INTERESTS}</span>
@@ -817,9 +841,12 @@ export default function ProfilePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-red-600 font-bold mb-1">Maximum limit reached</p>
+                    <p className="text-red-600 font-bold mb-1">
+                      Đã đạt giới hạn tối đa
+                    </p>
                     <p className="text-red-500 text-sm leading-relaxed">
-                      You can select up to {MAX_INTERESTS} interests. Please deselect an interest before selecting another one.
+                      Bạn có thể chọn tối đa {MAX_INTERESTS} sở thích. Vui lòng
+                      bỏ chọn một sở thích trước khi chọn một sở thích khác.
                     </p>
                   </div>
                 </div>
@@ -842,9 +869,12 @@ export default function ProfilePage() {
                     />
                   </svg>
                   <div>
-                    <p className="text-blue-700 font-medium mb-1">Choose your interests wisely!</p>
+                    <p className="text-blue-700 font-medium mb-1">
+                      Hãy chọn sở thích của bạn một cách khôn ngoan!
+                    </p>
                     <p className="text-blue-600 text-sm leading-relaxed">
-                      Your selected interests help us match you with people who share similar passions and hobbies.
+                      Sở thích bạn chọn giúp chúng tôi kết nối bạn với những
+                      người có cùng đam mê và sở thích tương tự.
                     </p>
                   </div>
                 </div>
@@ -860,9 +890,11 @@ export default function ProfilePage() {
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                     </svg>
-                    <h4 className="font-bold text-[#333] text-lg">Your Selected Interests</h4>
+                    <h4 className="font-bold text-[#333] text-lg">
+                      Sở thích đã chọn của bạn
+                    </h4>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {userHobbies
@@ -875,7 +907,9 @@ export default function ProfilePage() {
                             animationDelay: `${index * 100}ms`,
                           }}
                         >
-                          <span className="text-sm font-medium">#{hobby.name}</span>
+                          <span className="text-sm font-medium">
+                            #{hobby.name}
+                          </span>
                           <button
                             onClick={() => toggleHobbySelection(hobby.id)}
                             className="ml-3 flex items-center justify-center hover:bg-white/20 rounded-full w-6 h-6 transition-colors group-hover:rotate-90 transform transition-transform duration-200"
@@ -922,7 +956,7 @@ export default function ProfilePage() {
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                       />
                     </svg>
-                    Search Interests
+                    Tìm kiếm sở thích
                   </label>
                   <div className="relative">
                     <input
@@ -930,7 +964,7 @@ export default function ProfilePage() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Type to search interests..."
+                      placeholder="Nhập để tìm kiếm sở thích..."
                       className="w-full px-4 py-3 pl-12 pr-10 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-gray-50 focus:bg-white font-medium placeholder:text-gray-400"
                     />
                     <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
@@ -991,7 +1025,7 @@ export default function ProfilePage() {
                         d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
                       />
                     </svg>
-                    Filter by Category
+                    Lọc theo danh mục
                   </label>
                   <select
                     id="category-filter"
@@ -1011,8 +1045,8 @@ export default function ProfilePage() {
               {/* Interests Grid */}
               <div
                 className={`rounded-2xl p-6 mb-8 transition-all duration-300 ${
-                  isLimitReached 
-                    ? "border-2 border-red-300 bg-gradient-to-br from-red-50 to-orange-50" 
+                  isLimitReached
+                    ? "border-2 border-red-300 bg-gradient-to-br from-red-50 to-orange-50"
                     : "border-2 border-gray-100 bg-gradient-to-br from-gray-50 to-white"
                 }`}
               >
@@ -1034,8 +1068,12 @@ export default function ProfilePage() {
                         />
                       </svg>
                     </div>
-                    <p className="text-gray-500 font-medium mb-1">No interests found</p>
-                    <p className="text-gray-400 text-sm">Try adjusting your search or filter criteria</p>
+                    <p className="text-gray-500 font-medium mb-1">
+                      Không tìm thấy sở thích nào
+                    </p>
+                    <p className="text-gray-400 text-sm">
+                      Hãy thử điều chỉnh tìm kiếm hoặc tiêu chí lọc của bạn
+                    </p>
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-3">
@@ -1046,7 +1084,9 @@ export default function ProfilePage() {
                       return (
                         <div
                           key={hobby.id}
-                          onClick={() => !isDisabled && toggleHobbySelection(hobby.id)}
+                          onClick={() =>
+                            !isDisabled && toggleHobbySelection(hobby.id)
+                          }
                           className={`py-3 px-6 rounded-xl font-medium transition-all duration-200 cursor-pointer group relative overflow-hidden
                             ${
                               isSelected
@@ -1100,7 +1140,7 @@ export default function ProfilePage() {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      Saving Interests...
+                      Đang lưu sở thích...
                     </>
                   ) : (
                     <>
@@ -1118,7 +1158,7 @@ export default function ProfilePage() {
                           d="M5 13l4 4L19 7"
                         />
                       </svg>
-                      Save Interests
+                      Lưu sở thích
                     </>
                   )}
                 </button>
@@ -1145,18 +1185,22 @@ export default function ProfilePage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#333] mb-2">Smart Compatibility Matching</h3>
+                  <h3 className="text-xl font-bold text-[#333] mb-2">
+                    Kết nối thông minh
+                  </h3>
                   <p className="text-[#666] mb-3 leading-relaxed">
-                    Our advanced algorithm uses your selected interests to find people who share similar passions and hobbies.
+                    Thuật toán nâng cao của chúng tôi sử dụng sở thích bạn đã
+                    chọn để tìm những người có cùng đam mê và sở thích.
                   </p>
                   <p className="text-[#666] mb-4 leading-relaxed">
-                    The more interests you select, the better and more accurate matches we can find for you! ✨
+                    Càng chọn nhiều sở thích, chúng tôi càng có thể tìm ra nhiều
+                    kết nối chính xác và phù hợp hơn cho bạn! ✨
                   </p>
                   <Link
                     href="/"
                     className="inline-flex items-center gap-2 text-[#FF3366] font-bold hover:text-[#E62E5C] transition-colors group"
                   >
-                    <span>Discover Your Matches</span>
+                    <span>Khám phá người phù hợp</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5 group-hover:translate-x-1 transition-transform"
@@ -1183,8 +1227,8 @@ export default function ProfilePage() {
       <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl z-20 border-t border-gray-100">
         <ul className="flex justify-around list-none p-4">
           <li className="flex-1">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
             >
               <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
@@ -1203,7 +1247,7 @@ export default function ProfilePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Browse</span>
+              <span className="text-sm">Duyệt</span>
             </Link>
           </li>
           <li className="flex-1">
@@ -1227,7 +1271,7 @@ export default function ProfilePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-bold">Profile</span>
+              <span className="text-sm font-bold">Hồ sơ</span>
             </Link>
           </li>
           <li className="flex-1">
@@ -1254,7 +1298,7 @@ export default function ProfilePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Chat</span>
+              <span className="text-sm">Trò chuyện</span>
             </Link>
           </li>
           <li className="flex-1">
@@ -1281,7 +1325,7 @@ export default function ProfilePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Note</span>
+              <span className="text-sm">Ghi chú</span>
             </Link>
           </li>
           {session && (
@@ -1306,7 +1350,7 @@ export default function ProfilePage() {
                     />
                   </svg>
                 </div>
-                <span className="text-sm">Logout</span>
+                <span className="text-sm">Đăng xuất</span>
               </button>
             </li>
           )}
@@ -1316,20 +1360,20 @@ export default function ProfilePage() {
       {/* Modals */}
       {showFollowers && (
         <UserList
-          title="Followers"
+          title="Người theo dõi"
           users={followers}
           isLoading={isLoadingFollowers}
-          emptyMessage="You don't have any followers yet."
+          emptyMessage="Bạn chưa có người theo dõi nào."
           onClose={() => setShowFollowers(false)}
         />
       )}
 
       {showFollowing && (
         <UserList
-          title="Following"
+          title="Đang theo dõi"
           users={following}
           isLoading={isLoadingFollowing}
-          emptyMessage="You're not following anyone yet."
+          emptyMessage="Bạn chưa theo dõi ai."
           onClose={() => setShowFollowing(false)}
         />
       )}
@@ -1337,7 +1381,7 @@ export default function ProfilePage() {
       {isLoginModalOpen && (
         <LoginModal onClose={() => setIsLoginModalOpen(false)} />
       )}
-      
+
       {/* Custom CSS for glassmorphism effects */}
       <style jsx>{`
         .backdrop-blur-md {

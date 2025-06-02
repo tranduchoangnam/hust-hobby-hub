@@ -137,7 +137,7 @@ function ChatPageInner() {
             return {
               ...conversation,
               isOnline: data.isOnline,
-              lastActive: data.isOnline ? "now" : "a moment ago",
+              lastActive: data.isOnline ? "Đang hoạt động" : "Vừa xong ",
             };
           }
           return conversation;
@@ -450,19 +450,19 @@ function ChatPageInner() {
               <div className="p-4 border-b border-gray-200 flex-shrink-0">
                 <div className="flex items-center justify-between mb-4">
                   <h1 className="text-xl font-bold text-[#333] font-poppins">
-                    Messages
+                    Tin nhắn
                   </h1>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                     <span className="text-xs text-gray-500 font-poppins">
-                      Online
+                      Trực tuyến
                     </span>
                   </div>
                 </div>
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Search conversations..."
+                    placeholder="Tìm kiếm cuộc trò chuyện..."
                     className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent text-sm font-poppins"
                   />
                   <svg
@@ -481,136 +481,134 @@ function ChatPageInner() {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto">
-                {isLoading ? (
-                  <div className="flex justify-center items-center h-32">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-8 h-8 border-3 border-[#FF3366] border-t-transparent rounded-full animate-spin"></div>
-                      <p className="font-poppins text-gray-600 text-sm">
-                        Loading conversations...
-                      </p>
-                    </div>
+              {isLoading ? (
+                <div className="flex justify-center items-center h-32">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-8 h-8 border-3 border-[#FF3366] border-t-transparent rounded-full animate-spin"></div>
+                    <p className="font-poppins text-gray-600 text-sm">
+                      Đang tải cuộc trò chuyện...
+                    </p>
                   </div>
-                ) : conversations.length > 0 ? (
-                  <ul>
-                    {conversations.map((conversation) => (
-                      <li key={conversation.id}>
-                        <button
-                          onClick={() =>
-                            handleSelectConversation(conversation.id)
-                          }
-                          className={`flex items-center gap-3 p-4 hover:bg-gray-50 transition-all duration-200 w-full text-left border-l-4 ${
-                            selectedUserId === conversation.id
-                              ? "bg-pink-50 border-[#FF3366] shadow-sm"
-                              : "border-transparent hover:border-pink-200"
-                          }`}
-                        >
-                          <Avatar
-                            src={conversation.image}
-                            alt={conversation.name}
-                            size={48}
-                            showOnlineStatus={true}
-                            isOnline={conversation.isOnline}
-                          />
+                </div>
+              ) : conversations.length > 0 ? (
+                <ul>
+                  {conversations.map((conversation) => (
+                    <li key={conversation.id}>
+                      <button
+                        onClick={() =>
+                          handleSelectConversation(conversation.id)
+                        }
+                        className={`flex items-center gap-3 p-4 hover:bg-gray-50 transition-all duration-200 w-full text-left border-l-4 ${
+                          selectedUserId === conversation.id
+                            ? "bg-pink-50 border-[#FF3366] shadow-sm"
+                            : "border-transparent hover:border-pink-200"
+                        }`}
+                      >
+                        <Avatar
+                          src={conversation.image}
+                          alt={conversation.name}
+                          size={48}
+                          showOnlineStatus={true}
+                          isOnline={conversation.isOnline}
+                        />
 
-                          <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start">
-                              <h3
-                                className={`font-medium truncate font-poppins ${
-                                  conversation.unreadCount > 0
-                                    ? "text-gray-900 font-semibold"
-                                    : "text-gray-700"
-                                }`}
-                              >
-                                {conversation.name}
-                              </h3>
-                              <div className="flex flex-col items-end gap-1">
-                                <span className="text-xs text-gray-500 font-poppins">
-                                  {conversation.lastActive}
-                                </span>
-                                {conversation.unreadCount > 0 && (
-                                  <div className="bg-[#FF3366] text-white text-xs font-medium rounded-full px-2 py-1 min-w-[20px] flex items-center justify-center font-poppins animate-pulse">
-                                    {conversation.unreadCount}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2 mt-1">
-                              <p
-                                className={`text-sm truncate font-poppins ${
-                                  conversation.unreadCount > 0
-                                    ? "text-gray-700 font-medium"
-                                    : "text-gray-500"
-                                }`}
-                              >
-                                {conversation.lastMessage}
-                              </p>
-                              {conversation.lastMessage && (
-                                <div className="flex-shrink-0">
-                                  <svg
-                                    className="w-3 h-3 text-gray-400"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start">
+                            <h3
+                              className={`font-medium truncate font-poppins ${
+                                conversation.unreadCount > 0
+                                  ? "text-gray-900 font-semibold"
+                                  : "text-gray-700"
+                              }`}
+                            >
+                              {conversation.name}
+                            </h3>
+                            <div className="flex flex-col items-end gap-1">
+                              <span className="text-xs text-gray-500 font-poppins">
+                                {conversation.lastActive}
+                              </span>
+                              {conversation.unreadCount > 0 && (
+                                <div className="bg-[#FF3366] text-white text-xs font-medium rounded-full px-2 py-1 min-w-[20px] flex items-center justify-center font-poppins animate-pulse">
+                                  {conversation.unreadCount}
                                 </div>
                               )}
                             </div>
                           </div>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="flex flex-col items-center justify-center p-8 text-center h-64">
-                    <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-pink-200 rounded-full flex items-center justify-center mb-4">
-                      <svg
-                        className="w-8 h-8 text-pink-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                        />
-                      </svg>
-                    </div>
-                    <p className="text-gray-500 mb-4 font-poppins font-medium">
-                      No conversations yet.
-                    </p>
-                    <p className="text-gray-400 mb-4 font-poppins text-sm">
-                      Start chatting with people who share your interests!
-                    </p>
-                    <Link
-                      href="/"
-                      className="inline-flex items-center gap-2 text-[#FF3366] hover:text-[#E62E5C] font-poppins font-medium transition-colors"
+                          <div className="flex items-center gap-2 mt-1">
+                            <p
+                              className={`text-sm truncate font-poppins ${
+                                conversation.unreadCount > 0
+                                  ? "text-gray-700 font-medium"
+                                  : "text-gray-500"
+                              }`}
+                            >
+                              {conversation.lastMessage}
+                            </p>
+                            {conversation.lastMessage && (
+                              <div className="flex-shrink-0">
+                                <svg
+                                  className="w-3 h-3 text-gray-400"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-8 text-center h-64">
+                  <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-pink-200 rounded-full flex items-center justify-center mb-4">
+                    <svg
+                      className="w-8 h-8 text-pink-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4v16m8-8H4"
-                        />
-                      </svg>
-                      Find people to chat with
-                    </Link>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
+                    </svg>
                   </div>
-                )}
-              </div>
+                  <p className="text-gray-500 mb-4 font-poppins font-medium">
+                    Chưa có cuộc trò chuyện nào.
+                  </p>
+                  <p className="text-gray-400 mb-4 font-poppins text-sm">
+                    Bắt đầu trò chuyện với những người có cùng sở thích!
+                  </p>
+                  <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 text-[#FF3366] hover:text-[#E62E5C] font-poppins font-medium transition-colors"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Tìm người để trò chuyện
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Chat Area */}
@@ -636,7 +634,7 @@ function ChatPageInner() {
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                             <p className="text-xs text-green-600 font-poppins font-medium">
-                              Online now
+                              Đang hoạt động
                             </p>
                           </div>
                         </div>
@@ -687,7 +685,7 @@ function ChatPageInner() {
                             className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full hover:from-pink-600 hover:to-red-600 transition-all shadow-md hover:shadow-lg font-poppins"
                           >
                             <span>❤️</span>
-                            <span className="font-medium">Note</span>
+                            <span className="font-medium">Ghi chú</span>
                           </button>
                         )}
 
@@ -805,7 +803,7 @@ function ChatPageInner() {
                           type="text"
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
-                          placeholder="Type a message..."
+                          placeholder="Nhập tin nhắn..."
                           className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent bg-gray-50 focus:bg-white transition-all text-sm font-poppins"
                         />
                         <button
@@ -872,10 +870,10 @@ function ChatPageInner() {
                     </svg>
                   </div>
                   <h3 className="text-xl font-semibold text-gray-700 mb-2 font-poppins">
-                    Start a conversation
+                    Bắt đầu một cuộc trò chuyện
                   </h3>
                   <p className="text-gray-500 font-poppins">
-                    Select a conversation from the sidebar to start chatting
+                    Chọn một cuộc trò chuyện từ thanh bên để bắt đầu trò chuyện
                   </p>
                 </div>
               )}
@@ -923,7 +921,7 @@ function ChatPageInner() {
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                             <p className="text-xs text-green-600 font-poppins font-medium">
-                              Online now
+                              Đang trực tuyến
                             </p>
                           </div>
                         </div>
@@ -1054,7 +1052,7 @@ function ChatPageInner() {
                           type="text"
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
-                          placeholder="Type a message..."
+                          placeholder="Nhập tin nhắn..."
                           className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent bg-gray-50 focus:bg-white transition-all text-sm font-poppins"
                         />
                         <button
@@ -1107,9 +1105,11 @@ function ChatPageInner() {
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center text-gray-500">
                     <p className="text-lg mb-2">
-                      Select a conversation to start chatting
+                      Chọn một cuộc trò chuyện để bắt đầu
                     </p>
-                    <p className="text-sm">Your messages will appear here</p>
+                    <p className="text-sm">
+                      Tin nhắn của bạn sẽ hiển thị ở đây
+                    </p>
                   </div>
                 </div>
               )}
@@ -1134,7 +1134,7 @@ function ChatPageInner() {
                 </svg>
               </div>
               <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
-                Daily Note
+                Ghi Chú Hàng Ngày
               </h2>
               <p className="text-gray-700 mt-2 font-poppins">
                 {loveNote.question}
@@ -1144,7 +1144,7 @@ function ChatPageInner() {
             {/* My Answer */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
-                Your Answer
+                Câu trả lời của bạn
               </label>
               {(session?.user?.id === loveNote.senderId &&
                 loveNote.senderAnswer) ||
@@ -1159,7 +1159,7 @@ function ChatPageInner() {
                 <textarea
                   value={loveNoteAnswer}
                   onChange={(e) => setLoveNoteAnswer(e.target.value)}
-                  placeholder="Take a moment to reflect..."
+                  placeholder="Hãy dành một chút thời gian để suy ngẫm..."
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF3366] font-poppins"
                   rows={4}
                 />
@@ -1169,7 +1169,7 @@ function ChatPageInner() {
             {/* Partner's Answer */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
-                {selectedUser?.name}'s Answer
+                Câu trả lời của {selectedUser?.name}
               </label>
               {(session?.user?.id === loveNote.senderId &&
                 loveNote.recipientAnswer) ||
@@ -1194,7 +1194,7 @@ function ChatPageInner() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span>Waiting for response...</span>
+                  <span>Đang chờ phản hồi...</span>
                 </div>
               )}
             </div>
@@ -1211,14 +1211,14 @@ function ChatPageInner() {
                   disabled={!loveNoteAnswer.trim()}
                   className="bg-[#FF3366] text-white rounded-xl px-6 py-2 font-medium disabled:opacity-50 font-poppins"
                 >
-                  Share
+                  Chia sẻ
                 </button>
               )}
               <button
                 onClick={() => setShowLoveNote(false)}
                 className="text-gray-500 rounded-xl px-6 py-2 font-medium font-poppins"
               >
-                Close
+                Đóng
               </button>
             </div>
           </div>
@@ -1234,10 +1234,10 @@ function ChatPageInner() {
                 <span className="text-3xl">🔥</span>
               </div>
               <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
-                Chat Streak Stats
+                Thống Kê Chuỗi Trò Chuyện
               </h2>
               <p className="text-gray-700 mt-2 font-poppins">
-                Your conversation streak with {selectedUser?.name}
+                Chuỗi trò chuyện của bạn với {selectedUser?.name}
               </p>
             </div>
 
@@ -1247,13 +1247,13 @@ function ChatPageInner() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm opacity-90 font-poppins">
-                      Current Streak
+                      Chuỗi Hiện Tại
                     </p>
                     <p className="text-3xl font-bold font-poppins">
                       {streakInfo.currentStreak}
                     </p>
                     <p className="text-sm opacity-90 font-poppins">
-                      {streakInfo.currentStreak === 1 ? "day" : "days"}
+                      {streakInfo.currentStreak === 1 ? "ngày" : "ngày"}
                     </p>
                   </div>
                   <div className="text-4xl">🔥</div>
@@ -1265,13 +1265,13 @@ function ChatPageInner() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-amber-600 font-poppins">
-                      Longest Streak
+                      Chuỗi Dài Nhất
                     </p>
                     <p className="text-3xl font-bold text-amber-700 font-poppins">
                       {streakInfo.longestStreak}
                     </p>
                     <p className="text-sm text-amber-600 font-poppins">
-                      {streakInfo.longestStreak === 1 ? "day" : "days"}
+                      {streakInfo.longestStreak === 1 ? "ngày" : "ngày"}
                     </p>
                   </div>
                   <div className="text-4xl">🏆</div>
@@ -1284,7 +1284,7 @@ function ChatPageInner() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-blue-600 font-poppins">
-                        Last Chat
+                        Trò Chuyện Gần Nhất
                       </p>
                       <p className="text-lg font-semibold text-blue-700 font-poppins">
                         {new Date(streakInfo.lastChatDate).toLocaleDateString()}
@@ -1300,15 +1300,15 @@ function ChatPageInner() {
             <div className="text-center mb-6">
               {streakInfo.currentStreak === 0 ? (
                 <p className="text-gray-600 font-poppins">
-                  Start a new streak by chatting today! 💬
+                  Bắt đầu chuỗi mới bằng cách trò chuyện ngay hôm nay! 💬
                 </p>
               ) : streakInfo.currentStreak < 7 ? (
                 <p className="text-gray-600 font-poppins">
-                  Keep it up! You're building a great connection! 🚀
+                  Tiếp tục nhé! Bạn đang xây dựng một kết nối tuyệt vời! 🚀
                 </p>
               ) : (
                 <p className="text-gray-600 font-poppins">
-                  Amazing streak! You two really click! ⭐
+                  Chuỗi ấn tượng! Hai bạn thật sự hợp nhau! ⭐
                 </p>
               )}
             </div>
@@ -1318,7 +1318,7 @@ function ChatPageInner() {
                 onClick={() => setShowStreakModal(false)}
                 className="bg-[#FF3366] text-white rounded-xl px-8 py-2 font-medium font-poppins hover:bg-[#E62E5C] transition-colors"
               >
-                Close
+                Đóng
               </button>
             </div>
           </div>
@@ -1349,7 +1349,7 @@ function ChatPageInner() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Browse</span>
+              <span className="text-sm">Khám phá</span>
             </Link>
           </li>
           <li className="flex-1">
@@ -1373,7 +1373,7 @@ function ChatPageInner() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Profile</span>
+              <span className="text-sm">Hồ sơ</span>
             </Link>
           </li>
           <li className="flex-1">
@@ -1397,7 +1397,7 @@ function ChatPageInner() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-bold">Chat</span>
+              <span className="text-sm font-bold">Trò chuyện</span>
             </Link>
           </li>
           <li className="flex-1">
@@ -1421,7 +1421,7 @@ function ChatPageInner() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Note</span>
+              <span className="text-sm">Ghi chú</span>
             </Link>
           </li>
           {session && (
@@ -1446,7 +1446,7 @@ function ChatPageInner() {
                     />
                   </svg>
                 </div>
-                <span className="text-sm">Logout</span>
+                <span className="text-sm">Đăng xuất</span>
               </button>
             </li>
           )}

@@ -14,13 +14,13 @@ function formatLastActive(lastMessageTime: Date): string {
   if (diffMinutes < 1) {
     return "Just now";
   } else if (diffMinutes < 60) {
-    return `${diffMinutes}m ago`;
+    return `${diffMinutes} phút trước`;
   } else if (diffHours < 24) {
-    return `${diffHours}h ago`;
+    return `${diffHours} giờ trước`;
   } else if (diffDays === 1) {
     return "Yesterday";
   } else if (diffDays < 7) {
-    return `${diffDays}d ago`;
+    return `${diffDays} ngày trước`;
   } else {
     return lastMessageTime.toLocaleDateString();
   }

@@ -55,7 +55,8 @@ export default function Home() {
   const [showOnlyUserInterests, setShowOnlyUserInterests] =
     useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedCategory, setSelectedCategory] =
+    useState("🌈 Tất cả danh mục");
 
   // Pagination state for users
   const [currentPage, setCurrentPage] = useState(1);
@@ -185,7 +186,7 @@ export default function Home() {
     }
 
     // Filter theo category
-    if (selectedCategory !== "All Categories") {
+    if (selectedCategory !== "🌈 Tất cả danh mục") {
       filteredHobbies = filteredHobbies.filter(
         (hobby) => getCategoryForHobby(hobby.name) === selectedCategory
       );
@@ -255,7 +256,7 @@ export default function Home() {
 
     return (
       <div className={`px-3 py-1 rounded-full text-sm font-semibold ${color}`}>
-        {score}% Match
+        {score}% Điểm
       </div>
     );
   };
@@ -270,20 +271,22 @@ export default function Home() {
         <header className="text-center mb-10">
           <div className="relative mb-6">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FF3366] via-[#FF6B98] to-[#FFB3C1] text-transparent bg-clip-text mb-4 font-poppins">
-              Find Your Connection
+              Tìm kiếm Bạn Bè
             </h1>
             <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full opacity-20 animate-pulse"></div>
             <div className="absolute -bottom-1 -left-3 w-6 h-6 bg-gradient-to-r from-[#FFB3C1] to-[#FF6B8A] rounded-full opacity-30 animate-pulse animation-delay-1s"></div>
           </div>
           <p className="text-xl text-[#666] mb-8 font-medium">
-            Discover people who share your passions ✨
+            Khám phá những người có cùng sở thích với bạn ✨
           </p>
-          
+
           {/* Status indicator */}
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-sm text-[#666] font-medium">
-              {session ? `Welcome back, ${session.user?.name?.split(' ')[0]}!` : 'Ready to connect'}
+              {session
+                ? `Welcome back, ${session.user?.name?.split(" ")[0]}!`
+                : "Ready to connect"}
             </span>
           </div>
         </header>
@@ -314,7 +317,7 @@ export default function Home() {
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
-                Browse by Interest
+                Khám Phá Theo Sở Thích
               </button>
               <button
                 className={`px-8 py-3 rounded-xl transition-all duration-300 font-medium flex items-center gap-2 ${
@@ -338,7 +341,7 @@ export default function Home() {
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                   />
                 </svg>
-                Best Matches
+                Tương Thích
               </button>
             </div>
           </div>
@@ -366,17 +369,18 @@ export default function Home() {
                 </svg>
               </div>
               <div className="flex-grow">
-                <h3 className="font-bold text-[#333] mb-2 text-lg">
-                  Set up your interests first! 🎯
+                <h3 className="font-semibold text-[#333] mb-1">
+                  Thêm sở thích để tìm kiếm những người bạn
                 </h3>
-                <p className="text-[#666] mb-4 leading-relaxed">
-                  To see your compatibility matches, you need to select your interests in your profile. This helps us find people who share your passions!
+                <p className="text-sm text-[#666] mb-2">
+                  Để tìm kiếm những người bạn tuyệt vời, hãy thêm sở thích vào
+                  hồ sơ của bạn.
                 </p>
                 <Link
                   href="/profile"
                   className="inline-flex items-center gap-2 text-[#FF3366] font-bold hover:text-[#E62E5C] transition-colors group"
                 >
-                  <span>Complete Your Profile</span>
+                  <span>Hoàn thành hồ sơ</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5 group-hover:translate-x-1 transition-transform"
@@ -406,7 +410,7 @@ export default function Home() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for interests..."
+                  placeholder="Tìm kiếm theo sở thích..."
                   className="w-full px-6 py-4 pl-14 pr-12 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-gray-50 focus:bg-white font-medium placeholder:text-gray-400 shadow-sm"
                 />
                 <div className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -493,7 +497,7 @@ export default function Home() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span>My Interests</span>
+                      <span>Sở thích của tôi</span>
                     </>
                   ) : (
                     <>
@@ -509,7 +513,7 @@ export default function Home() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span>All Interests</span>
+                      <span>Tất cả sở thích</span>
                     </>
                   )}
                 </button>
@@ -522,14 +526,15 @@ export default function Home() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
                   <h2 className="text-2xl font-bold text-[#333] font-poppins">
-                    {session && showOnlyUserInterests ? 'Your Interests' : 'Explore Interests'}
+                    {session && showOnlyUserInterests
+                      ? "Your Interests"
+                      : "Explore Interests"}
                   </h2>
                 </div>
                 <p className="text-[#666] font-medium">
-                  {session && showOnlyUserInterests 
-                    ? 'Click on any of your interests to find like-minded people'
-                    : 'Choose an interest to discover people who share your passion'
-                  }
+                  {session && showOnlyUserInterests
+                    ? "Click on any of your interests to find like-minded people"
+                    : "Choose an interest to discover people who share your passion"}
                 </p>
               </div>
 
@@ -555,7 +560,7 @@ export default function Home() {
                     {selectedHobby === hobby.id && (
                       <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
                     )}
-                    
+
                     {/* Subtle glow effect for selected hobby */}
                     {selectedHobby === hobby.id && (
                       <div className="absolute -inset-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-2xl blur opacity-30 -z-10"></div>
@@ -588,15 +593,15 @@ export default function Home() {
                         d="M15 19l-7-7 7-7"
                       />
                     </svg>
-                    Previous
+                    Trước
                   </button>
-                  
+
                   <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
                     <span className="text-[#666] font-medium">
-                      Page {currentInterestPage} of {totalInterestPages}
+                      Trang {currentInterestPage} / {totalInterestPages}
                     </span>
                   </div>
-                  
+
                   <button
                     onClick={() =>
                       setCurrentInterestPage((prev) =>
@@ -606,7 +611,7 @@ export default function Home() {
                     disabled={currentInterestPage === totalInterestPages}
                     className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#FF3366] border-2 border-[#FF3366] font-medium transition-all duration-200 hover:bg-[#FFF0F3] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                   >
-                    Next
+                    Sau
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4"
@@ -661,14 +666,15 @@ export default function Home() {
                       </svg>
                     )}
                   </div>
-                  
+
                   {searchQuery ? (
                     <div>
                       <p className="text-[#666] mb-3 font-medium">
-                        No interests found matching "{searchQuery}".
+                        Không có sở thích "{searchQuery}".
                       </p>
                       <p className="text-[#999] text-sm">
-                        Try adjusting your search terms or explore other categories
+                        Hãy thử tìm kiếm khác hoặc chọn một sở thích từ danh
+                        sách.
                       </p>
                     </div>
                   ) : session && showOnlyUserInterests ? (
@@ -680,7 +686,7 @@ export default function Home() {
                         href="/profile"
                         className="inline-flex items-center gap-2 text-[#FF3366] font-bold hover:text-[#E62E5C] transition-colors group"
                       >
-                        <span>Add Interests to Your Profile</span>
+                        <span>Thêm sở thích vào hồ sơ của bạn</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5 group-hover:translate-x-1 transition-transform"
@@ -700,10 +706,11 @@ export default function Home() {
                   ) : (
                     <div>
                       <p className="text-[#666] mb-3 font-medium">
-                        No interests available in this category.
+                        Không có sở thích nào phù hợp với bộ lọc hiện tại.
                       </p>
                       <p className="text-[#999] text-sm">
-                        Try selecting a different category or search term
+                        Hãy thử chọn một sở thích khác hoặc xóa bộ lọc để xem
+                        tất cả sở thích.
                       </p>
                     </div>
                   )}
@@ -720,8 +727,13 @@ export default function Home() {
                       <div className="w-20 h-20 border-4 border-[#FF3366]/20 border-t-[#FF3366] rounded-full animate-spin mx-auto"></div>
                       <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-t-[#FF6B8A] rounded-full animate-spin animation-delay-150 mx-auto"></div>
                     </div>
-                    <h3 className="text-lg font-semibold text-[#333] mb-2">Finding amazing people...</h3>
-                    <p className="text-[#666] font-medium">Discovering users who share your interests</p>
+                    <h3 className="text-lg font-semibold text-[#333] mb-2">
+                      Đang tải người dùng...
+                    </h3>
+                    <p className="text-[#666] font-medium">
+                      Vui lòng đợi trong giây lát, chúng tôi đang tìm kiếm những
+                      người dùng có sở thích này.
+                    </p>
                   </div>
                 ) : users.length === 0 ? (
                   <div className="text-center py-16 bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] rounded-2xl shadow-sm border border-[#FFD6DD]">
@@ -742,16 +754,18 @@ export default function Home() {
                       </svg>
                     </div>
                     <h2 className="text-2xl font-bold text-[#333] mb-3">
-                      No users found
+                      Không có người dùng nào có sở thích này
                     </h2>
                     <p className="text-[#666] mb-6 max-w-lg mx-auto leading-relaxed">
-                      There are no users matching this interest right now. Try selecting another interest or check back later when more people join!
+                      Hiện tại không có người dùng nào chia sẻ sở thích này. Hãy
+                      thử chọn một sở thích khác hoặc thêm sở thích của bạn để
+                      tìm kiếm những người bạn mới.
                     </p>
                     <button
                       onClick={() => setSelectedHobby(null)}
                       className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white px-6 py-3 rounded-xl font-medium transition-all hover:from-[#E62E5C] hover:to-[#FF5577] shadow-lg hover:shadow-xl"
                     >
-                      Explore Other Interests
+                      Quay lại danh sách sở thích
                     </button>
                   </div>
                 ) : (
@@ -760,11 +774,14 @@ export default function Home() {
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
                         <h2 className="text-2xl font-bold text-[#333] font-poppins">
-                          People with this interest
+                          {users.length} Người dùng có sở thích{" "}
+                          <span className="text-[#FF3366]">
+                            #{selectedHobby}
+                          </span>
                         </h2>
                       </div>
                       <p className="text-[#666] font-medium">
-                        Found {totalUsers} {totalUsers === 1 ? 'person' : 'people'} who share this passion
+                        Đã tìm {totalUsers} người có cùng sở thích này.
                       </p>
                     </div>
 
@@ -780,7 +797,9 @@ export default function Home() {
                           {/* Compatibility Score Badge - Only show when user is logged in */}
                           {session && user.compatibilityScore !== undefined && (
                             <div className="absolute right-4 top-4 z-10">
-                              {renderCompatibilityBadge(user.compatibilityScore)}
+                              {renderCompatibilityBadge(
+                                user.compatibilityScore
+                              )}
                             </div>
                           )}
 
@@ -807,7 +826,7 @@ export default function Home() {
                               <h2 className="text-xl font-bold text-[#333] mb-3 text-center group-hover:text-[#FF3366] transition-colors duration-200">
                                 {user.name}
                               </h2>
-                              
+
                               <p className="text-sm text-[#666] mb-6 text-center font-medium">
                                 {user.hobbies.length > 0
                                   ? `${user.hobbies[0].hobby.name} ${
@@ -817,7 +836,7 @@ export default function Home() {
                                         ? user.hobbies[1].hobby.name
                                         : ""
                                     } enthusiast`
-                                  : "New to the community"}
+                                  : "Mới tham gia"}
                               </p>
 
                               <div className="flex flex-wrap justify-center gap-2 mb-6">
@@ -860,8 +879,8 @@ export default function Home() {
                                     </div>
                                     <span className="text-sm text-[#666] font-medium">
                                       {user.commonHobbies === 1
-                                        ? "shared interest"
-                                        : "shared interests"}
+                                        ? "sở thích chung"
+                                        : "sở thích chung"}
                                     </span>
                                   </>
                                 ) : (
@@ -886,11 +905,11 @@ export default function Home() {
                                       </span>
                                     </div>
                                     <span className="text-sm text-[#666] font-medium">
-                                      interests shown
+                                      Thể hiện sự quan tâm
                                     </span>
                                   </>
                                 )}
-                                
+
                                 <div className="ml-auto">
                                   {renderMutualDots(
                                     session && user.commonHobbies !== undefined
@@ -923,10 +942,12 @@ export default function Home() {
                                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                                     />
                                   </svg>
-                                  Profile
+                                  Hồ sơ
                                 </Link>
                                 <Link
-                                  href={session ? `/chat?userId=${user.id}` : "#"}
+                                  href={
+                                    session ? `/chat?userId=${user.id}` : "#"
+                                  }
                                   onClick={(e) =>
                                     !session &&
                                     (e.preventDefault(), handleLoginClick())
@@ -947,7 +968,7 @@ export default function Home() {
                                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                                     />
                                   </svg>
-                                  Chat
+                                  Trò chuyện
                                 </Link>
                               </div>
                             </div>
@@ -980,15 +1001,15 @@ export default function Home() {
                               d="M15 19l-7-7 7-7"
                             />
                           </svg>
-                          Previous
+                          Trước
                         </button>
-                        
+
                         <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
                           <span className="text-[#666] font-medium">
-                            Page {currentPage} of {totalPages}
+                            Trang {currentPage} / {totalPages}
                           </span>
                         </div>
-                        
+
                         <button
                           onClick={() =>
                             setCurrentPage((prev) =>
@@ -998,7 +1019,7 @@ export default function Home() {
                           disabled={currentPage === totalPages}
                           className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#FF3366] border-2 border-[#FF3366] font-medium transition-all duration-200 hover:bg-[#FFF0F3] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                         >
-                          Next
+                          Sau
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="h-4 w-4"
@@ -1029,12 +1050,12 @@ export default function Home() {
               <div className="flex items-center justify-center gap-3 mb-4">
                 <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
                 <h2 className="text-3xl font-bold text-[#333] font-poppins">
-                  Your Best Matches
+                  Người phù hợp nhất với bạn
                 </h2>
                 <div className="w-2 h-8 bg-gradient-to-b from-[#FF6B8A] to-[#FF3366] rounded-full"></div>
               </div>
               <p className="text-[#666] font-medium text-lg">
-                Discover people who share the most interests with you ✨
+                Khám phá những người có cùng sở thích với bạn ✨
               </p>
             </div>
 
@@ -1057,16 +1078,17 @@ export default function Home() {
                   </svg>
                 </div>
                 <h2 className="text-2xl font-bold text-[#333] mb-4">
-                  Find Your Best Matches
+                  Đăng nhập để tìm người phù hợp
                 </h2>
                 <p className="text-[#666] mb-8 max-w-lg mx-auto leading-relaxed">
-                  Sign in to see people who share your interests and are most compatible with you. Discover your perfect hobby partners!
+                  Đăng nhập để xem những người dùng có sở thích tương đồng với
+                  bạn. Tạo kết nối và khám phá những người bạn mới!
                 </p>
                 <button
                   onClick={handleLoginClick}
                   className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white rounded-2xl py-4 px-8 font-bold transition-all hover:from-[#E62E5C] hover:to-[#FF5577] shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
-                  Sign In to Discover Matches
+                  Đăng nhập ngay
                 </button>
               </div>
             ) : isLoading ? (
@@ -1075,8 +1097,12 @@ export default function Home() {
                   <div className="w-20 h-20 border-4 border-[#FF3366]/20 border-t-[#FF3366] rounded-full animate-spin mx-auto"></div>
                   <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-t-[#FF6B8A] rounded-full animate-spin animation-delay-150 mx-auto"></div>
                 </div>
-                <h3 className="text-lg font-semibold text-[#333] mb-2">Finding your perfect matches...</h3>
-                <p className="text-[#666] font-medium">Analyzing compatibility based on your interests</p>
+                <h3 className="text-lg font-semibold text-[#333] mb-2">
+                  Đang tải...
+                </h3>
+                <p className="text-[#666] font-medium">
+                  Phân tích khả năng tương thích dựa trên sở thích của bạn
+                </p>
               </div>
             ) : compatibleUsers.length === 0 ? (
               <div className="text-center py-16 bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] rounded-2xl shadow-sm border border-[#FFD6DD]">
@@ -1097,10 +1123,12 @@ export default function Home() {
                   </svg>
                 </div>
                 <h2 className="text-2xl font-bold text-[#333] mb-4">
-                  No Matches Found Yet
+                  Không có người dùng phù hợp
                 </h2>
                 <p className="text-[#666] mb-8 max-w-lg mx-auto leading-relaxed">
-                  We couldn't find any users who share your interests yet. Add more hobbies to your profile or check back later when more people join!
+                  Hiện tại không có người dùng nào có sở thích tương đồng với
+                  bạn. Hãy thử thêm sở thích mới hoặc mời bạn bè tham gia để
+                  tăng cơ hội kết nối!
                 </p>
                 <Link
                   href="/profile"
@@ -1120,7 +1148,7 @@ export default function Home() {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
                   </svg>
-                  Add More Interests
+                  Thêm sở thích vào hồ sơ của bạn
                 </Link>
               </div>
             ) : (
@@ -1128,7 +1156,7 @@ export default function Home() {
                 <div className="mb-8">
                   <div className="text-center">
                     <p className="text-[#666] font-medium">
-                      Found {compatibleUsers.length} compatible {compatibleUsers.length === 1 ? 'person' : 'people'} for you
+                      Đã tìm thấy {compatibleUsers.length} người phù hợp với bạn
                     </p>
                   </div>
                 </div>
@@ -1191,8 +1219,8 @@ export default function Home() {
                           </div>
                           <span className="text-sm text-[#666] font-medium">
                             {user.commonHobbies === 1
-                              ? "shared interest"
-                              : "shared interests"}
+                              ? "sở thích chung"
+                              : "sở thích chung"}
                           </span>
                         </div>
 
@@ -1231,7 +1259,7 @@ export default function Home() {
                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                               />
                             </svg>
-                            Profile
+                            Hồ sơ
                           </Link>
                           <Link
                             href={`/chat?userId=${user.id}`}
@@ -1251,7 +1279,7 @@ export default function Home() {
                                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                               />
                             </svg>
-                            Chat
+                            Trò chuyện
                           </Link>
                         </div>
                       </div>
@@ -1285,15 +1313,15 @@ export default function Home() {
                           d="M15 19l-7-7 7-7"
                         />
                       </svg>
-                      Previous
+                      Trước
                     </button>
-                    
+
                     <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl">
                       <span className="text-[#666] font-medium">
-                        Page {currentCompatiblePage} of {totalCompatiblePages}
+                        Trang {currentCompatiblePage} / {totalCompatiblePages}
                       </span>
                     </div>
-                    
+
                     <button
                       onClick={() =>
                         setCurrentCompatiblePage((prev) =>
@@ -1303,7 +1331,7 @@ export default function Home() {
                       disabled={currentCompatiblePage === totalCompatiblePages}
                       className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-[#FF3366] border-2 border-[#FF3366] font-medium transition-all duration-200 hover:bg-[#FFF0F3] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                     >
-                      Next
+                      Sau
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-4 w-4"
@@ -1331,8 +1359,8 @@ export default function Home() {
       <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl z-20 border-t border-gray-100">
         <ul className="flex justify-around list-none p-4">
           <li className="flex-1">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="flex items-center justify-center gap-2 text-[#FF3366] font-medium no-underline p-3 rounded-xl transition-all duration-200 hover:bg-[#FF3366]/10"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-[#FF3366] to-[#FF6B8A] rounded-xl flex items-center justify-center shadow-md">
@@ -1351,14 +1379,16 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-bold">Browse</span>
+              <span className="text-sm font-bold">Trang chủ</span>
             </Link>
           </li>
           <li className="flex-1">
             <Link
               href="/profile"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
-              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+              onClick={(e) =>
+                !session && (e.preventDefault(), handleLoginClick())
+              }
             >
               <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
                 <svg
@@ -1376,14 +1406,16 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Profile</span>
+              <span className="text-sm">Hồ sơ</span>
             </Link>
           </li>
           <li className="flex-1">
             <Link
               href="/chat"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
-              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+              onClick={(e) =>
+                !session && (e.preventDefault(), handleLoginClick())
+              }
             >
               <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
                 <svg
@@ -1401,14 +1433,16 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Chat</span>
+              <span className="text-sm">Trò chuyện</span>
             </Link>
           </li>
           <li className="flex-1">
             <Link
               href="/love-note"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
-              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+              onClick={(e) =>
+                !session && (e.preventDefault(), handleLoginClick())
+              }
             >
               <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
                 <svg
@@ -1426,7 +1460,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Love Note</span>
+              <span className="text-sm">Ghi chú</span>
             </Link>
           </li>
           {session && (
@@ -1451,7 +1485,7 @@ export default function Home() {
                     />
                   </svg>
                 </div>
-                <span className="text-sm">Logout</span>
+                <span className="text-sm">Đăng xuất</span>
               </button>
             </li>
           )}
@@ -1499,10 +1533,10 @@ export default function Home() {
           transform: rotate(90deg);
         }
         .group:hover .group-hover\\:from-\\[\\#FF3366\\] {
-          background: linear-gradient(to right, #FF3366, #FF6B8A);
+          background: linear-gradient(to right, #ff3366, #ff6b8a);
         }
         .group:hover .group-hover\\:to-\\[\\#FF6B8A\\] {
-          background: linear-gradient(to right, #FF3366, #FF6B8A);
+          background: linear-gradient(to right, #ff3366, #ff6b8a);
         }
         .group:hover .group-hover\\:text-white {
           color: white;
