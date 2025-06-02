@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node --loader ts-node/esm server.js",
     "build": "next build",
-    "start": "node server.js",
+    "start": "node --loader ts-node/esm server.js",
     "lint": "next lint",
     "seed": "prisma db seed"
   },

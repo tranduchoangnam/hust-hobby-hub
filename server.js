@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
+import { prisma } from "./src/lib/prisma.ts";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "0.0.0.0";
