@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import LoginModal from "@/components/LoginModal";
+import Avatar from "@/components/Avatar";
 
 type CompatibleUser = {
   id: string;
@@ -152,15 +153,14 @@ export default function CompatibilityPage() {
                   </div>
 
                   <div className="w-20 h-20 rounded-full bg-[#f5f5f5] mb-4 self-center overflow-hidden border-2 border-white shadow-sm">
-                    {user.image && (
-                      <Image
-                        src={user.image}
-                        alt={user.name || "User profile"}
-                        width={80}
-                        height={80}
-                        className="object-cover w-full h-full"
-                      />
-                    )}
+                    <Avatar
+                      src={user.image}
+                      alt={user.name || "User profile"}
+                      size={80}
+                      className=""
+                      showOnlineStatus={true}
+                      isOnline={Math.random() > 0.5} // Random online status for demo
+                    />
                   </div>
 
                   <h2 className="text-xl font-semibold text-[#333] mb-2 text-center">
@@ -216,58 +216,153 @@ export default function CompatibilityPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md z-10">
+      <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl z-20 border-t border-gray-100">
         <ul className="flex justify-around list-none p-4">
-          <li>
-            <Link href="/" className="text-[#666] font-medium no-underline">
-              Trang chủ
+          <li className="flex-1">
+            <Link 
+              href="/" 
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+            >
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Khám phá</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/profile"
-              className="text-[#666] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
             >
-              Hồ sơ
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Hồ sơ</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/compatibility"
-              className="text-[#BE185D] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#FF3366] font-medium no-underline p-3 rounded-xl transition-all duration-200 hover:bg-[#FF3366]/10"
             >
-              Kết nối
+              <div className="w-8 h-8 bg-gradient-to-br from-[#FF3366] to-[#FF6B8A] rounded-xl flex items-center justify-center shadow-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-bold">Kết nối</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/chat"
-              className="text-[#666] no-underline font-medium"
-              onClick={(e) =>
-                !session && (e.preventDefault(), handleLoginClick())
-              }
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
             >
-              Trò chuyện
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Trò chuyện</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
-              href="/love-note"
-              className="text-[#666] no-underline font-medium"
-              onClick={(e) =>
-                !session && (e.preventDefault(), handleLoginClick())
-              }
+              href="/daily-questions"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
             >
-              Ghi chú
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-5 h-5"
+                >
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                  <path d="M12 17h.01"/>
+                </svg>
+              </div>
+              <span className="text-sm">Câu hỏi hàng ngày</span>
             </Link>
           </li>
           {session && (
-            <li>
+            <li className="flex-1">
               <button
                 onClick={() => signOut()}
-                className="text-gray-500 font-poppins hover:text-[#FF3366]"
+                className="flex items-center justify-center gap-2 text-gray-500 font-medium hover:text-[#FF3366] p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 w-full"
               >
-                Đăng xuất
+                <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                </div>
+                <span className="text-sm">Đăng xuất</span>
               </button>
             </li>
           )}
@@ -277,6 +372,16 @@ export default function CompatibilityPage() {
       {isLoginModalOpen && (
         <LoginModal onClose={() => setIsLoginModalOpen(false)} />
       )}
+      
+      {/* Custom CSS for glassmorphism effects */}
+      <style jsx>{`
+        .backdrop-blur-md {
+          backdrop-filter: blur(12px);
+        }
+        .bg-white\\/95 {
+          background-color: rgba(255, 255, 255, 0.95);
+        }
+      `}</style>
     </div>
   );
 }

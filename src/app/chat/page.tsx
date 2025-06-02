@@ -84,6 +84,8 @@ function ChatPageInner() {
     if (!socket) return;
 
     socket.on("new_message", (data) => {
+      console.log("Received new_message event:", data);
+      
       // Update conversations with the new message
       setConversations((prev) => {
         const updatedConversations = [...prev];
@@ -93,8 +95,20 @@ function ChatPageInner() {
 
         if (conversationIndex >= 0) {
           const conversation = { ...updatedConversations[conversationIndex] };
-          conversation.lastMessage = data.content;
-          conversation.unreadCount += 1;
+          
+          // Set appropriate preview based on message content
+          if (data.content.includes('Daily Question:')) {
+            conversation.lastMessage = data.content.includes('Hi! Let\'s start') 
+              ? "👋 Started with daily question" 
+              : "📝 Daily question answered";
+          } else {
+            conversation.lastMessage = data.content;
+          }
+          
+          // Only increment unread count if it's not our message
+          if (data.senderId !== session?.user?.id) {
+            conversation.unreadCount += 1;
+          }
 
           // Move this conversation to the top
           updatedConversations.splice(conversationIndex, 1);
@@ -109,6 +123,7 @@ function ChatPageInner() {
         selectedUserId === data.senderId ||
         selectedUserId === data.recipientId
       ) {
+        console.log("Adding message to current chat:", data);
         setMessages((prev) => {
           // If this message has a tempId, it's a confirmation of a message we sent
           if (data.tempId) {
@@ -117,7 +132,7 @@ function ChatPageInner() {
               msg.id === data.tempId ? { ...data, tempId: undefined } : msg
             );
           } else {
-            // It's a new message from the other user
+            // It's a new message from the other user or our daily question answer
             return [...prev, data];
           }
         });
@@ -158,10 +173,12 @@ function ChatPageInner() {
 
     // Listen for love note updates
     socket.on("love_note_updated", (data: LoveNote) => {
+      console.log("Received love_note_updated event:", data);
       if (
         data.senderId === selectedUserId ||
         data.recipientId === selectedUserId
       ) {
+        console.log("Updating love note for current conversation");
         setLoveNote(data);
       }
     });
@@ -277,17 +294,20 @@ function ChatPageInner() {
         setSelectedUser(userData);
       }
 
+      let messagesData = [];
       if (messagesResponse.ok) {
-        const messagesData = await messagesResponse.json();
+        messagesData = await messagesResponse.json();
         setMessages(messagesData);
       }
 
+      let hasRecentLoveNote = false;
       if (loveNoteResponse.ok) {
         const loveNoteData = await loveNoteResponse.json();
         if (loveNoteData) {
           // Ensure the data has the expected structure before using it
           if (loveNoteData.senderId && loveNoteData.recipientId) {
             setLoveNote(loveNoteData);
+            hasRecentLoveNote = true;
             // Show love note popup if it's new (within last hour) or not answered by current user
             const isNew =
               new Date(loveNoteData.createdAt) > new Date(Date.now() - 3600000);
@@ -306,6 +326,37 @@ function ChatPageInner() {
       if (streakResponse.ok) {
         const streakData = await streakResponse.json();
         setStreakInfo(streakData);
+      }
+
+      // Create a daily question immediately if this is a new conversation
+      // (no messages between users AND no recent daily question)
+      if (!hasRecentLoveNote && messagesData.length === 0) {
+        // Small delay to ensure all data is loaded
+        setTimeout(async () => {
+          try {
+            if (socket && isConnected) {
+              // Use socket if available for real-time updates
+              socket.emit("create_love_note", { recipientId: userId });
+            } else {
+              // Use API call as fallback when socket is not available
+              const response = await fetch("/api/love-notes", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ recipientId: userId }),
+              });
+
+              if (response.ok) {
+                const newLoveNote = await response.json();
+                setLoveNote(newLoveNote);
+                setShowLoveNote(true);
+              }
+            }
+          } catch (error) {
+            console.error("Error creating daily question:", error);
+          }
+        }, 500);
       }
     } catch (error) {
       console.error("Error fetching chat data:", error);
@@ -384,16 +435,6 @@ function ChatPageInner() {
           console.log("Socket not connected, message saved to DB only");
         }
 
-        // Maybe trigger a love note after a few messages
-        const messageCount = messages.filter(
-          (msg) => msg.senderId === session.user.id
-        ).length;
-        if (messageCount === 2 && !loveNote && socket && isConnected) {
-          // After 2 messages, generate a love note
-          setTimeout(() => {
-            socket.emit("create_love_note", { recipientId: selectedUserId });
-          }, 1000);
-        }
       } else {
         console.error("Failed to send message");
         // Rollback optimistic update
@@ -406,31 +447,113 @@ function ChatPageInner() {
     }
   };
 
-  const handleSubmitLoveNote = () => {
-    if (!loveNoteAnswer.trim() || !socket || !session?.user || !loveNote)
+  const handleSubmitLoveNote = async () => {
+    if (!loveNoteAnswer.trim() || !session?.user || !loveNote || !selectedUserId) {
+      console.log("Cannot submit: missing requirements", {
+        hasAnswer: !!loveNoteAnswer.trim(),
+        hasSession: !!session?.user,
+        hasLoveNote: !!loveNote,
+        hasSelectedUser: !!selectedUserId,
+      });
       return;
+    }
 
     const isRecipient = loveNote.recipientId === session.user.id;
+    
+    // Check if this is a new conversation (no previous messages)
+    const isNewConversation = messages.length === 0;
+    
+    // Create message content based on conversation type
+    const messageContent = isNewConversation 
+      ? `👋 Hi! Let's start with a daily question to get to know each other:\n\n📝 "${loveNote.question}"\n\n💭 My answer: ${loveNoteAnswer}`
+      : `📝 Daily Question: "${loveNote.question}"\n\n💭 Answer: ${loveNoteAnswer}`;
 
-    socket.emit("answer_love_note", {
+    console.log("Sending daily question answer as message:", {
       loveNoteId: loveNote.id,
-      answer: loveNoteAnswer,
       isRecipient,
+      isNewConversation,
+      messageContent,
     });
 
-    // Optimistically update UI
-    setLoveNote((prev) => {
-      if (!prev) return null;
+    // Create optimistic message
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMessage = {
+      id: tempId,
+      content: messageContent,
+      senderId: session.user.id,
+      recipientId: selectedUserId,
+      createdAt: new Date().toISOString(),
+      read: false,
+    };
 
-      return {
-        ...prev,
-        senderAnswer: isRecipient ? prev.senderAnswer : loveNoteAnswer,
-        recipientAnswer: isRecipient ? loveNoteAnswer : prev.recipientAnswer,
-      };
-    });
+    setMessages(prev => [...prev, optimisticMessage]);
 
-    setLoveNoteAnswer("");
-    setShowLoveNote(false);
+    try {
+      // Send message using the standard message endpoint
+      const messageResponse = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipientId: selectedUserId,
+          content: messageContent,
+        }),
+      });
+
+      if (!messageResponse.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      const savedMessage = await messageResponse.json();
+
+      // Replace optimistic message with saved message
+      setMessages(prev =>
+        prev.map(msg => msg.id === tempId ? savedMessage : msg)
+      );
+
+      // Update love note answer
+      const loveNoteResponse = await fetch("/api/love-notes/answer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          loveNoteId: loveNote.id,
+          answer: loveNoteAnswer,
+        }),
+      });
+
+      if (!loveNoteResponse.ok) {
+        throw new Error("Failed to save love note answer");
+      }
+
+      setLoveNoteAnswer("");
+      setShowLoveNote(false);
+      
+      // Update conversations list optimistically
+      setConversations(prev => {
+        const updated = [...prev];
+        const existingIndex = updated.findIndex(c => c.id === selectedUserId);
+        
+        if (existingIndex >= 0) {
+          // Move to top and update
+          const conversation = updated.splice(existingIndex, 1)[0];
+          updated.unshift({
+            ...conversation,
+            lastMessage: isNewConversation ? "Đã bắt đầu cuộc trò chuyện với câu hỏi hàng ngày" : "Đã trả lời câu hỏi hàng ngày",
+            unreadCount: 0
+          });
+        }
+        
+        return updated;
+      });
+    } catch (error) {
+      console.error("Error sending daily question answer:", error);
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(msg => msg.id !== tempId));
+      alert("Failed to send your answer. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -684,8 +807,21 @@ function ChatPageInner() {
                             onClick={() => setShowLoveNote(true)}
                             className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full hover:from-pink-600 hover:to-red-600 transition-all shadow-md hover:shadow-lg font-poppins"
                           >
-                            <span>❤️</span>
-                            <span className="font-medium">Ghi chú</span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="w-4 h-4"
+                            >
+                              <circle cx="12" cy="12" r="10"/>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                              <path d="M12 17h.01"/>
+                            </svg>
+                            <span className="font-medium">Câu Hỏi Hàng Ngày</span>
                           </button>
                         )}
 
@@ -1134,7 +1270,7 @@ function ChatPageInner() {
                 </svg>
               </div>
               <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
-                Ghi Chú Hàng Ngày
+                Câu Hỏi Hàng Ngày
               </h2>
               <p className="text-gray-700 mt-2 font-poppins">
                 {loveNote.question}
@@ -1421,7 +1557,7 @@ function ChatPageInner() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Ghi chú</span>
+              <span className="text-sm font-bold">Câu Hỏi Hàng Ngày</span>
             </Link>
           </li>
           {session && (

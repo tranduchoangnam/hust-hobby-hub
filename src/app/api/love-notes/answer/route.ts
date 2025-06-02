@@ -64,8 +64,12 @@ export async function POST(request: NextRequest) {
         },
       },
     });
-    
-    return NextResponse.json(updatedLoveNote);
+
+    console.log(`Love note answered via API: ${loveNoteId} by user ${session.user.id}`);
+
+    return NextResponse.json({
+      loveNote: updatedLoveNote
+    });
   } catch (error) {
     console.error("Error answering love note:", error);
     return NextResponse.json(

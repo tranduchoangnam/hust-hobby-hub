@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import LoginModal from "@/components/LoginModal";
+import Avatar from "@/components/Avatar";
 import { LoveNote } from "@/types/models";
 import { signOut } from "next-auth/react";
 
@@ -68,7 +69,8 @@ export default function LoveNotePage() {
       });
 
       if (response.ok) {
-        const updatedLoveNote = await response.json();
+        const data = await response.json();
+        const updatedLoveNote = data.loveNote || data; // Handle both new and old response formats
 
         // Cập nhật danh sách ghi chú
         setLoveNotes((prev) =>
@@ -80,6 +82,12 @@ export default function LoveNotePage() {
         // Cập nhật ghi chú đang chọn
         setSelectedLoveNote(updatedLoveNote);
         setLoveNoteAnswer("");
+
+        // Show success message that the answer was sent as a message
+        if (data.message) {
+          // Could add a toast notification here if desired
+          console.log("Answer sent as message to chat!");
+        }
       }
     } catch (error) {
       console.error("Lỗi khi trả lời ghi chú:", error);
@@ -125,25 +133,29 @@ export default function LoveNotePage() {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              fill="currentColor"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className="w-8 h-8 text-[#FF3366]"
             >
-              <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <circle cx="12" cy="17" r="1"/>
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-[#FF3366] mb-2 font-poppins">
-            Ghi chú mỗi ngày
+            Câu Hỏi Hàng Ngày
           </h1>
           <p className="text-gray-600 max-w-md mx-auto font-poppins">
-            Ghi chú mỗi ngày là một cách tuyệt vời để kết nối với người bạn của
-            bạn. Chia sẻ những câu hỏi thú vị và nhận câu trả lời từ họ. Hãy bắt
-            đầu ngay hôm nay!
+            Câu hỏi hàng ngày giúp bạn bắt đầu cuộc trò chuyện và tìm hiểu nhau tốt hơn
           </p>
         </div>
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <p className="font-poppins text-gray-600">Đang tải ghi chú...</p>
+            <p className="font-poppins text-gray-600">Đang tải câu hỏi...</p>
           </div>
         ) : loveNotes.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-6">
@@ -154,21 +166,14 @@ export default function LoveNotePage() {
                 onClick={() => setSelectedLoveNote(loveNote)}
               >
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
-                    {getPartnerImage(loveNote) ? (
-                      <Image
-                        src={getPartnerImage(loveNote) as string}
-                        alt={getPartnerName(loveNote)}
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        {getPartnerName(loveNote).charAt(0)}
-                      </div>
-                    )}
-                  </div>
+                  <Avatar
+                    src={getPartnerImage(loveNote)}
+                    alt={getPartnerName(loveNote)}
+                    size={48}
+                    className=""
+                    showOnlineStatus={true}
+                    isOnline={Math.random() > 0.5} // Random online status for demo
+                  />
                   <div className="ml-3">
                     <h3 className="font-medium font-poppins">
                       {getPartnerName(loveNote)}
@@ -211,14 +216,13 @@ export default function LoveNotePage() {
         ) : (
           <div className="bg-white rounded-xl p-8 shadow-md text-center">
             <p className="text-gray-600 mb-4 font-poppins">
-              Bạn chưa có ghi chú nào. Hãy tạo một ghi chú mới để bắt đầu kết
-              nối với người bạn của bạn!
+              Chưa có câu hỏi hàng ngày nào! Bắt đầu cuộc trò chuyện với ai đó và bạn sẽ nhận được câu hỏi đầu tiên để phá vỡ bức tường băng.
             </p>
             <Link
-              href="/chat"
-              className="text-[#FF3366] hover:underline font-poppins"
+              href="/"
+              className="text-[#FF3366] hover:underline font-poppins font-medium"
             >
-              Bắt đầu trò chuyện
+              Tìm người để trò chuyện
             </Link>
           </div>
         )}
@@ -233,14 +237,20 @@ export default function LoveNotePage() {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="currentColor"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   className="w-8 h-8 text-[#FF3366]"
                 >
-                  <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                  <circle cx="12" cy="17" r="1"/>
                 </svg>
               </div>
               <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
-                Ghi chú mỗi ngày
+                Câu Hỏi Hàng Ngày
               </h2>
               <p className="text-gray-700 mt-2 font-poppins">
                 {selectedLoveNote.question}
@@ -355,7 +365,7 @@ export default function LoveNotePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Duyệt</span>
+              <span className="text-sm">Trang chủ</span>
             </Link>
           </li>
           <li className="flex-1">
@@ -427,7 +437,7 @@ export default function LoveNotePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-bold">Ghi chú</span>
+              <span className="text-sm font-bold">Câu Hỏi Hàng Ngày</span>
             </Link>
           </li>
           {session && (
