@@ -50,8 +50,7 @@ export default function ProfilePage() {
 
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] =
-    useState("🌈 Tất cả danh mục");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -68,7 +67,7 @@ export default function ProfilePage() {
         hobby.name.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesCategory =
-        selectedCategory === "🌈 Tất cả danh mục" ||
+        selectedCategory === "All Categories" ||
         getCategoryForHobby(hobby.name) === selectedCategory;
 
       return matchesSearch && matchesCategory;
@@ -102,7 +101,7 @@ export default function ProfilePage() {
         setAllHobbies(data);
       } catch (error) {
         console.error("Error fetching hobbies:", error);
-        setError("Failed to load interests. Please refresh and try again.");
+        setError("Không thể tải sở thích. Vui lòng làm mới và thử lại.");
       }
     };
 
@@ -129,7 +128,7 @@ export default function ProfilePage() {
       } catch (error) {
         console.error("Error fetching user hobbies:", error);
         setError(
-          "Failed to load your interests. Please refresh and try again."
+          "Không thể tải sở thích của bạn. Vui lòng làm mới và thử lại."
         );
       } finally {
         setIsLoading(false);
@@ -155,7 +154,9 @@ export default function ProfilePage() {
         setBio(data.bio || "");
       } catch (error) {
         console.error("Error fetching user bio:", error);
-        setBioError("Failed to load your bio. Please refresh and try again.");
+        setBioError(
+          "Không thể tải thông tin giới thiệu của bạn. Vui lòng làm mới và thử lại."
+        );
       }
     };
 
@@ -258,12 +259,12 @@ export default function ProfilePage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update interests");
+        throw new Error(errorData.error || "Không thể cập nhật sở thích");
       }
 
       const data = await response.json();
       setUserHobbies(data.hobbies);
-      setSuccessMessage("Your interests have been updated successfully!");
+      setSuccessMessage("Sở thích của bạn đã được cập nhật thành công!");
 
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -272,7 +273,7 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Error updating hobbies:", error);
       setError(
-        error instanceof Error ? error.message : "Failed to update interests"
+        error instanceof Error ? error.message : "Không thể cập nhật sở thích"
       );
     } finally {
       setIsSaving(false);
@@ -300,12 +301,16 @@ export default function ProfilePage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update bio");
+        throw new Error(
+          errorData.error || "Không thể cập nhật thông tin giới thiệu"
+        );
       }
 
       setIsEditingBio(false);
       // Show success message
-      setSuccessMessage("Your bio has been updated successfully!");
+      setSuccessMessage(
+        "Thông tin giới thiệu của bạn đã được cập nhật thành công!"
+      );
 
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -314,7 +319,9 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Error updating bio:", error);
       setBioError(
-        error instanceof Error ? error.message : "Failed to update bio"
+        error instanceof Error
+          ? error.message
+          : "Không thể cập nhật thông tin giới thiệu"
       );
     } finally {
       setIsSavingBio(false);
@@ -345,19 +352,17 @@ export default function ProfilePage() {
             Quay lại
           </button>
           <h1 className="text-2xl font-bold text-[#333] flex-grow text-center mr-12">
-            Thông tin cá nhân
+            Hồ sơ của bạn
           </h1>
         </div>
 
         {!session ? (
           <div className="text-center py-12 bg-[#FFF0F3] rounded-[20px] shadow-sm">
             <h2 className="text-2xl font-semibold text-[#333] mb-4">
-              Bạn chưa đăng nhập
+              Yêu cầu đăng nhập
             </h2>
             <p className="text-[#666] mb-6 max-w-lg mx-auto">
-              Để truy cập trang cá nhân và quản lý sở thích của bạn, vui lòng
-              đăng nhập. Chúng tôi sẽ giúp bạn kết nối với những người bạn có
-              cùng sở thích.
+              Vui lòng đăng nhập để xem và chỉnh sửa hồ sơ của bạn.
             </p>
             <button
               onClick={handleLoginClick}
@@ -369,7 +374,7 @@ export default function ProfilePage() {
         ) : isLoading ? (
           <div className="text-center py-16">
             <div className="w-16 h-16 border-4 border-[#FF3366] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-[#666]">Đang tải thông tin...</p>
+            <p className="text-[#666]">Đang tải hồ sơ của bạn...</p>
           </div>
         ) : (
           <div className="flex flex-col">
@@ -520,7 +525,9 @@ export default function ProfilePage() {
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                       />
                     </svg>
-                    <h3 className="font-bold text-[#333] text-lg">About Me</h3>
+                    <h3 className="font-bold text-[#333] text-lg">
+                      Giới thiệu
+                    </h3>
                   </div>
                   {!isEditingBio ? (
                     <button
@@ -646,7 +653,7 @@ export default function ProfilePage() {
                     onChange={handleBioChange}
                     className="w-full p-4 border-2 border-[#FFD9E4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-white/80 backdrop-blur-sm font-medium resize-none"
                     rows={6}
-                    placeholder="Tell people about yourself... What are your passions? What makes you unique? 🌟"
+                    placeholder="Hãy nói về bản thân... Sở thích của bạn là gì? Điều gì làm bạn trở nên đặc biệt? 🌟"
                   />
                 ) : (
                   <div>
@@ -665,7 +672,7 @@ export default function ProfilePage() {
                               onClick={() => setShowFullBio(true)}
                               className="text-[#FF3366] text-sm mt-2 hover:underline font-medium inline-flex items-center gap-1"
                             >
-                              Read more
+                              Xem thêm
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-3 w-3"
@@ -689,7 +696,7 @@ export default function ProfilePage() {
                             onClick={() => setShowFullBio(false)}
                             className="text-[#FF3366] text-sm mt-2 hover:underline font-medium inline-flex items-center gap-1"
                           >
-                            Show less
+                            Thu gọn
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="h-3 w-3"
@@ -724,9 +731,11 @@ export default function ProfilePage() {
                           />
                         </svg>
                         <div>
-                          <p className="font-medium">No bio yet</p>
+                          <p className="font-medium">
+                            Chưa có thông tin giới thiệu
+                          </p>
                           <p className="text-sm">
-                            Click edit to tell people about yourself!
+                            Nhấp vào chỉnh sửa để kể về bản thân bạn!
                           </p>
                         </div>
                       </div>
@@ -740,7 +749,7 @@ export default function ProfilePage() {
             <div className="mb-8">
               <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
+                  <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>{" "}
                   <h3 className="text-2xl font-bold text-[#333] font-poppins">
                     Sở thích của bạn
                   </h3>
@@ -832,11 +841,12 @@ export default function ProfilePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-red-600 font-medium">
-                      Tối đa số sở thích đã được chọn
+                    <p className="text-red-600 font-bold mb-1">
+                      Đã đạt giới hạn tối đa
                     </p>
-                    <p className="text-red-500 text-sm">
-                      Bạn chỉ có thể chọn tối đa {MAX_INTERESTS} sở thích.
+                    <p className="text-red-500 text-sm leading-relaxed">
+                      Bạn có thể chọn tối đa {MAX_INTERESTS} sở thích. Vui lòng
+                      bỏ chọn một sở thích trước khi chọn một sở thích khác.
                     </p>
                   </div>
                 </div>
@@ -860,13 +870,11 @@ export default function ProfilePage() {
                   </svg>
                   <div>
                     <p className="text-blue-700 font-medium mb-1">
-                      Chọn sở thích của bạn!
+                      Hãy chọn sở thích của bạn một cách khôn ngoan!
                     </p>
                     <p className="text-blue-600 text-sm leading-relaxed">
-                      Bạn có thể chọn tối đa {MAX_INTERESTS} sở thích. Hãy chọn
-                      những sở thích mà bạn yêu thích nhất để kết nối với những
-                      người có cùng đam mê. Nhấn vào các sở thích bên dưới để
-                      thêm hoặc bỏ chọn.
+                      Sở thích bạn chọn giúp chúng tôi kết nối bạn với những
+                      người có cùng đam mê và sở thích tương tự.
                     </p>
                   </div>
                 </div>
@@ -885,7 +893,7 @@ export default function ProfilePage() {
                       <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                     </svg>
                     <h4 className="font-bold text-[#333] text-lg">
-                      Your Selected Interests
+                      Sở thích đã chọn của bạn
                     </h4>
                   </div>
                   <div className="flex flex-wrap gap-3">
@@ -956,7 +964,7 @@ export default function ProfilePage() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Nhập sở thích..."
+                      placeholder="Nhập để tìm kiếm sở thích..."
                       className="w-full px-4 py-3 pl-12 pr-10 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-gray-50 focus:bg-white font-medium placeholder:text-gray-400"
                     />
                     <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
@@ -1064,7 +1072,7 @@ export default function ProfilePage() {
                       Không tìm thấy sở thích nào
                     </p>
                     <p className="text-gray-400 text-sm">
-                      Hãy thử điều chỉnh tiêu chí tìm kiếm hoặc lọc của bạn
+                      Hãy thử điều chỉnh tìm kiếm hoặc tiêu chí lọc của bạn
                     </p>
                   </div>
                 ) : (
@@ -1132,7 +1140,7 @@ export default function ProfilePage() {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      Lưu sở thích...
+                      Đang lưu sở thích...
                     </>
                   ) : (
                     <>
@@ -1150,7 +1158,7 @@ export default function ProfilePage() {
                           d="M5 13l4 4L19 7"
                         />
                       </svg>
-                      Save Interests
+                      Lưu sở thích
                     </>
                   )}
                 </button>
@@ -1178,21 +1186,21 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[#333] mb-2">
-                    Smart Compatibility Matching
+                    Kết nối thông minh
                   </h3>
                   <p className="text-[#666] mb-3 leading-relaxed">
                     Thuật toán nâng cao của chúng tôi sử dụng sở thích bạn đã
                     chọn để tìm những người có cùng đam mê và sở thích.
                   </p>
                   <p className="text-[#666] mb-4 leading-relaxed">
-                    Bạn chọn càng nhiều sở thích, chúng tôi càng tìm được những
-                    kết quả phù hợp và chính xác hơn cho bạn! ✨
+                    Càng chọn nhiều sở thích, chúng tôi càng có thể tìm ra nhiều
+                    kết nối chính xác và phù hợp hơn cho bạn! ✨
                   </p>
                   <Link
                     href="/"
                     className="inline-flex items-center gap-2 text-[#FF3366] font-bold hover:text-[#E62E5C] transition-colors group"
                   >
-                    <span>Khám phá những người phù hợp với bạn</span>
+                    <span>Khám phá người phù hợp</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5 group-hover:translate-x-1 transition-transform"
@@ -1239,7 +1247,7 @@ export default function ProfilePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm">Trang chủ</span>
+              <span className="text-sm">Duyệt</span>
             </Link>
           </li>
           <li className="flex-1">
@@ -1352,20 +1360,20 @@ export default function ProfilePage() {
       {/* Modals */}
       {showFollowers && (
         <UserList
-          title="Followers"
+          title="Người theo dõi"
           users={followers}
           isLoading={isLoadingFollowers}
-          emptyMessage="You don't have any followers yet."
+          emptyMessage="Bạn chưa có người theo dõi nào."
           onClose={() => setShowFollowers(false)}
         />
       )}
 
       {showFollowing && (
         <UserList
-          title="Following"
+          title="Đang theo dõi"
           users={following}
           isLoading={isLoadingFollowing}
-          emptyMessage="You're not following anyone yet."
+          emptyMessage="Bạn chưa theo dõi ai."
           onClose={() => setShowFollowing(false)}
         />
       )}

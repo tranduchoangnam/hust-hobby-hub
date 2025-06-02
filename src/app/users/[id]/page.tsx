@@ -82,23 +82,23 @@ export default function UserProfilePage() {
   // Function to render compatibility badge
   const renderCompatibilityBadge = (score: number) => {
     let color = "bg-gray-200 text-gray-700";
-    let text = "Low Match";
+    let text = "Kết nối thấp";
 
     if (score >= 80) {
       color = "bg-green-100 text-green-800";
-      text = "Perfect Match";
+      text = "Kết nối hoàn hảo";
     } else if (score >= 60) {
       color = "bg-blue-100 text-blue-800";
-      text = "Great Match";
+      text = "Kết nối tuyệt vời";
     } else if (score >= 40) {
       color = "bg-yellow-100 text-yellow-700";
-      text = "Good Match";
+      text = "Kết nối tốt";
     } else if (score >= 20) {
       color = "bg-orange-100 text-orange-700";
-      text = "Fair Match";
+      text = "Kết nối trung bình";
     } else {
       color = "bg-red-100 text-red-700";
-      text = "Low Match";
+      text = "Kết nối thấp";
     }
 
     return (

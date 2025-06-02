@@ -75,7 +75,7 @@ export default function CompatibilityPage() {
 
     return (
       <div className={`px-3 py-1 rounded-full text-sm font-semibold ${color}`}>
-        {score}% Match
+        {score}% Điểm
       </div>
     );
   };
@@ -173,8 +173,8 @@ export default function CompatibilityPage() {
                     </span>
                     <span className="text-sm text-[#666]">
                       {user.commonHobbies === 1
-                        ? "shared interest"
-                        : "shared interests"}
+                        ? "sở thích chung"
+                        : "sở thích chung"}
                     </span>
                   </div>
 

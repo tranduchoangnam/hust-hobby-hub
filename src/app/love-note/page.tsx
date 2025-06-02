@@ -427,7 +427,7 @@ export default function LoveNotePage() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-bold">Ghi chú mỗi ngày</span>
+              <span className="text-sm font-bold">Ghi chú</span>
             </Link>
           </li>
           {session && (

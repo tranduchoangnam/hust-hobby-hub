@@ -256,7 +256,7 @@ export default function Home() {
 
     return (
       <div className={`px-3 py-1 rounded-full text-sm font-semibold ${color}`}>
-        {score}% Match
+        {score}% Điểm
       </div>
     );
   };
@@ -728,10 +728,11 @@ export default function Home() {
                       <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-t-[#FF6B8A] rounded-full animate-spin animation-delay-150 mx-auto"></div>
                     </div>
                     <h3 className="text-lg font-semibold text-[#333] mb-2">
-                      Finding amazing people...
+                      Đang tải người dùng...
                     </h3>
                     <p className="text-[#666] font-medium">
-                      Discovering users who share your interests
+                      Vui lòng đợi trong giây lát, chúng tôi đang tìm kiếm những
+                      người dùng có sở thích này.
                     </p>
                   </div>
                 ) : users.length === 0 ? (
@@ -780,9 +781,7 @@ export default function Home() {
                         </h2>
                       </div>
                       <p className="text-[#666] font-medium">
-                        Đã tìm {totalUsers}{" "}
-                        {totalUsers === 1 ? "person" : "people"} người có cùng
-                        sở thích này.
+                        Đã tìm {totalUsers} người có cùng sở thích này.
                       </p>
                     </div>
 
@@ -880,8 +879,8 @@ export default function Home() {
                                     </div>
                                     <span className="text-sm text-[#666] font-medium">
                                       {user.commonHobbies === 1
-                                        ? "shared interest"
-                                        : "shared interests"}
+                                        ? "sở thích chung"
+                                        : "sở thích chung"}
                                     </span>
                                   </>
                                 ) : (
@@ -1157,9 +1156,7 @@ export default function Home() {
                 <div className="mb-8">
                   <div className="text-center">
                     <p className="text-[#666] font-medium">
-                      Đã tìm thấy {compatibleUsers.length} tương thích{" "}
-                      {compatibleUsers.length === 1 ? "person" : "people"} cho
-                      bạn
+                      Đã tìm thấy {compatibleUsers.length} người phù hợp với bạn
                     </p>
                   </div>
                 </div>
@@ -1222,8 +1219,8 @@ export default function Home() {
                           </div>
                           <span className="text-sm text-[#666] font-medium">
                             {user.commonHobbies === 1
-                              ? "shared interest"
-                              : "shared interests"}
+                              ? "sở thích chung"
+                              : "sở thích chung"}
                           </span>
                         </div>
 
