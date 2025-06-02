@@ -7,7 +7,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const userId = params.id;
+  const { id: userId } = await params;
   
   try {
     const session = await getServerSession(authOptions);

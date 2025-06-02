@@ -17,25 +17,25 @@ export async function GET(
       );
     }
 
-    const targetUserId = params.id;
+    const { id: targetUserId } = await params;
 
-    // Count followers
-    const followerCount = await prisma.follow.count({
-      where: {
-        followingId: targetUserId,
-      },
-    });
-
-    // Count following
-    const followingCount = await prisma.follow.count({
-      where: {
-        followerId: targetUserId,
-      },
-    });
+    // Get user stats (followers, following, hobbies count)
+    const [followerCount, followingCount, hobbiesCount] = await Promise.all([
+      prisma.follow.count({
+        where: { followingId: targetUserId }
+      }),
+      prisma.follow.count({
+        where: { followerId: targetUserId }
+      }),
+      prisma.userHobby.count({
+        where: { userId: targetUserId }
+      })
+    ]);
 
     return NextResponse.json({
-      followerCount,
-      followingCount,
+      followers: followerCount,
+      following: followingCount,
+      hobbies: hobbiesCount
     });
   } catch (error) {
     console.error("Error fetching user stats:", error);

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { updateChatStreak } from "@/lib/streakUtils";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -73,6 +74,32 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Verify that both sender and recipient exist
+    const [sender, recipient] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { id: true }
+      }),
+      prisma.user.findUnique({
+        where: { id: recipientId },
+        select: { id: true }
+      })
+    ]);
+    
+    if (!sender) {
+      return NextResponse.json(
+        { error: "Sender not found" },
+        { status: 404 }
+      );
+    }
+    
+    if (!recipient) {
+      return NextResponse.json(
+        { error: "Recipient not found" },
+        { status: 404 }
+      );
+    }
+    
     // Save message to database
     const message = await prisma.message.create({
       data: {
@@ -81,6 +108,11 @@ export async function POST(request: NextRequest) {
         recipientId,
         read: false,
       },
+    });
+    
+    // Update chat streak asynchronously (don't block message sending)
+    updateChatStreak(session.user.id, recipientId).catch(error => {
+      console.error("Failed to update chat streak:", error);
     });
     
     return NextResponse.json({ ...message, tempId });

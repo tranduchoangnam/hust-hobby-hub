@@ -30,6 +30,8 @@ model User {
   receivedLoveNotes LoveNote[] @relation("ReceivedLoveNotes")
   followers     Follow[]     @relation("Followers")
   following     Follow[]     @relation("Following")
+  streaksAsUser1 Streak[]    @relation("StreakUser1")
+  streaksAsUser2 Streak[]    @relation("StreakUser2")
 }
 
 model Account {
@@ -109,12 +111,29 @@ model LoveNote {
 }
 
 model Follow {
-  id          String    @id @default(cuid())
-  follower    User      @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
   followerId  String
-  following   User      @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
   followingId String
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Followers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
+}
+
+model Streak {
+  id              String   @id @default(cuid())
+  user1Id         String
+  user2Id         String
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastChatDate    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user1 User @relation("StreakUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2 User @relation("StreakUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+
+  @@unique([user1Id, user2Id])
 }

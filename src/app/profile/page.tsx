@@ -7,333 +7,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import LoginModal from "@/components/LoginModal";
 import UserList from "@/components/UserList";
+import Avatar from "@/components/Avatar";
 import { HOBBY_CATEGORIES, getCategoryForHobby } from "@/lib/hobbyCategories";
 
 type Hobby = {
   id: string;
   name: string;
-};
-
-// Categories for grouping interests
-const HOBBY_CATEGORIES = [
-  "All Categories",
-  "Arts & Creativity",
-  "Music",
-  "Literature & Writing",
-  "Performing Arts",
-  "Food & Beverages",
-  "Sports & Fitness",
-  "Travel & Culture",
-  "Nature & Outdoors",
-  "Technology & Gaming",
-  "Media & Entertainment",
-  "Wellness & Spirituality",
-  "Science & Learning",
-  "Collecting & Appreciation",
-  "Social Activities",
-];
-
-// Function to determine category based on hobby name
-const getCategoryForHobby = (hobbyName: string): string => {
-  const lowerName = hobbyName.toLowerCase();
-
-  // Arts & Creativity
-  if (
-    [
-      "art",
-      "paint",
-      "draw",
-      "sculpt",
-      "digital",
-      "illustrat",
-      "design",
-      "animation",
-      "calligraphy",
-      "pottery",
-      "jewelry",
-      "knit",
-      "crochet",
-      "quilt",
-      "sew",
-      "embroidery",
-      "candle",
-      "diy",
-      "craft",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Arts & Creativity";
-  }
-
-  // Music
-  if (
-    [
-      "music",
-      "guitar",
-      "piano",
-      "drum",
-      "violin",
-      "sing",
-      "song",
-      "dj",
-      "classical",
-      "jazz",
-      "rock",
-      "pop",
-      "hip hop",
-      "electronic",
-      "country",
-      "r&b",
-      "opera",
-      "choir",
-      "musical",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Music";
-  }
-
-  // Literature & Writing
-  if (
-    [
-      "book",
-      "read",
-      "writ",
-      "poetry",
-      "fiction",
-      "non-fiction",
-      "screen",
-      "play",
-      "blog",
-      "journal",
-      "literary",
-      "story",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Literature & Writing";
-  }
-
-  // Performing Arts
-  if (
-    [
-      "act",
-      "theater",
-      "dance",
-      "ballet",
-      "contemporary",
-      "ballroom",
-      "salsa",
-      "comedy",
-      "improv",
-      "magic",
-      "circus",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Performing Arts";
-  }
-
-  // Food & Beverages
-  if (
-    [
-      "cook",
-      "bak",
-      "mix",
-      "bartend",
-      "coffee",
-      "tea",
-      "wine",
-      "beer",
-      "whiskey",
-      "ferment",
-      "sourdough",
-      "cheese",
-      "food",
-      "vegetarian",
-      "vegan",
-      "gluten",
-      "barbecue",
-      "sushi",
-      "italian",
-      "french",
-      "asian",
-      "mexican",
-      "middle eastern",
-      "indian",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Food & Beverages";
-  }
-
-  // Sports & Fitness
-  if (
-    [
-      "yoga",
-      "pilates",
-      "run",
-      "hik",
-      "climb",
-      "swim",
-      "cycl",
-      "bik",
-      "weight",
-      "crossfit",
-      "soccer",
-      "basketball",
-      "tennis",
-      "volleyball",
-      "badminton",
-      "golf",
-      "baseball",
-      "snow",
-      "ski",
-      "surf",
-      "skat",
-      "martial",
-      "box",
-      "wrestl",
-      "fenc",
-      "archer",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Sports & Fitness";
-  }
-
-  // Travel & Culture
-  if (
-    [
-      "travel",
-      "backpack",
-      "road trip",
-      "camp",
-      "cultural",
-      "histor",
-      "museum",
-      "galler",
-      "language",
-      "anthropology",
-      "archaeology",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Travel & Culture";
-  }
-
-  // Nature & Outdoors
-  if (
-    [
-      "garden",
-      "plant",
-      "bird",
-      "fish",
-      "hunt",
-      "forag",
-      "wildlife",
-      "stargaz",
-      "astronom",
-      "bee",
-      "ecology",
-      "conservation",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Nature & Outdoors";
-  }
-
-  // Technology & Gaming
-  if (
-    [
-      "program",
-      "develop",
-      "game",
-      "chess",
-      "puzzle",
-      "vr",
-      "robot",
-      "electronic",
-      "drone",
-      "print",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Technology & Gaming";
-  }
-
-  // Media & Entertainment
-  if (
-    [
-      "film",
-      "documentary",
-      "tv",
-      "anime",
-      "comic",
-      "manga",
-      "podcast",
-      "radio",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Media & Entertainment";
-  }
-
-  // Wellness & Spirituality
-  if (
-    [
-      "meditat",
-      "mindful",
-      "spiritual",
-      "tarot",
-      "astrology",
-      "essential oil",
-      "aromatherapy",
-      "herbal",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Wellness & Spirituality";
-  }
-
-  // Science & Learning
-  if (
-    [
-      "science",
-      "physics",
-      "chemistry",
-      "biology",
-      "psychology",
-      "neuroscience",
-      "history",
-      "philosophy",
-      "linguistic",
-      "math",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Science & Learning";
-  }
-
-  // Collecting & Appreciation
-  if (
-    [
-      "collect",
-      "antique",
-      "coin",
-      "stamp",
-      "vinyl",
-      "vintage",
-      "enthusiasm",
-      "sneaker",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Collecting & Appreciation";
-  }
-
-  // Social Activities
-  if (
-    [
-      "volunteer",
-      "community",
-      "activism",
-      "speak",
-      "debate",
-      "event plan",
-    ].some((term) => lowerName.includes(term))
-  ) {
-    return "Social Activities";
-  }
-
-  return "All Categories";
 };
 
 // Maximum number of interests a user can select
@@ -691,105 +370,311 @@ export default function ProfilePage() {
           <div className="flex flex-col">
             {/* User Info */}
             <div className="flex flex-col items-center mb-10">
-              {/* Large Avatar */}
-              <div className="w-36 h-36 rounded-full bg-[#f5f5f5] overflow-hidden border-4 border-[#FFE0E9] shadow-lg mb-6 relative hover:scale-105 transition-transform">
-                {session.user?.image && (
-                  <Image
-                    src={session.user.image}
-                    alt={session.user.name || "User profile"}
-                    width={144}
-                    height={144}
-                    className="object-cover w-full h-full"
+              {/* Large Avatar with enhanced design */}
+              <div className="relative mb-6 group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#FF3366] via-[#FF6B8A] to-[#FFB3C1] rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                <div className="relative">
+                  <Avatar
+                    src={session.user?.image}
+                    alt={session.user?.name || "User profile"}
+                    size={144}
+                    className="border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-300"
+                    showOnlineStatus={true}
+                    isOnline={true}
                   />
-                )}
+                  {/* Edit profile picture hint */}
+                  <div className="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-full p-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-[#FF3366]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* User Name */}
-              <h2 className="text-3xl font-bold text-[#333] mb-2">
-                {session.user?.name}
-              </h2>
+              {/* User Name with enhanced typography */}
+              <div className="text-center mb-6">
+                <h2 className="text-4xl font-bold text-[#333] mb-2 font-poppins">
+                  {session.user?.name}
+                </h2>
+                
+                {/* Email with icon */}
+                <div className="flex items-center justify-center gap-2 text-[#666] mb-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                    />
+                  </svg>
+                  <span className="font-medium">{session.user?.email}</span>
+                </div>
 
-              {/* Email and Stats */}
-              <div className="flex items-center gap-4 mb-4 text-sm text-[#666]">
-                <span>{session.user?.email}</span>
-                <span className="w-1 h-1 bg-[#999] rounded-full"></span>
-                <button
-                  onClick={handleOpenFollowers}
-                  className="text-[#666] hover:text-[#FF3366] hover:underline transition-colors"
-                >
-                  <span className="font-medium">{followerCount}</span> follower
-                  {followerCount !== 1 ? "s" : ""}
-                </button>
-                <span className="w-1 h-1 bg-[#999] rounded-full"></span>
-                <button
-                  onClick={handleOpenFollowing}
-                  className="text-[#666] hover:text-[#FF3366] hover:underline transition-colors"
-                >
-                  <span className="font-medium">{followingCount}</span>{" "}
-                  following
-                </button>
+                {/* Stats with enhanced design */}
+                <div className="flex items-center justify-center gap-6">
+                  <button
+                    onClick={handleOpenFollowers}
+                    className="group flex flex-col items-center p-3 rounded-xl hover:bg-gradient-to-br hover:from-[#FF3366]/5 hover:to-[#FF6B8A]/5 transition-all duration-200 hover:scale-105"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 text-[#FF3366]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 20h5v-2a3 3 0 00-5.196-2.121M9 20H4v-2a3 3 0 015.196-2.121M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a2 2 0 11-4 0 2 2 0 014 0zM7 2a2 2 0 11-4 0 2 2 0 014 0z"
+                        />
+                      </svg>
+                      <span className="text-2xl font-bold text-[#333] group-hover:text-[#FF3366] transition-colors">
+                        {followerCount}
+                      </span>
+                    </div>
+                    <span className="text-sm text-[#666] group-hover:text-[#FF3366] transition-colors font-medium">
+                      {followerCount !== 1 ? "Followers" : "Follower"}
+                    </span>
+                  </button>
+
+                  <div className="w-px h-12 bg-gradient-to-b from-gray-300 to-transparent"></div>
+
+                  <button
+                    onClick={handleOpenFollowing}
+                    className="group flex flex-col items-center p-3 rounded-xl hover:bg-gradient-to-br hover:from-[#FF3366]/5 hover:to-[#FF6B8A]/5 transition-all duration-200 hover:scale-105"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 text-[#FF3366]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                        />
+                      </svg>
+                      <span className="text-2xl font-bold text-[#333] group-hover:text-[#FF3366] transition-colors">
+                        {followingCount}
+                      </span>
+                    </div>
+                    <span className="text-sm text-[#666] group-hover:text-[#FF3366] transition-colors font-medium">
+                      Following
+                    </span>
+                  </button>
+                </div>
               </div>
 
-              {/* Bio Section */}
-              <div className="w-full max-w-xl bg-[#FFF9FB] rounded-xl p-5 mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-semibold text-[#333]">Bio</h3>
+              {/* Bio Section with enhanced design */}
+              <div className="w-full max-w-2xl bg-gradient-to-br from-[#FFF9FB] to-[#FFF0F3] rounded-2xl p-6 mb-8 border border-[#FFE0E9] shadow-sm">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-[#FF3366]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    <h3 className="font-bold text-[#333] text-lg">About Me</h3>
+                  </div>
                   {!isEditingBio ? (
                     <button
                       onClick={() => setIsEditingBio(true)}
-                      className="text-[#FF3366] text-sm hover:underline"
+                      className="flex items-center gap-1 text-[#FF3366] text-sm font-medium hover:bg-[#FF3366]/10 px-3 py-1 rounded-lg transition-colors"
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
                       Edit
                     </button>
                   ) : (
                     <div className="flex gap-2">
                       <button
                         onClick={() => setIsEditingBio(false)}
-                        className="text-[#666] text-sm hover:underline"
+                        className="flex items-center gap-1 text-[#666] text-sm font-medium hover:bg-gray-100 px-3 py-1 rounded-lg transition-colors"
                       >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
                         Cancel
                       </button>
                       <button
                         onClick={saveBio}
                         disabled={isSavingBio}
-                        className={`text-[#FF3366] text-sm hover:underline ${
-                          isSavingBio ? "opacity-50 cursor-not-allowed" : ""
+                        className={`flex items-center gap-1 text-white text-sm font-medium bg-[#FF3366] hover:bg-[#E62E5C] px-3 py-1 rounded-lg transition-colors ${
+                          isSavingBio ? "opacity-70 cursor-not-allowed" : ""
                         }`}
                       >
-                        {isSavingBio ? "Saving..." : "Save"}
+                        {isSavingBio ? (
+                          <>
+                            <svg
+                              className="animate-spin h-4 w-4"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            Save
+                          </>
+                        )}
                       </button>
                     </div>
                   )}
                 </div>
 
                 {bioError && (
-                  <div className="text-red-500 text-sm mb-2">{bioError}</div>
+                  <div className="flex items-center gap-2 text-red-500 text-sm mb-3 bg-red-50 p-2 rounded-lg">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    {bioError}
+                  </div>
                 )}
 
                 {isEditingBio ? (
                   <textarea
                     value={bio}
                     onChange={handleBioChange}
-                    className="w-full p-3 border border-[#FFD9E4] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
-                    rows={5}
-                    placeholder="Write something about yourself..."
+                    className="w-full p-4 border-2 border-[#FFD9E4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-white/80 backdrop-blur-sm font-medium resize-none"
+                    rows={6}
+                    placeholder="Tell people about yourself... What are your passions? What makes you unique? 🌟"
                   />
                 ) : (
                   <div>
                     {bio ? (
-                      <div className="prose text-[#666]">
+                      <div className="prose max-w-none">
                         {showFullBio || bio.length <= 200 ? (
-                          <p className="whitespace-pre-wrap">{bio}</p>
+                          <p className="whitespace-pre-wrap text-[#666] leading-relaxed font-medium">
+                            {bio}
+                          </p>
                         ) : (
                           <>
-                            <p className="whitespace-pre-wrap">
+                            <p className="whitespace-pre-wrap text-[#666] leading-relaxed font-medium">
                               {bio.substring(0, 200)}...
                             </p>
                             <button
                               onClick={() => setShowFullBio(true)}
-                              className="text-[#FF3366] text-sm mt-1 hover:underline"
+                              className="text-[#FF3366] text-sm mt-2 hover:underline font-medium inline-flex items-center gap-1"
                             >
                               Read more
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-3 w-3"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 9l-7 7-7-7"
+                                />
+                              </svg>
                             </button>
                           </>
                         )}
@@ -797,16 +682,47 @@ export default function ProfilePage() {
                         {showFullBio && bio.length > 200 && (
                           <button
                             onClick={() => setShowFullBio(false)}
-                            className="text-[#FF3366] text-sm mt-1 hover:underline"
+                            className="text-[#FF3366] text-sm mt-2 hover:underline font-medium inline-flex items-center gap-1"
                           >
                             Show less
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-3 w-3"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 15l7-7 7 7"
+                              />
+                            </svg>
                           </button>
                         )}
                       </div>
                     ) : (
-                      <p className="text-[#999] italic">
-                        No bio yet. Click edit to add something about yourself.
-                      </p>
+                      <div className="flex items-center gap-3 text-[#999] italic bg-white/50 p-4 rounded-xl border border-dashed border-gray-300">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-8 w-8 text-gray-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                          />
+                        </svg>
+                        <div>
+                          <p className="font-medium">No bio yet</p>
+                          <p className="text-sm">Click edit to tell people about yourself!</p>
+                        </div>
+                      </div>
                     )}
                   </div>
                 )}
@@ -815,35 +731,78 @@ export default function ProfilePage() {
 
             {/* Interests Section */}
             <div className="mb-8">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold text-[#333]">
-                  Your Interests
-                </h3>
-                <div className="text-sm text-[#666] font-medium">
-                  <span
-                    className={isLimitReached ? "text-red-500 font-bold" : ""}
+              <div className="flex justify-between items-center mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
+                  <h3 className="text-2xl font-bold text-[#333] font-poppins">Your Interests</h3>
+                </div>
+                <div className="flex items-center gap-2 bg-white rounded-xl px-4 py-2 border border-gray-200 shadow-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-4 w-4 ${isLimitReached ? "text-red-500" : "text-[#FF3366]"}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    {selectedHobbyIds.length}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                  <span className="text-sm font-medium text-[#666]">
+                    <span className={`font-bold ${isLimitReached ? "text-red-500" : "text-[#FF3366]"}`}>
+                      {selectedHobbyIds.length}
+                    </span>
+                    <span> / {MAX_INTERESTS}</span>
                   </span>
-                  <span> / {MAX_INTERESTS}</span>
                 </div>
               </div>
 
               {error && (
-                <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
-                  {error}
+                <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl mb-6 flex items-center gap-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-red-500 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="font-medium">{error}</span>
                 </div>
               )}
 
               {successMessage && (
-                <div className="bg-green-50 text-green-600 p-4 rounded-lg mb-6">
-                  {successMessage}
+                <div className="bg-green-50 border border-green-200 text-green-600 p-4 rounded-xl mb-6 flex items-center gap-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-green-500 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span className="font-medium">{successMessage}</span>
                 </div>
               )}
 
               {isLimitReached && (
-                <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-6 flex items-center">
-                  <div className="text-red-500 mr-3">
+                <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 p-5 rounded-xl mb-6 flex items-start gap-4">
+                  <div className="text-red-500 flex-shrink-0 mt-0.5">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -858,40 +817,68 @@ export default function ProfilePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-red-600 font-medium">
-                      Maximum limit reached
-                    </p>
-                    <p className="text-red-500 text-sm">
-                      You can select up to {MAX_INTERESTS} interests. Please
-                      deselect an interest before selecting another one.
+                    <p className="text-red-600 font-bold mb-1">Maximum limit reached</p>
+                    <p className="text-red-500 text-sm leading-relaxed">
+                      You can select up to {MAX_INTERESTS} interests. Please deselect an interest before selecting another one.
                     </p>
                   </div>
                 </div>
               )}
 
-              <p className="text-[#666] mb-6">
-                Select your interests below. This will help us match you with
-                people who share similar passions.
-              </p>
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-5 rounded-xl mb-8">
+                <div className="flex items-start gap-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-blue-500 flex-shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <div>
+                    <p className="text-blue-700 font-medium mb-1">Choose your interests wisely!</p>
+                    <p className="text-blue-600 text-sm leading-relaxed">
+                      Your selected interests help us match you with people who share similar passions and hobbies.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
               {/* Selected Interests */}
               {selectedHobbyIds.length > 0 && (
-                <div className="mb-6">
-                  <h4 className="font-medium text-[#333] mb-3">
-                    Your Selected Interests
-                  </h4>
+                <div className="mb-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-[#FF3366]"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <h4 className="font-bold text-[#333] text-lg">Your Selected Interests</h4>
+                  </div>
                   <div className="flex flex-wrap gap-3">
                     {userHobbies
                       .filter((hobby) => selectedHobbyIds.includes(hobby.id))
-                      .map((hobby) => (
+                      .map((hobby, index) => (
                         <div
                           key={hobby.id}
-                          className="bg-[#FF3366] text-white px-5 py-2 rounded-full flex items-center shadow-sm hover:shadow-md transition-shadow"
+                          className="group bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white px-5 py-3 rounded-full flex items-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 border-2 border-white"
+                          style={{
+                            animationDelay: `${index * 100}ms`,
+                          }}
                         >
-                          <span className="text-md">{hobby.name}</span>
+                          <span className="text-sm font-medium">#{hobby.name}</span>
                           <button
                             onClick={() => toggleHobbySelection(hobby.id)}
-                            className="ml-2 flex items-center justify-center hover:bg-[#ff1a53] rounded-full w-5 h-5"
+                            className="ml-3 flex items-center justify-center hover:bg-white/20 rounded-full w-6 h-6 transition-colors group-hover:rotate-90 transform transition-transform duration-200"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -899,7 +886,7 @@ export default function ProfilePage() {
                               viewBox="0 0 24 24"
                               strokeWidth={2}
                               stroke="currentColor"
-                              className="w-3 h-3"
+                              className="w-4 h-4"
                             >
                               <path
                                 strokeLinecap="round"
@@ -915,12 +902,26 @@ export default function ProfilePage() {
               )}
 
               {/* Search and Filter */}
-              <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label
                     htmlFor="search-interests"
-                    className="block text-sm font-medium text-[#666] mb-1"
+                    className="block text-sm font-bold text-[#333] mb-2 flex items-center gap-2"
                   >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 text-[#FF3366]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
                     Search Interests
                   </label>
                   <div className="relative">
@@ -929,13 +930,29 @@ export default function ProfilePage() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Type to search..."
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
+                      placeholder="Type to search interests..."
+                      className="w-full px-4 py-3 pl-12 pr-10 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-gray-50 focus:bg-white font-medium placeholder:text-gray-400"
                     />
+                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                    </div>
                     {searchQuery && (
                       <button
                         onClick={() => setSearchQuery("")}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -943,7 +960,7 @@ export default function ProfilePage() {
                           viewBox="0 0 24 24"
                           strokeWidth={1.5}
                           stroke="currentColor"
-                          className="w-5 h-5"
+                          className="w-4 h-4"
                         >
                           <path
                             strokeLinecap="round"
@@ -958,15 +975,29 @@ export default function ProfilePage() {
                 <div>
                   <label
                     htmlFor="category-filter"
-                    className="block text-sm font-medium text-[#666] mb-1"
+                    className="block text-sm font-bold text-[#333] mb-2 flex items-center gap-2"
                   >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 text-[#FF3366]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                      />
+                    </svg>
                     Filter by Category
                   </label>
                   <select
                     id="category-filter"
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF3366]/20 focus:border-[#FF3366] transition-all duration-200 bg-gray-50 focus:bg-white font-medium"
                   >
                     {HOBBY_CATEGORIES.map((category) => (
                       <option key={category} value={category}>
@@ -978,163 +1009,304 @@ export default function ProfilePage() {
               </div>
 
               {/* Interests Grid */}
-              {/* Interest Selection */}
               <div
-                className={`flex flex-wrap gap-3 mb-8 p-4 rounded-lg ${
-                  isLimitReached ? "border-2 border-red-400 bg-red-50/20" : ""
+                className={`rounded-2xl p-6 mb-8 transition-all duration-300 ${
+                  isLimitReached 
+                    ? "border-2 border-red-300 bg-gradient-to-br from-red-50 to-orange-50" 
+                    : "border-2 border-gray-100 bg-gradient-to-br from-gray-50 to-white"
                 }`}
               >
                 {filteredHobbies.length === 0 ? (
-                  <div className="w-full text-center py-4 text-gray-500">
-                    No interests found matching your search criteria
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                    </div>
+                    <p className="text-gray-500 font-medium mb-1">No interests found</p>
+                    <p className="text-gray-400 text-sm">Try adjusting your search or filter criteria</p>
                   </div>
                 ) : (
-                  filteredHobbies.map((hobby) => {
-                    const isSelected = selectedHobbyIds.includes(hobby.id);
-                    const isDisabled = !isSelected && isLimitReached;
+                  <div className="flex flex-wrap gap-3">
+                    {filteredHobbies.map((hobby, index) => {
+                      const isSelected = selectedHobbyIds.includes(hobby.id);
+                      const isDisabled = !isSelected && isLimitReached;
 
-                    return (
-                      <div
-                        key={hobby.id}
-                        onClick={() =>
-                          !isDisabled && toggleHobbySelection(hobby.id)
-                        }
-                        className={`py-2 px-6 rounded-[20px] shadow-sm transition-all
-                          ${
-                            isSelected
-                              ? "bg-[#FF3366] text-white hover:-translate-y-[2px] hover:shadow-md"
-                              : isDisabled
-                              ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-300"
-                              : "bg-white text-[#666] border border-[#ddd] hover:-translate-y-[2px] hover:shadow-md cursor-pointer"
-                          }`}
-                      >
-                        {hobby.name}
-                      </div>
-                    );
-                  })
+                      return (
+                        <div
+                          key={hobby.id}
+                          onClick={() => !isDisabled && toggleHobbySelection(hobby.id)}
+                          className={`py-3 px-6 rounded-xl font-medium transition-all duration-200 cursor-pointer group relative overflow-hidden
+                            ${
+                              isSelected
+                                ? "bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white hover:from-[#E62E5C] hover:to-[#FF5577] shadow-lg hover:shadow-xl transform hover:scale-105"
+                                : isDisabled
+                                ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-300"
+                                : "bg-white text-[#666] border-2 border-gray-200 hover:border-[#FF3366] hover:text-[#FF3366] hover:shadow-md transform hover:scale-105 hover:bg-gradient-to-r hover:from-[#FFF0F3] hover:to-[#FFE5EA]"
+                            }`}
+                          style={{
+                            animationDelay: `${index * 50}ms`,
+                          }}
+                        >
+                          <span className="relative z-10">#{hobby.name}</span>
+                          {isSelected && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
 
-              <button
-                onClick={saveHobbies}
-                disabled={isSaving}
-                className={`bg-[#FF3366] text-white rounded-2xl py-3 px-8 font-medium transition-all hover:bg-[#E62E5C] shadow-md ${
-                  isSaving ? "opacity-70 cursor-not-allowed" : ""
-                }`}
-              >
-                {isSaving ? (
-                  <span className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
+              <div className="flex justify-center">
+                <button
+                  onClick={saveHobbies}
+                  disabled={isSaving}
+                  className={`bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white rounded-2xl py-4 px-12 font-bold text-lg transition-all duration-200 hover:from-[#E62E5C] hover:to-[#FF5577] shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-3 ${
+                    isSaving ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isSaving ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Saving Interests...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
                         stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Saving...
-                  </span>
-                ) : (
-                  "Save Interests"
-                )}
-              </button>
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Save Interests
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Compatibility Info */}
-            <div className="bg-[#FFF0F3] rounded-[20px] p-6 mb-4">
-              <h3 className="text-lg font-semibold text-[#333] mb-4">
-                Compatibility Matching
-              </h3>
-              <p className="text-[#666] mb-2">
-                Your selected interests will be used to find people who share
-                similar passions.
-              </p>
-              <p className="text-[#666] mb-2">
-                The more interests you select, the better matches we can find
-                for you.
-              </p>
-              <Link
-                href="/"
-                className="text-[#FF3366] font-medium hover:underline inline-flex items-center mt-2"
-              >
-                Go to browse matches
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="ml-1"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
+            <div className="bg-gradient-to-br from-[#FFF0F3] via-[#FFF8FA] to-[#FFE5EA] rounded-2xl p-8 mb-8 border border-[#FFD6DD] shadow-sm">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#FF3366] to-[#FF6B8A] rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-[#333] mb-2">Smart Compatibility Matching</h3>
+                  <p className="text-[#666] mb-3 leading-relaxed">
+                    Our advanced algorithm uses your selected interests to find people who share similar passions and hobbies.
+                  </p>
+                  <p className="text-[#666] mb-4 leading-relaxed">
+                    The more interests you select, the better and more accurate matches we can find for you! ✨
+                  </p>
+                  <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 text-[#FF3366] font-bold hover:text-[#E62E5C] transition-colors group"
+                  >
+                    <span>Discover Your Matches</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 group-hover:translate-x-1 transition-transform"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 8l4 4m0 0l-4 4m4-4H3"
+                      />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         )}
       </div>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md z-10">
+      <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl z-20 border-t border-gray-100">
         <ul className="flex justify-around list-none p-4">
-          <li>
-            <Link href="/" className="text-[#666] font-medium no-underline">
-              Browse
+          <li className="flex-1">
+            <Link 
+              href="/" 
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
+            >
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Browse</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/profile"
-              className="text-[#BE185D] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#FF3366] font-medium no-underline p-3 rounded-xl transition-all duration-200 hover:bg-[#FF3366]/10"
             >
-              Profile
+              <div className="w-8 h-8 bg-gradient-to-br from-[#FF3366] to-[#FF6B8A] rounded-xl flex items-center justify-center shadow-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-bold">Profile</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/chat"
-              className="text-[#666] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
               onClick={(e) =>
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Chat
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Chat</span>
             </Link>
           </li>
-          <li>
+          <li className="flex-1">
             <Link
               href="/love-note"
-              className="text-[#666] no-underline font-medium"
+              className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
               onClick={(e) =>
                 !session && (e.preventDefault(), handleLoginClick())
               }
             >
-              Love Note
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Love Note</span>
             </Link>
           </li>
           {session && (
-            <li>
+            <li className="flex-1">
               <button
                 onClick={() => signOut()}
-                className="text-gray-500 font-poppins hover:text-[#FF3366]"
+                className="flex items-center justify-center gap-2 text-gray-500 font-medium hover:text-[#FF3366] p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 w-full"
               >
-                Log out
+                <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                </div>
+                <span className="text-sm">Logout</span>
               </button>
             </li>
           )}
@@ -1165,6 +1337,16 @@ export default function ProfilePage() {
       {isLoginModalOpen && (
         <LoginModal onClose={() => setIsLoginModalOpen(false)} />
       )}
+      
+      {/* Custom CSS for glassmorphism effects */}
+      <style jsx>{`
+        .backdrop-blur-md {
+          backdrop-filter: blur(12px);
+        }
+        .bg-white\\/95 {
+          background-color: rgba(255, 255, 255, 0.95);
+        }
+      `}</style>
     </div>
   );
 }
