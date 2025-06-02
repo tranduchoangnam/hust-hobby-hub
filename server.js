@@ -11,16 +11,16 @@ const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 // Random questions for love notes
 const loveNoteQuestions = [
-    "What small moment made you feel loved today?",
-    "What's something about me that always makes you smile?",
-    "What's a memory with me that you cherish?",
-    "What's something new you'd like us to try together?",
-    "What's your favorite way to spend time with me?",
-    "What's something I do that makes you feel special?",
-    "What's a quality of mine that you admire?",
-    "If we could go anywhere together right now, where would you choose?",
-    "What's a song that reminds you of us?",
-    "What would be your perfect day with me?",
+    "Bài hát nào luôn khiến bạn muốn hát theo?",
+    "Thể loại phim nào bạn có thể xem cả ngày mà không chán?",
+    "Cuốn sách nào bạn khuyên mọi người nên đọc?",
+    "Hoạt động nào khiến bạn quên mất thời gian?",
+    "Món ăn nào bạn nấu ngon nhất?",
+    "Sở thích nào giúp bạn tìm thấy cảm hứng sáng tạo?",
+    "Game hoặc môn thể thao nào bạn chơi giỏi nhất?",
+    "Kỹ năng thủ công nào bạn tự hào nhất?",
+    "Ứng dụng nào trên điện thoại bạn không thể thiếu?",
+    "Hoạt động cuối tuần nào khiến bạn cảm thấy hạnh phúc nhất?",
 ];
 // Map of connected users
 const connectedUsers = new Map();
@@ -132,17 +132,20 @@ app.prepare().then(() => {
             try {
                 const { recipientId } = data;
 
-                // Check if there's already an active love note between these users
+                // Ensure consistent ordering of user IDs to prevent duplicate love notes
+                const [user1, user2] = [userId, recipientId].sort();
+
+                // Check if there's already an active love note between these users (in either direction)
                 const existingLoveNote = await prisma.loveNote.findFirst({
                     where: {
                         OR: [
                             {
-                                senderId: userId,
-                                recipientId,
+                                senderId: user1,
+                                recipientId: user2,
                             },
                             {
-                                senderId: recipientId,
-                                recipientId: userId,
+                                senderId: user2,
+                                recipientId: user1,
                             },
                         ],
                         createdAt: {
@@ -152,8 +155,8 @@ app.prepare().then(() => {
                 });
 
                 if (existingLoveNote) {
-                    // Notify sender about existing love note
-                    socket.emit("love_note_exists", existingLoveNote);
+                    // Send the existing love note to the requester
+                    socket.emit("new_love_note", existingLoveNote);
                     return;
                 }
 
@@ -163,6 +166,7 @@ app.prepare().then(() => {
                         Math.floor(Math.random() * loveNoteQuestions.length)
                     ];
 
+                // Always use the original sender/recipient order for creation
                 const loveNote = await prisma.loveNote.create({
                     data: {
                         question: randomQuestion,
@@ -180,6 +184,35 @@ app.prepare().then(() => {
                 }
             } catch (error) {
                 console.error("Error creating love note:", error);
+                
+                // If there's a constraint error (duplicate), try to find and return the existing one
+                if (error.code === 'P2002') {
+                    try {
+                        const existingLoveNote = await prisma.loveNote.findFirst({
+                            where: {
+                                OR: [
+                                    {
+                                        senderId: userId,
+                                        recipientId,
+                                    },
+                                    {
+                                        senderId: recipientId,
+                                        recipientId: userId,
+                                    },
+                                ],
+                                createdAt: {
+                                    gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+                                },
+                            },
+                        });
+                        
+                        if (existingLoveNote) {
+                            socket.emit("new_love_note", existingLoveNote);
+                        }
+                    } catch (findError) {
+                        console.error("Error finding existing love note:", findError);
+                    }
+                }
             }
         });
 
@@ -201,7 +234,9 @@ app.prepare().then(() => {
                     ? loveNote.senderId
                     : loveNote.recipientId;
 
-                // Notify both users about update
+                console.log(`Love note answered by ${userId} for love note ${loveNoteId}`);
+
+                // Notify both users about love note update
                 socket.emit("love_note_updated", loveNote);
 
                 const partnerSocketId = connectedUsers.get(partnerId);
