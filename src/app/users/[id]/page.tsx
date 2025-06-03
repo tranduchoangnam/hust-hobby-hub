@@ -114,7 +114,7 @@ export default function UserProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins']">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Montserrat']">
       <div className="max-w-[900px] mx-auto p-8 bg-white rounded-[20px] shadow-md my-6">
         <button
           onClick={() => router.back()}
@@ -174,7 +174,12 @@ export default function UserProfilePage() {
               {/* Large Avatar */}
               <div className="flex-shrink-0">
                 <Avatar
-                  src={userCompatibility.targetUser.image}
+                  src={
+                    userCompatibility.targetUser.id ==
+                    "cmbes2i8e005yulninzkouloa"
+                      ? "/img/huy.png"
+                      : userCompatibility.targetUser.image
+                  }
                   alt={userCompatibility.targetUser.name || "User profile"}
                   size={144}
                   className="border-4 border-[#FFE0E9] shadow-lg hover:scale-105 transition-transform"

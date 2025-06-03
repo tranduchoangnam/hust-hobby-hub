@@ -329,7 +329,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins'] py-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Montserrat'] py-6">
       <div className="max-w-[900px] mx-auto p-8 bg-white rounded-[20px] shadow-md">
         <div className="flex items-center mb-8">
           <button
@@ -422,7 +422,7 @@ export default function ProfilePage() {
 
               {/* User Name with enhanced typography */}
               <div className="text-center mb-6">
-                <h2 className="text-4xl font-bold text-[#333] mb-2 font-poppins">
+                <h2 className="text-4xl font-bold text-[#333] mb-2 font-montserrat">
                   {session.user?.name}
                 </h2>
 
@@ -750,7 +750,7 @@ export default function ProfilePage() {
               <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>{" "}
-                  <h3 className="text-2xl font-bold text-[#333] font-poppins">
+                  <h3 className="text-2xl font-bold text-[#333] font-montserrat">
                     Sở thích của bạn
                   </h3>
                 </div>

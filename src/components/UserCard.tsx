@@ -89,7 +89,7 @@ export default function UserCard({
           />
         </div>
 
-        <h2 className="text-xl font-semibold text-[#333] mb-2 text-center font-poppins">
+        <h2 className="text-xl font-semibold text-[#333] mb-2 text-center font-montserrat">
           {user.name}
         </h2>
 
@@ -154,13 +154,13 @@ export default function UserCard({
           <>
             <Link
               href={`/users/${user.id}`}
-              className="flex-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white text-center py-3 rounded-full font-medium transition-all hover:shadow-lg hover:scale-105 transform font-poppins"
+              className="flex-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white text-center py-3 rounded-full font-medium transition-all hover:shadow-lg hover:scale-105 transform font-montserrat"
             >
               View Profile
             </Link>
             <Link
               href={`/chat?userId=${user.id}`}
-              className="px-4 py-3 bg-white border-2 border-[#FF3366] text-[#FF3366] rounded-full font-medium transition-all hover:bg-[#FF3366] hover:text-white hover:scale-105 transform font-poppins"
+              className="px-4 py-3 bg-white border-2 border-[#FF3366] text-[#FF3366] rounded-full font-medium transition-all hover:bg-[#FF3366] hover:text-white hover:scale-105 transform font-montserrat"
             >
               <svg
                 className="w-5 h-5"
@@ -180,7 +180,7 @@ export default function UserCard({
         ) : (
           <button
             onClick={handleLoginClick}
-            className="w-full bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white py-3 rounded-full font-medium transition-all hover:shadow-lg hover:scale-105 transform font-poppins"
+            className="w-full bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white py-3 rounded-full font-medium transition-all hover:shadow-lg hover:scale-105 transform font-montserrat"
           >
             Sign in to connect
           </button>

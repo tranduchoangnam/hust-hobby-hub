@@ -263,14 +263,14 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins'] py-6"
+      className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Montserrat'] py-6"
       id="home-screen"
     >
       <div className="max-w-[1200px] mx-auto p-8 bg-white rounded-[20px] shadow-md">
         {/* Header */}
         <header className="text-center mb-10">
           <div className="relative mb-6">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FF3366] via-[#FF6B98] to-[#FFB3C1] text-transparent bg-clip-text mb-4 font-poppins">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FF3366] via-[#FF6B98] to-[#FFB3C1] text-transparent bg-clip-text mb-4 font-montserrat">
               Tìm kiếm Bạn Bè
             </h1>
             <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full opacity-20 animate-pulse"></div>
@@ -525,7 +525,7 @@ export default function Home() {
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
-                  <h2 className="text-2xl font-bold text-[#333] font-poppins">
+                  <h2 className="text-2xl font-bold text-[#333] font-montserrat">
                     {session && showOnlyUserInterests
                       ? "Your Interests"
                       : "Explore Interests"}
@@ -773,7 +773,7 @@ export default function Home() {
                     <div className="mb-8">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
-                        <h2 className="text-2xl font-bold text-[#333] font-poppins">
+                        <h2 className="text-2xl font-bold text-[#333] font-montserrat">
                           {users.length} Người dùng có sở thích{" "}
                           <span className="text-[#FF3366]">
                             #{selectedHobby}
@@ -1049,7 +1049,7 @@ export default function Home() {
             <div className="text-center mb-10">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
-                <h2 className="text-3xl font-bold text-[#333] font-poppins">
+                <h2 className="text-3xl font-bold text-[#333] font-montserrat">
                   Người phù hợp nhất với bạn
                 </h2>
                 <div className="w-2 h-8 bg-gradient-to-b from-[#FF6B8A] to-[#FF3366] rounded-full"></div>
