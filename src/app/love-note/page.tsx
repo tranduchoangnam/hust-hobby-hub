@@ -126,7 +126,7 @@ export default function LoveNotePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins']">
+    <main className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Montserrat']">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-pink-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -140,22 +140,23 @@ export default function LoveNotePage() {
               strokeLinejoin="round"
               className="w-8 h-8 text-[#FF3366]"
             >
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-              <circle cx="12" cy="17" r="1"/>
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <circle cx="12" cy="17" r="1" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-[#FF3366] mb-2 font-poppins">
+          <h1 className="text-3xl font-bold text-[#FF3366] mb-2 font-montserrat">
             Câu Hỏi Hàng Ngày
           </h1>
-          <p className="text-gray-600 max-w-md mx-auto font-poppins">
-            Câu hỏi hàng ngày giúp bạn bắt đầu cuộc trò chuyện và tìm hiểu nhau tốt hơn
+          <p className="text-gray-600 max-w-md mx-auto font-montserrat">
+            Câu hỏi hàng ngày giúp bạn bắt đầu cuộc trò chuyện và tìm hiểu nhau
+            tốt hơn
           </p>
         </div>
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
-            <p className="font-poppins text-gray-600">Đang tải câu hỏi...</p>
+            <p className="font-montserrat text-gray-600">Đang tải câu hỏi...</p>
           </div>
         ) : loveNotes.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-6">
@@ -175,22 +176,22 @@ export default function LoveNotePage() {
                     isOnline={Math.random() > 0.5} // Random online status for demo
                   />
                   <div className="ml-3">
-                    <h3 className="font-medium font-poppins">
+                    <h3 className="font-medium font-montserrat">
                       {getPartnerName(loveNote)}
                     </h3>
-                    <p className="text-xs text-gray-500 font-poppins">
+                    <p className="text-xs text-gray-500 font-montserrat">
                       {new Date(loveNote.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
 
-                <p className="text-gray-700 mb-3 font-medium font-poppins">
+                <p className="text-gray-700 mb-3 font-medium font-montserrat">
                   {loveNote.question}
                 </p>
 
                 <div className="flex justify-between text-sm">
                   <span
-                    className={`px-2 py-1 rounded font-poppins ${
+                    className={`px-2 py-1 rounded font-montserrat ${
                       getUserAnswer(loveNote)
                         ? "bg-pink-50 text-[#FF3366]"
                         : "bg-gray-50 text-gray-500"
@@ -201,7 +202,7 @@ export default function LoveNotePage() {
                       : "Chưa trả lời"}
                   </span>
                   <span
-                    className={`px-2 py-1 rounded font-poppins ${
+                    className={`px-2 py-1 rounded font-montserrat ${
                       getPartnerAnswer(loveNote)
                         ? "bg-pink-50 text-[#FF3366]"
                         : "bg-gray-50 text-gray-500"
@@ -215,12 +216,13 @@ export default function LoveNotePage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl p-8 shadow-md text-center">
-            <p className="text-gray-600 mb-4 font-poppins">
-              Chưa có câu hỏi hàng ngày nào! Bắt đầu cuộc trò chuyện với ai đó và bạn sẽ nhận được câu hỏi đầu tiên để phá vỡ bức tường băng.
+            <p className="text-gray-600 mb-4 font-montserrat">
+              Chưa có câu hỏi hàng ngày nào! Bắt đầu cuộc trò chuyện với ai đó
+              và bạn sẽ nhận được câu hỏi đầu tiên để phá vỡ bức tường băng.
             </p>
             <Link
               href="/"
-              className="text-[#FF3366] hover:underline font-poppins font-medium"
+              className="text-[#FF3366] hover:underline font-montserrat font-medium"
             >
               Tìm người để trò chuyện
             </Link>
@@ -244,18 +246,18 @@ export default function LoveNotePage() {
                   strokeLinejoin="round"
                   className="w-8 h-8 text-[#FF3366]"
                 >
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                  <circle cx="12" cy="17" r="1"/>
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                  <circle cx="12" cy="17" r="1" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
+              <h2 className="text-2xl font-semibold text-[#FF3366] font-montserrat">
                 Câu Hỏi Hàng Ngày
               </h2>
-              <p className="text-gray-700 mt-2 font-poppins">
+              <p className="text-gray-700 mt-2 font-montserrat">
                 {selectedLoveNote.question}
               </p>
-              <p className="text-sm text-gray-500 mt-1 font-poppins">
+              <p className="text-sm text-gray-500 mt-1 font-montserrat">
                 với {getPartnerName(selectedLoveNote)} •{" "}
                 {new Date(selectedLoveNote.createdAt).toLocaleDateString()}
               </p>
@@ -263,11 +265,11 @@ export default function LoveNotePage() {
 
             {/* Câu trả lời của bạn */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-montserrat">
                 Câu trả lời của bạn
               </label>
               {getUserAnswer(selectedLoveNote) ? (
-                <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-poppins">
+                <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-montserrat">
                   {getUserAnswer(selectedLoveNote)}
                 </p>
               ) : (
@@ -276,13 +278,13 @@ export default function LoveNotePage() {
                     value={loveNoteAnswer}
                     onChange={(e) => setLoveNoteAnswer(e.target.value)}
                     placeholder="Hãy dành một chút thời gian để suy ngẫm..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF3366] font-poppins"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF3366] font-montserrat"
                     rows={4}
                   />
                   <button
                     onClick={handleSubmitAnswer}
                     disabled={!loveNoteAnswer.trim()}
-                    className="mt-2 bg-[#FF3366] text-white rounded-xl px-4 py-2 text-sm font-medium disabled:opacity-50 font-poppins"
+                    className="mt-2 bg-[#FF3366] text-white rounded-xl px-4 py-2 text-sm font-medium disabled:opacity-50 font-montserrat"
                   >
                     Chia sẻ
                   </button>
@@ -292,15 +294,15 @@ export default function LoveNotePage() {
 
             {/* Câu trả lời của {đối phương} */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-montserrat">
                 Câu trả lời của {getPartnerName(selectedLoveNote)}
               </label>
               {getPartnerAnswer(selectedLoveNote) ? (
-                <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-poppins">
+                <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-montserrat">
                   {getPartnerAnswer(selectedLoveNote)}
                 </p>
               ) : (
-                <div className="bg-gray-100 p-3 rounded-lg text-gray-400 flex items-center justify-center space-x-2 font-poppins">
+                <div className="bg-gray-100 p-3 rounded-lg text-gray-400 flex items-center justify-center space-x-2 font-montserrat">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -321,7 +323,7 @@ export default function LoveNotePage() {
             <div className="flex justify-center">
               <button
                 onClick={() => setSelectedLoveNote(null)}
-                className="text-gray-500 rounded-xl px-6 py-2 font-medium font-poppins"
+                className="text-gray-500 rounded-xl px-6 py-2 font-medium font-montserrat"
               >
                 Đóng
               </button>
@@ -332,7 +334,7 @@ export default function LoveNotePage() {
                     ? selectedLoveNote.recipient.id
                     : selectedLoveNote.sender.id
                 }`}
-                className="ml-3 bg-[#FF3366] text-white rounded-xl px-6 py-2 font-medium font-poppins"
+                className="ml-3 bg-[#FF3366] text-white rounded-xl px-6 py-2 font-medium font-montserrat"
               >
                 Trò chuyện
               </Link>

@@ -45,7 +45,7 @@ export default function UserList({
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
-            <h2 className="text-xl font-bold text-[#333] font-poppins">
+            <h2 className="text-xl font-bold text-[#333] font-montserrat">
               {title}
             </h2>
           </div>
@@ -210,7 +210,7 @@ export default function UserList({
 
                     <div className="flex-grow min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-[#333] truncate font-poppins group-hover:text-[#FF3366] transition-colors duration-200">
+                        <h3 className="font-semibold text-[#333] truncate font-montserrat group-hover:text-[#FF3366] transition-colors duration-200">
                           {user.name}
                         </h3>
                         {user.followedAt && (

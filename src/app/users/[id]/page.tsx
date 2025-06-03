@@ -114,8 +114,8 @@ export default function UserProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins']">
-      <div className="max-w-[900px] mx-auto p-8 bg-white rounded-[20px] shadow-md my-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Montserrat'] py-6">
+      <div className="max-w-[900px] mx-auto p-8 bg-white rounded-[20px] shadow-md">
         <button
           onClick={() => router.back()}
           className="mb-6 flex items-center gap-2 text-[#666] hover:text-[#FF3366] transition-colors"
@@ -174,7 +174,12 @@ export default function UserProfilePage() {
               {/* Large Avatar */}
               <div className="flex-shrink-0">
                 <Avatar
-                  src={userCompatibility.targetUser.image}
+                  src={
+                    userCompatibility.targetUser.id ==
+                    "cmbes2i8e005yulninzkouloa"
+                      ? "/img/huy.png"
+                      : userCompatibility.targetUser.image
+                  }
                   alt={userCompatibility.targetUser.name || "User profile"}
                   size={144}
                   className="border-4 border-[#FFE0E9] shadow-lg hover:scale-105 transition-transform"
@@ -213,7 +218,7 @@ export default function UserProfilePage() {
 
                 <div className="mt-6 flex gap-4 justify-center md:justify-start">
                   <Link
-                    href={`/chat/${userCompatibility.targetUser.id}`}
+                    href={`/chat?userId=${userCompatibility.targetUser.id}`}
                     className="bg-[#FF3366] text-white rounded-2xl py-2 px-6 font-medium transition-all hover:bg-[#E62E5C]"
                   >
                     Gửi tin nhắn
@@ -296,8 +301,8 @@ export default function UserProfilePage() {
       <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl z-20 border-t border-gray-100">
         <ul className="flex justify-around list-none p-4">
           <li className="flex-1">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
             >
               <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
@@ -347,7 +352,9 @@ export default function UserProfilePage() {
             <Link
               href="/chat"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
-              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+              onClick={(e) =>
+                !session && (e.preventDefault(), handleLoginClick())
+              }
             >
               <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
                 <svg
@@ -372,7 +379,9 @@ export default function UserProfilePage() {
             <Link
               href="/daily-questions"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
-              onClick={(e) => !session && (e.preventDefault(), handleLoginClick())}
+              onClick={(e) =>
+                !session && (e.preventDefault(), handleLoginClick())
+              }
             >
               <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
                 <svg
@@ -385,9 +394,9 @@ export default function UserProfilePage() {
                   strokeLinejoin="round"
                   className="w-5 h-5"
                 >
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                  <path d="M12 17h.01"/>
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                  <path d="M12 17h.01" />
                 </svg>
               </div>
               <span className="text-sm">Câu hỏi hàng ngày</span>
@@ -425,7 +434,7 @@ export default function UserProfilePage() {
       {isLoginModalOpen && (
         <LoginModal onClose={() => setIsLoginModalOpen(false)} />
       )}
-      
+
       {/* Custom CSS for glassmorphism effects */}
       <style jsx>{`
         .backdrop-blur-md {

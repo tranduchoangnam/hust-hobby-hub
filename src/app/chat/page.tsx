@@ -85,7 +85,7 @@ function ChatPageInner() {
 
     socket.on("new_message", (data) => {
       console.log("Received new_message event:", data);
-      
+
       // Update conversations with the new message
       setConversations((prev) => {
         const updatedConversations = [...prev];
@@ -95,16 +95,16 @@ function ChatPageInner() {
 
         if (conversationIndex >= 0) {
           const conversation = { ...updatedConversations[conversationIndex] };
-          
+
           // Set appropriate preview based on message content
-          if (data.content.includes('Daily Question:')) {
-            conversation.lastMessage = data.content.includes('Hi! Let\'s start') 
-              ? "👋 Started with daily question" 
+          if (data.content.includes("Daily Question:")) {
+            conversation.lastMessage = data.content.includes("Hi! Let's start")
+              ? "👋 Started with daily question"
               : "📝 Daily question answered";
           } else {
             conversation.lastMessage = data.content;
           }
-          
+
           // Only increment unread count if it's not our message
           if (data.senderId !== session?.user?.id) {
             conversation.unreadCount += 1;
@@ -434,7 +434,6 @@ function ChatPageInner() {
         } else {
           console.log("Socket not connected, message saved to DB only");
         }
-
       } else {
         console.error("Failed to send message");
         // Rollback optimistic update
@@ -448,7 +447,12 @@ function ChatPageInner() {
   };
 
   const handleSubmitLoveNote = async () => {
-    if (!loveNoteAnswer.trim() || !session?.user || !loveNote || !selectedUserId) {
+    if (
+      !loveNoteAnswer.trim() ||
+      !session?.user ||
+      !loveNote ||
+      !selectedUserId
+    ) {
       console.log("Cannot submit: missing requirements", {
         hasAnswer: !!loveNoteAnswer.trim(),
         hasSession: !!session?.user,
@@ -459,12 +463,12 @@ function ChatPageInner() {
     }
 
     const isRecipient = loveNote.recipientId === session.user.id;
-    
+
     // Check if this is a new conversation (no previous messages)
     const isNewConversation = messages.length === 0;
-    
+
     // Create message content based on conversation type
-    const messageContent = isNewConversation 
+    const messageContent = isNewConversation
       ? `👋 Hi! Let's start with a daily question to get to know each other:\n\n📝 "${loveNote.question}"\n\n💭 My answer: ${loveNoteAnswer}`
       : `📝 Daily Question: "${loveNote.question}"\n\n💭 Answer: ${loveNoteAnswer}`;
 
@@ -486,7 +490,7 @@ function ChatPageInner() {
       read: false,
     };
 
-    setMessages(prev => [...prev, optimisticMessage]);
+    setMessages((prev) => [...prev, optimisticMessage]);
 
     try {
       // Send message using the standard message endpoint
@@ -508,8 +512,8 @@ function ChatPageInner() {
       const savedMessage = await messageResponse.json();
 
       // Replace optimistic message with saved message
-      setMessages(prev =>
-        prev.map(msg => msg.id === tempId ? savedMessage : msg)
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === tempId ? savedMessage : msg))
       );
 
       // Update love note answer
@@ -530,28 +534,30 @@ function ChatPageInner() {
 
       setLoveNoteAnswer("");
       setShowLoveNote(false);
-      
+
       // Update conversations list optimistically
-      setConversations(prev => {
+      setConversations((prev) => {
         const updated = [...prev];
-        const existingIndex = updated.findIndex(c => c.id === selectedUserId);
-        
+        const existingIndex = updated.findIndex((c) => c.id === selectedUserId);
+
         if (existingIndex >= 0) {
           // Move to top and update
           const conversation = updated.splice(existingIndex, 1)[0];
           updated.unshift({
             ...conversation,
-            lastMessage: isNewConversation ? "Đã bắt đầu cuộc trò chuyện với câu hỏi hàng ngày" : "Đã trả lời câu hỏi hàng ngày",
-            unreadCount: 0
+            lastMessage: isNewConversation
+              ? "Đã bắt đầu cuộc trò chuyện với câu hỏi hàng ngày"
+              : "Đã trả lời câu hỏi hàng ngày",
+            unreadCount: 0,
           });
         }
-        
+
         return updated;
       });
     } catch (error) {
       console.error("Error sending daily question answer:", error);
       // Remove optimistic message on error
-      setMessages(prev => prev.filter(msg => msg.id !== tempId));
+      setMessages((prev) => prev.filter((msg) => msg.id !== tempId));
       alert("Failed to send your answer. Please try again.");
     }
   };
@@ -564,7 +570,7 @@ function ChatPageInner() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Poppins']">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Montserrat']">
       <div className="max-w-[1200px] mx-auto p-4 md:p-8">
         <div className="bg-white rounded-[20px] shadow-md overflow-hidden">
           <div className="flex h-[calc(100vh-200px)]">
@@ -572,12 +578,12 @@ function ChatPageInner() {
             <div className="w-full md:w-80 border-r border-gray-200 bg-white flex flex-col">
               <div className="p-4 border-b border-gray-200 flex-shrink-0">
                 <div className="flex items-center justify-between mb-4">
-                  <h1 className="text-xl font-bold text-[#333] font-poppins">
+                  <h1 className="text-xl font-bold text-[#333] font-montserrat">
                     Tin nhắn
                   </h1>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-gray-500 font-poppins">
+                    <span className="text-xs text-gray-500 font-montserrat">
                       Trực tuyến
                     </span>
                   </div>
@@ -586,7 +592,7 @@ function ChatPageInner() {
                   <input
                     type="text"
                     placeholder="Tìm kiếm cuộc trò chuyện..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent text-sm font-poppins"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent text-sm font-montserrat"
                   />
                   <svg
                     className="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
@@ -608,13 +614,13 @@ function ChatPageInner() {
                 <div className="flex justify-center items-center h-32">
                   <div className="flex flex-col items-center gap-3">
                     <div className="w-8 h-8 border-3 border-[#FF3366] border-t-transparent rounded-full animate-spin"></div>
-                    <p className="font-poppins text-gray-600 text-sm">
+                    <p className="font-montserrat text-gray-600 text-sm">
                       Đang tải cuộc trò chuyện...
                     </p>
                   </div>
                 </div>
               ) : conversations.length > 0 ? (
-                <ul>
+                <ul className="overflow-y-auto flex-1">
                   {conversations.map((conversation) => (
                     <li key={conversation.id}>
                       <button
@@ -638,7 +644,7 @@ function ChatPageInner() {
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start">
                             <h3
-                              className={`font-medium truncate font-poppins ${
+                              className={`font-medium truncate font-montserrat ${
                                 conversation.unreadCount > 0
                                   ? "text-gray-900 font-semibold"
                                   : "text-gray-700"
@@ -647,11 +653,11 @@ function ChatPageInner() {
                               {conversation.name}
                             </h3>
                             <div className="flex flex-col items-end gap-1">
-                              <span className="text-xs text-gray-500 font-poppins">
+                              <span className="text-xs text-gray-500 font-montserrat">
                                 {conversation.lastActive}
                               </span>
                               {conversation.unreadCount > 0 && (
-                                <div className="bg-[#FF3366] text-white text-xs font-medium rounded-full px-2 py-1 min-w-[20px] flex items-center justify-center font-poppins animate-pulse">
+                                <div className="bg-[#FF3366] text-white text-xs font-medium rounded-full px-2 py-1 min-w-[20px] flex items-center justify-center font-montserrat animate-pulse">
                                   {conversation.unreadCount}
                                 </div>
                               )}
@@ -659,7 +665,7 @@ function ChatPageInner() {
                           </div>
                           <div className="flex items-center gap-2 mt-1">
                             <p
-                              className={`text-sm truncate font-poppins ${
+                              className={`text-sm truncate font-montserrat ${
                                 conversation.unreadCount > 0
                                   ? "text-gray-700 font-medium"
                                   : "text-gray-500"
@@ -705,15 +711,15 @@ function ChatPageInner() {
                       />
                     </svg>
                   </div>
-                  <p className="text-gray-500 mb-4 font-poppins font-medium">
+                  <p className="text-gray-500 mb-4 font-montserrat font-medium">
                     Chưa có cuộc trò chuyện nào.
                   </p>
-                  <p className="text-gray-400 mb-4 font-poppins text-sm">
+                  <p className="text-gray-400 mb-4 font-montserrat text-sm">
                     Bắt đầu trò chuyện với những người có cùng sở thích!
                   </p>
                   <Link
                     href="/"
-                    className="inline-flex items-center gap-2 text-[#FF3366] hover:text-[#E62E5C] font-poppins font-medium transition-colors"
+                    className="inline-flex items-center gap-2 text-[#FF3366] hover:text-[#E62E5C] font-montserrat font-medium transition-colors"
                   >
                     <svg
                       className="w-4 h-4"
@@ -751,12 +757,12 @@ function ChatPageInner() {
                         />
 
                         <div className="ml-3">
-                          <h2 className="font-semibold text-lg font-poppins text-gray-800">
+                          <h2 className="font-semibold text-lg font-montserrat text-gray-800">
                             {selectedUser.name}
                           </h2>
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <p className="text-xs text-green-600 font-poppins font-medium">
+                            <p className="text-xs text-green-600 font-montserrat font-medium">
                               Đang hoạt động
                             </p>
                           </div>
@@ -767,10 +773,10 @@ function ChatPageInner() {
                           <div className="ml-4 flex items-center px-4 py-2 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full shadow-lg hover:shadow-xl transition-all">
                             <span className="text-white mr-2 text-lg">🔥</span>
                             <div className="text-white">
-                              <span className="text-sm font-bold font-poppins">
+                              <span className="text-sm font-bold font-montserrat">
                                 {streakInfo.currentStreak}
                               </span>
-                              <span className="text-xs font-poppins ml-1">
+                              <span className="text-xs font-montserrat ml-1">
                                 day{streakInfo.currentStreak !== 1 ? "s" : ""}
                               </span>
                             </div>
@@ -781,7 +787,7 @@ function ChatPageInner() {
                         {selectedUser.hobbies?.includes("music") && (
                           <div className="ml-3 flex items-center px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full border border-purple-200 shadow-sm">
                             <span className="text-purple-500 mr-2">🎵</span>
-                            <span className="text-sm text-purple-600 font-poppins font-medium">
+                            <span className="text-sm text-purple-600 font-montserrat font-medium">
                               Music Lover
                             </span>
                           </div>
@@ -795,7 +801,7 @@ function ChatPageInner() {
                             streakInfo.longestStreak > 0) && (
                             <button
                               onClick={() => setShowStreakModal(true)}
-                              className="flex items-center gap-2 px-4 py-2 text-sm bg-white text-[#FF3366] rounded-full hover:bg-pink-50 transition-all border border-pink-200 shadow-sm hover:shadow-md font-poppins"
+                              className="flex items-center gap-2 px-4 py-2 text-sm bg-white text-[#FF3366] rounded-full hover:bg-pink-50 transition-all border border-pink-200 shadow-sm hover:shadow-md font-montserrat"
                             >
                               <span>📊</span>
                               <span className="font-medium">Stats</span>
@@ -805,7 +811,7 @@ function ChatPageInner() {
                         {loveNote && (
                           <button
                             onClick={() => setShowLoveNote(true)}
-                            className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full hover:from-pink-600 hover:to-red-600 transition-all shadow-md hover:shadow-lg font-poppins"
+                            className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full hover:from-pink-600 hover:to-red-600 transition-all shadow-md hover:shadow-lg font-montserrat"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -817,11 +823,13 @@ function ChatPageInner() {
                               strokeLinejoin="round"
                               className="w-4 h-4"
                             >
-                              <circle cx="12" cy="12" r="10"/>
-                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                              <path d="M12 17h.01"/>
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                              <path d="M12 17h.01" />
                             </svg>
-                            <span className="font-medium">Câu Hỏi Hàng Ngày</span>
+                            <span className="font-medium">
+                              Câu Hỏi Hàng Ngày
+                            </span>
                           </button>
                         )}
 
@@ -940,7 +948,7 @@ function ChatPageInner() {
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
                           placeholder="Nhập tin nhắn..."
-                          className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent bg-gray-50 focus:bg-white transition-all text-sm font-poppins"
+                          className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent bg-gray-50 focus:bg-white transition-all text-sm font-montserrat"
                         />
                         <button
                           type="button"
@@ -1005,10 +1013,10 @@ function ChatPageInner() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-700 mb-2 font-poppins">
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2 font-montserrat">
                     Bắt đầu một cuộc trò chuyện
                   </h3>
-                  <p className="text-gray-500 font-poppins">
+                  <p className="text-gray-500 font-montserrat">
                     Chọn một cuộc trò chuyện từ thanh bên để bắt đầu trò chuyện
                   </p>
                 </div>
@@ -1051,12 +1059,12 @@ function ChatPageInner() {
                         />
 
                         <div className="ml-3">
-                          <h2 className="font-semibold text-lg font-poppins text-gray-800">
+                          <h2 className="font-semibold text-lg font-montserrat text-gray-800">
                             {selectedUser.name}
                           </h2>
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <p className="text-xs text-green-600 font-poppins font-medium">
+                            <p className="text-xs text-green-600 font-montserrat font-medium">
                               Đang trực tuyến
                             </p>
                           </div>
@@ -1068,7 +1076,7 @@ function ChatPageInner() {
                         {streakInfo && streakInfo.currentStreak > 0 && (
                           <div className="flex items-center px-2 py-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full">
                             <span className="text-white mr-1 text-sm">🔥</span>
-                            <span className="text-xs text-white font-bold font-poppins">
+                            <span className="text-xs text-white font-bold font-montserrat">
                               {streakInfo.currentStreak}
                             </span>
                           </div>
@@ -1189,7 +1197,7 @@ function ChatPageInner() {
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
                           placeholder="Nhập tin nhắn..."
-                          className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent bg-gray-50 focus:bg-white transition-all text-sm font-poppins"
+                          className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#FF3366] focus:border-transparent bg-gray-50 focus:bg-white transition-all text-sm font-montserrat"
                         />
                         <button
                           type="button"
@@ -1269,24 +1277,24 @@ function ChatPageInner() {
                   <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
+              <h2 className="text-2xl font-semibold text-[#FF3366] font-montserrat">
                 Câu Hỏi Hàng Ngày
               </h2>
-              <p className="text-gray-700 mt-2 font-poppins">
+              <p className="text-gray-700 mt-2 font-montserrat">
                 {loveNote.question}
               </p>
             </div>
 
             {/* My Answer */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-montserrat">
                 Câu trả lời của bạn
               </label>
               {(session?.user?.id === loveNote.senderId &&
                 loveNote.senderAnswer) ||
               (session?.user?.id === loveNote.recipientId &&
                 loveNote.recipientAnswer) ? (
-                <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-poppins">
+                <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-montserrat">
                   {session?.user?.id === loveNote.senderId
                     ? loveNote.senderAnswer
                     : loveNote.recipientAnswer}
@@ -1296,7 +1304,7 @@ function ChatPageInner() {
                   value={loveNoteAnswer}
                   onChange={(e) => setLoveNoteAnswer(e.target.value)}
                   placeholder="Hãy dành một chút thời gian để suy ngẫm..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF3366] font-poppins"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF3366] font-montserrat"
                   rows={4}
                 />
               )}
@@ -1304,20 +1312,20 @@ function ChatPageInner() {
 
             {/* Partner's Answer */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1 font-poppins">
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-montserrat">
                 Câu trả lời của {selectedUser?.name}
               </label>
               {(session?.user?.id === loveNote.senderId &&
                 loveNote.recipientAnswer) ||
               (session?.user?.id === loveNote.recipientId &&
                 loveNote.senderAnswer) ? (
-                <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-poppins">
+                <p className="bg-pink-50 p-3 rounded-lg text-gray-800 font-montserrat">
                   {session?.user?.id === loveNote.senderId
                     ? loveNote.recipientAnswer
                     : loveNote.senderAnswer}
                 </p>
               ) : (
-                <div className="bg-gray-100 p-3 rounded-lg text-gray-400 flex items-center justify-center space-x-2 font-poppins">
+                <div className="bg-gray-100 p-3 rounded-lg text-gray-400 flex items-center justify-center space-x-2 font-montserrat">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -1345,14 +1353,14 @@ function ChatPageInner() {
                 <button
                   onClick={handleSubmitLoveNote}
                   disabled={!loveNoteAnswer.trim()}
-                  className="bg-[#FF3366] text-white rounded-xl px-6 py-2 font-medium disabled:opacity-50 font-poppins"
+                  className="bg-[#FF3366] text-white rounded-xl px-6 py-2 font-medium disabled:opacity-50 font-montserrat"
                 >
                   Chia sẻ
                 </button>
               )}
               <button
                 onClick={() => setShowLoveNote(false)}
-                className="text-gray-500 rounded-xl px-6 py-2 font-medium font-poppins"
+                className="text-gray-500 rounded-xl px-6 py-2 font-medium font-montserrat"
               >
                 Đóng
               </button>
@@ -1369,10 +1377,10 @@ function ChatPageInner() {
               <div className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                 <span className="text-3xl">🔥</span>
               </div>
-              <h2 className="text-2xl font-semibold text-[#FF3366] font-poppins">
+              <h2 className="text-2xl font-semibold text-[#FF3366] font-montserrat">
                 Thống Kê Chuỗi Trò Chuyện
               </h2>
-              <p className="text-gray-700 mt-2 font-poppins">
+              <p className="text-gray-700 mt-2 font-montserrat">
                 Chuỗi trò chuyện của bạn với {selectedUser?.name}
               </p>
             </div>
@@ -1382,13 +1390,13 @@ function ChatPageInner() {
               <div className="bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] rounded-2xl p-4 text-white">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm opacity-90 font-poppins">
+                    <p className="text-sm opacity-90 font-montserrat">
                       Chuỗi Hiện Tại
                     </p>
-                    <p className="text-3xl font-bold font-poppins">
+                    <p className="text-3xl font-bold font-montserrat">
                       {streakInfo.currentStreak}
                     </p>
-                    <p className="text-sm opacity-90 font-poppins">
+                    <p className="text-sm opacity-90 font-montserrat">
                       {streakInfo.currentStreak === 1 ? "ngày" : "ngày"}
                     </p>
                   </div>
@@ -1400,13 +1408,13 @@ function ChatPageInner() {
               <div className="bg-amber-100 rounded-2xl p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-amber-600 font-poppins">
+                    <p className="text-sm text-amber-600 font-montserrat">
                       Chuỗi Dài Nhất
                     </p>
-                    <p className="text-3xl font-bold text-amber-700 font-poppins">
+                    <p className="text-3xl font-bold text-amber-700 font-montserrat">
                       {streakInfo.longestStreak}
                     </p>
-                    <p className="text-sm text-amber-600 font-poppins">
+                    <p className="text-sm text-amber-600 font-montserrat">
                       {streakInfo.longestStreak === 1 ? "ngày" : "ngày"}
                     </p>
                   </div>
@@ -1419,10 +1427,10 @@ function ChatPageInner() {
                 <div className="bg-blue-50 rounded-2xl p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-blue-600 font-poppins">
+                      <p className="text-sm text-blue-600 font-montserrat">
                         Trò Chuyện Gần Nhất
                       </p>
-                      <p className="text-lg font-semibold text-blue-700 font-poppins">
+                      <p className="text-lg font-semibold text-blue-700 font-montserrat">
                         {new Date(streakInfo.lastChatDate).toLocaleDateString()}
                       </p>
                     </div>
@@ -1435,15 +1443,15 @@ function ChatPageInner() {
             {/* Motivation message */}
             <div className="text-center mb-6">
               {streakInfo.currentStreak === 0 ? (
-                <p className="text-gray-600 font-poppins">
+                <p className="text-gray-600 font-montserrat">
                   Bắt đầu chuỗi mới bằng cách trò chuyện ngay hôm nay! 💬
                 </p>
               ) : streakInfo.currentStreak < 7 ? (
-                <p className="text-gray-600 font-poppins">
+                <p className="text-gray-600 font-montserrat">
                   Tiếp tục nhé! Bạn đang xây dựng một kết nối tuyệt vời! 🚀
                 </p>
               ) : (
-                <p className="text-gray-600 font-poppins">
+                <p className="text-gray-600 font-montserrat">
                   Chuỗi ấn tượng! Hai bạn thật sự hợp nhau! ⭐
                 </p>
               )}
@@ -1452,7 +1460,7 @@ function ChatPageInner() {
             <div className="flex justify-center">
               <button
                 onClick={() => setShowStreakModal(false)}
-                className="bg-[#FF3366] text-white rounded-xl px-8 py-2 font-medium font-poppins hover:bg-[#E62E5C] transition-colors"
+                className="bg-[#FF3366] text-white rounded-xl px-8 py-2 font-medium font-montserrat hover:bg-[#E62E5C] transition-colors"
               >
                 Đóng
               </button>

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { NextAuthProvider } from "@/components/providers/NextAuthProvider";
 import { SocketProvider } from "@/components/providers/SocketProvider";
 
-const poppins = Poppins({
+const montserrat = Montserrat({
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
+  variable: "--font-montserrat",
 });
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} font-poppins`}>
+      <body className={`${montserrat.variable} font-montserrat`}>
         <NextAuthProvider>
           <SocketProvider>{children}</SocketProvider>
         </NextAuthProvider>
