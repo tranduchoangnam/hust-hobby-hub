@@ -377,7 +377,7 @@ export default function UserProfilePage() {
           </li>
           <li className="flex-1">
             <Link
-              href="/daily-questions"
+              href="/love-note"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
               onClick={(e) =>
                 !session && (e.preventDefault(), handleLoginClick())

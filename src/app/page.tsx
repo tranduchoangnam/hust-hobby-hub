@@ -285,8 +285,8 @@ export default function Home() {
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-sm text-[#666] font-medium">
               {session
-                ? `Welcome back, ${session.user?.name?.split(" ")[0]}!`
-                : "Ready to connect"}
+                ? `Chào mừng bạn trở lại, ${session.user?.name?.split(" ")[0]}!`
+                : "Sẵn sàng kết nối"}
             </span>
           </div>
         </header>
@@ -1438,7 +1438,7 @@ export default function Home() {
           </li>
           <li className="flex-1">
             <Link
-              href="/daily-questions"
+              href="/love-note"
               className="flex items-center justify-center gap-2 text-[#666] no-underline font-medium p-3 rounded-xl transition-all duration-200 hover:bg-gray-100 hover:text-[#FF3366]"
               onClick={(e) =>
                 !session && (e.preventDefault(), handleLoginClick())
