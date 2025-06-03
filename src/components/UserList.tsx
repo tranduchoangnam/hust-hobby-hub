@@ -168,17 +168,17 @@ export default function UserList({
               {searchQuery ? (
                 <div>
                   <p className="text-[#666] font-medium mb-1">
-                    No users found matching "{searchQuery}"
+                    Không có người dùng có sở thích "{searchQuery}"
                   </p>
                   <p className="text-[#999] text-sm">
-                    Try adjusting your search terms
+                    Hãy thử điều chỉnh từ khóa tìm kiếm
                   </p>
                 </div>
               ) : (
                 <div>
                   <p className="text-[#666] font-medium mb-1">{emptyMessage}</p>
                   <p className="text-[#999] text-sm">
-                    Check back later for new members
+                    Kiểm tra lại sau để xem thêm thành viên mới
                   </p>
                 </div>
               )}
@@ -224,7 +224,7 @@ export default function UserList({
                               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                             </svg>
                             <span className="text-xs font-medium">
-                              Following
+                              Đang theo dõi
                             </span>
                           </div>
                         )}
@@ -262,7 +262,7 @@ export default function UserList({
                               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                           </svg>
-                          <span className="text-xs">No hobbies listed</span>
+                          <span className="text-xs">Không có sở thích</span>
                         </div>
                       )}
                     </div>
