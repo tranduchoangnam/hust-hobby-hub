@@ -120,7 +120,7 @@ export default function UserCard({
         {isBrowse && user.hobbies && user.hobbies.length > 0 && (
           <div>
             <h3 className="text-sm font-medium text-[#666] mb-2 text-center">
-              Interests
+              Sở thích
             </h3>
             <div className="flex flex-wrap gap-2 justify-center">
               {(showAllHobbies ? user.hobbies : user.hobbies.slice(0, 3)).map(
@@ -156,7 +156,7 @@ export default function UserCard({
               href={`/users/${user.id}`}
               className="flex-1 bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white text-center py-3 rounded-full font-medium transition-all hover:shadow-lg hover:scale-105 transform font-montserrat"
             >
-              View Profile
+              Xem hồ sơ
             </Link>
             <Link
               href={`/chat?userId=${user.id}`}
@@ -182,7 +182,7 @@ export default function UserCard({
             onClick={handleLoginClick}
             className="w-full bg-gradient-to-r from-[#FF3366] to-[#FF6B8A] text-white py-3 rounded-full font-medium transition-all hover:shadow-lg hover:scale-105 transform font-montserrat"
           >
-            Sign in to connect
+            Đăng nhập để tiếp tục
           </button>
         )}
       </div>

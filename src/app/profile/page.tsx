@@ -471,7 +471,9 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <span className="text-sm text-[#666] group-hover:text-[#FF3366] transition-colors font-medium">
-                      {followerCount !== 1 ? "Followers" : "Follower"}
+                      {followerCount !== 1
+                        ? "Người theo dõi"
+                        : "Người theo dõi"}
                     </span>
                   </button>
 
@@ -501,7 +503,7 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <span className="text-sm text-[#666] group-hover:text-[#FF3366] transition-colors font-medium">
-                      Following
+                      Đang theo dõi
                     </span>
                   </button>
                 </div>

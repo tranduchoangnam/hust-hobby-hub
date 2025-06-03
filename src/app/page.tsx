@@ -527,14 +527,14 @@ export default function Home() {
                   <div className="w-2 h-8 bg-gradient-to-b from-[#FF3366] to-[#FF6B8A] rounded-full"></div>
                   <h2 className="text-2xl font-bold text-[#333] font-montserrat">
                     {session && showOnlyUserInterests
-                      ? "Your Interests"
-                      : "Explore Interests"}
+                      ? "Sở thích của bạn"
+                      : "Khám phá sở thích"}
                   </h2>
                 </div>
                 <p className="text-[#666] font-medium">
                   {session && showOnlyUserInterests
-                    ? "Click on any of your interests to find like-minded people"
-                    : "Choose an interest to discover people who share your passion"}
+                    ? "Nhấn vào bất kỳ sở thích nào để tìm những người có chung sở thích"
+                    : "Chọn sở thích để tìm những người có chung sở thích"}
                 </p>
               </div>
 
