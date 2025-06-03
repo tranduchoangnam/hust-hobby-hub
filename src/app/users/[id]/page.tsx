@@ -114,8 +114,8 @@ export default function UserProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Montserrat']">
-      <div className="max-w-[900px] mx-auto p-8 bg-white rounded-[20px] shadow-md my-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF0F3] to-[#FFE5EA] pb-20 font-['Montserrat'] py-6">
+      <div className="max-w-[900px] mx-auto p-8 bg-white rounded-[20px] shadow-md">
         <button
           onClick={() => router.back()}
           className="mb-6 flex items-center gap-2 text-[#666] hover:text-[#FF3366] transition-colors"
